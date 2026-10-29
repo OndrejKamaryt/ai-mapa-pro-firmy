@@ -1,0 +1,1119 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI mapa pro firmy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* AI mapa pro firmy, prototyp lead magnetu LifeScale Business.
+   Vzhled podle business.lifescale.cz: světlé pozadí s modrým nádechem, modrá #00B4F1, tmavý text #20100B,
+   tučné nadpisy s mírně staženým prokladem, modré štítky kapitálkami a pilulková tlačítka. Web používá písmo Satoshi,
+   to v prototypu nahrazuje podobné Figtree. Ukázková lekce je ve stylu Grizletu (Nunito, #032B43, #2971AE). */
+:root{
+  --blue:#00B4F1; --blue-deep:#009FD8; --blue-ink:#0079B5; --blue-soft:#E3F6FE; --blue-wash:#F2FAFE;
+  --ink:#20100B; --muted:#5C5855; --line:#E6EBEF; --bg:#FFFFFF; --card:#FFFFFF;
+  --navy:#0B3460; --navy-2:#0E5596;
+  --amber-soft:#FFF4E2; --amber-ink:#7A4300; --green:#1E8E57; --green-soft:#E6F5EC;
+  --font:'Figtree', 'Satoshi', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --mono:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --r:16px; --r-sm:10px;
+  --shadow:0 6px 24px rgba(16, 52, 84, .08);
+  --shadow-up:0 14px 40px rgba(16, 52, 84, .16);
+  color-scheme: light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+body{margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 var(--font); -webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px))}
+a{color:var(--blue-ink)}
+p{margin:0}
+h1,h2,h3,h4{margin:0; text-wrap:balance}
+:focus-visible{outline:3px solid var(--blue); outline-offset:2px; border-radius:6px}
+[hidden]{display:none !important}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *,*::before,*::after{transition:none !important; animation:none !important} }
+
+/* hlavička */
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px); z-index:29; background:#FFFFFF}
+.top{position:sticky; top:env(safe-area-inset-top, 0px); z-index:30; background:rgba(255,255,255,.92); backdrop-filter:saturate(1.4) blur(8px); -webkit-backdrop-filter:saturate(1.4) blur(8px); border-bottom:1px solid var(--line)}
+.top-in{display:flex; align-items:center; gap:12px; min-height:64px}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); font-weight:800; font-size:19px; letter-spacing:-.02em}
+.brand-mark{width:30px; height:30px; flex:none}
+.brand .sub{color:var(--blue-ink); font-weight:500}
+.proto{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--blue-ink); background:var(--blue-soft); border-radius:999px; padding:4px 9px}
+.plan-pill{margin-left:auto; display:inline-flex; align-items:center; gap:8px; min-height:42px; padding:8px 18px; border-radius:999px; border:0; background:var(--blue); color:#fff; font:700 15px var(--font); cursor:pointer; text-decoration:none; transition:background .15s}
+.plan-pill:hover{background:var(--blue-deep)}
+.plan-pill b{display:inline-grid; place-items:center; min-width:24px; height:24px; padding:0 6px; border-radius:999px; background:#fff; color:var(--blue-ink); font-size:13px}
+@media (max-width:560px){ .brand{font-size:17px} .brand .sub{display:none} .plan-pill{padding:8px 14px} }
+
+/* tlačítka */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:46px; padding:11px 24px; border-radius:999px; border:1.5px solid transparent; font:700 15px/1.2 var(--font); cursor:pointer; text-decoration:none; text-align:center; transition:background .15s, border-color .15s, color .15s}
+.btn-primary{background:var(--blue); color:#fff}
+.btn-primary:hover{background:var(--blue-deep)}
+.btn-ghost{background:#fff; color:var(--ink); border-color:#CFD8DE}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn-dark{background:var(--ink); color:#fff}
+.btn-white{background:#fff; color:var(--navy)}
+.btn:disabled{opacity:.5; cursor:not-allowed}
+.btn.on{background:var(--green-soft); color:var(--green); border-color:#BFE3CD}
+.btn-sm{min-height:40px; padding:8px 16px; font-size:14px}
+.linkish{background:none; border:0; padding:6px 0; font:600 15px var(--font); color:var(--blue-ink); cursor:pointer; text-decoration:underline; text-underline-offset:3px}
+
+/* úvod */
+.hero{background:linear-gradient(180deg, var(--blue-wash) 0%, #FFFFFF 100%); padding:56px 0 30px; position:relative; overflow:hidden}
+.hero::after{content:""; position:absolute; right:-120px; top:-140px; width:520px; height:520px; border-radius:50%; background:radial-gradient(circle at 40% 40%, rgba(0,180,241,.16), rgba(0,180,241,0) 65%); pointer-events:none}
+.kicker{display:inline-block; font-size:13px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--blue-ink)}
+.tagpill{display:inline-block; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--blue-ink); background:var(--blue-soft); border-radius:999px; padding:6px 12px}
+.hero h1{font-size:clamp(32px,5vw,54px); line-height:1.08; font-weight:800; letter-spacing:-.03em; margin:14px 0 16px; max-width:16ch}
+.mark{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 24' preserveAspectRatio='none'%3E%3Cpath d='M3 16C70 9 150 7 297 12' stroke='%2300B4F1' stroke-opacity='.45' stroke-width='12' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") left 88% / 100% .42em no-repeat; padding-bottom:2px}
+.lede{font-size:clamp(17px,2vw,20px); color:var(--muted); max-width:58ch}
+.lede b{color:var(--ink)}
+.hero-facts{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:20px; font-weight:600; font-size:15px}
+.hero-facts span{display:inline-flex; align-items:center; gap:8px}
+.hero-facts span::before{content:""; width:20px; height:20px; border-radius:50%; flex:none; background:var(--blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
+@media (max-width:560px){ .hero{padding:30px 0 18px} .hero h1{margin:10px 0 10px} .hero-facts{font-size:14px; gap:6px 14px; margin-top:14px} }
+/* ukázka v úvodu, jen na širokých obrazovkách */
+.hero-vis{display:none}
+@media (min-width:1200px){
+  .hero{padding:44px 0 30px}
+  .hero-in{display:grid; grid-template-columns:minmax(0,1fr) 440px; gap:40px; align-items:center}
+  .hero-vis{display:block; position:relative; height:392px; z-index:1}
+}
+.hv-card{position:absolute; left:0; top:0; width:292px; background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:18px; box-shadow:var(--shadow); display:grid; gap:9px}
+.hv-card h3{font-size:18px; line-height:1.3; font-weight:800; letter-spacing:-.01em}
+.hv-card .meta{margin:0; padding:0; font-size:13px}
+.hv-label{font-size:12px; font-weight:800; margin-top:2px}
+.hv-prompt{background:var(--blue-wash); border:1px solid #CDEBF8; border-radius:12px; padding:10px 12px; font-size:13px; line-height:1.5}
+.hv-prompt span{display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden}
+.hv-row{display:flex; gap:8px}
+.hv-chip{display:inline-flex; align-items:center; min-height:30px; padding:5px 12px; border-radius:999px; font-size:13px; font-weight:700}
+.hv-chip.on{background:var(--green-soft); color:var(--green); border:1px solid #BFE3CD}
+.hv-phone{position:absolute; right:0; top:64px; width:178px; height:296px; background:#fff; border:7px solid #032B43; border-radius:30px; padding:16px 12px 12px; box-shadow:var(--shadow-up); font-family:'Nunito Sans', var(--font); color:#032B43; display:flex; flex-direction:column; gap:7px}
+.hv-phone .gz-prog{gap:4px}
+.hv-phone .gz-prog i{height:4px}
+.hv-phone .gz-cat{margin:2px 0 0; font-size:10px}
+.hv-q{font:800 13px/1.3 Nunito, var(--font)}
+.hv-opt{border:1.5px solid #DCE6EE; border-radius:10px; padding:6px 8px; font-size:11.5px; line-height:1.35; font-weight:600}
+.hv-opt.hv-ok{border-color:#3A9D5D; background:#EAF6EE}
+.hv-btn{margin-top:auto; min-height:30px; border-radius:999px; background:#2971AE; color:#fff; font:800 12.5px 'Nunito Sans', var(--font); display:grid; place-items:center}
+.hv-cap{position:absolute; right:0; top:372px; width:178px; display:flex; justify-content:center; align-items:center; gap:8px; white-space:nowrap; font-size:13px; font-weight:700; color:var(--muted)}
+.hv-cap i{width:20px; height:20px; border-radius:6px; background:#032B43; color:#fff; display:inline-grid; place-items:center; font:900 12px Nunito, var(--font); font-style:normal}
+
+/* filtry */
+.filters{position:relative; z-index:2; background:#fff; border-radius:var(--r); box-shadow:var(--shadow); padding:18px 20px; display:grid; gap:14px; margin-top:6px}
+.frow{display:grid; grid-template-columns:120px minmax(0,1fr); gap:10px; align-items:start}
+.flabel{font-weight:700; font-size:14px; padding-top:9px}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{min-height:40px; padding:8px 15px; border-radius:999px; border:1.5px solid var(--line); background:#fff; font:600 14px var(--font); color:var(--ink); cursor:pointer; white-space:nowrap; transition:border-color .15s, background .15s}
+.chip:hover{border-color:var(--blue)}
+.chip[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:#fff}
+.search{display:flex; align-items:center; gap:10px; border:1.5px solid var(--line); border-radius:999px; padding:0 16px; min-height:44px; max-width:420px; background:#fff}
+.search:focus-within{border-color:var(--blue)}
+.search svg{width:18px; height:18px; flex:none; stroke:var(--muted)}
+.search input{border:0; outline:0; font:16px var(--font); color:var(--ink); width:100%; background:transparent; min-height:42px}
+@media (max-width:720px){
+  .filters{padding:14px 0 14px 14px; border-radius:var(--r-sm)}
+  .frow{grid-template-columns:minmax(0,1fr); gap:6px}
+  .flabel{padding:0}
+  .chips{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding-right:14px; -webkit-overflow-scrolling:touch}
+  .chips::-webkit-scrollbar{display:none}
+  .search{margin-right:14px; max-width:none}
+}
+
+/* výsledky */
+.res-head{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px 16px; margin:30px 0 14px}
+.res-head h2{font-size:clamp(22px,2.6vw,30px); font-weight:800; letter-spacing:-.02em}
+.res-head p{color:var(--muted); font-size:15px}
+.grid{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:16px}
+@media (max-width:1000px){ .grid{grid-template-columns:repeat(2, minmax(0,1fr))} }
+@media (max-width:640px){ .grid{grid-template-columns:minmax(0,1fr); gap:12px} }
+.uc{display:flex; flex-direction:column; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:20px; transition:box-shadow .2s, border-color .2s}
+.uc:hover{box-shadow:var(--shadow); border-color:#D7E3EA}
+.uc.in{border-color:var(--blue); box-shadow:0 0 0 1px var(--blue) inset}
+.uc-top{display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center}
+.dept{font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--blue-ink)}
+.ind{font-size:12px; font-weight:700; color:var(--navy); background:#E9F0F8; border-radius:999px; padding:3px 9px}
+.uc h3{font-size:19px; line-height:1.3; font-weight:800; letter-spacing:-.01em}
+.uc .w{color:var(--muted); font-size:15px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
+.meta{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:14px; font-weight:600; margin-top:auto; padding-top:4px}
+.meta span{display:inline-flex; align-items:center; gap:6px}
+.meta svg{width:16px; height:16px; stroke:var(--blue-ink); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.lvl::before{content:""; width:8px; height:8px; border-radius:50%; background:var(--green)}
+.lvl.m::before{background:#E39B1B}
+.uc-actions{display:flex; flex-wrap:wrap; gap:8px; padding-top:4px}
+.empty{grid-column:1 / -1; text-align:center; padding:40px 16px; color:var(--muted)}
+
+/* detail */
+.overlay{position:fixed; inset:0; z-index:50; background:rgba(11,24,38,.5); display:grid; place-items:center; padding:max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+.sheet{background:#fff; border-radius:20px; width:100%; max-width:680px; max-height:calc(100dvh - 32px); overflow-y:auto; padding:28px 28px 24px; position:relative; box-shadow:var(--shadow-up); animation:rise .25s ease}
+@keyframes rise{from{transform:translateY(14px); opacity:0} to{transform:none; opacity:1}}
+.x{position:absolute; top:14px; right:14px; width:40px; height:40px; border-radius:50%; border:0; background:var(--blue-wash); cursor:pointer; display:grid; place-items:center}
+.x svg{width:18px; height:18px; stroke:var(--ink); stroke-width:2.4; stroke-linecap:round}
+.sheet h2{font-size:clamp(24px,3vw,30px); line-height:1.2; font-weight:800; letter-spacing:-.02em; margin:8px 40px 10px 0}
+.sheet .w{color:var(--muted); font-size:16px}
+.sheet .meta{margin:14px 0 0; padding:0}
+.sec{margin-top:22px}
+.sec h4{font-size:16px; font-weight:800; margin-bottom:10px}
+.steps{list-style:none; counter-reset:k; margin:0; padding:0; display:grid; gap:10px}
+.steps li{counter-increment:k; display:grid; grid-template-columns:28px minmax(0,1fr); gap:10px; align-items:start}
+.steps li::before{content:counter(k); width:28px; height:28px; border-radius:50%; background:var(--blue-soft); color:var(--blue-ink); display:grid; place-items:center; font-weight:800; font-size:14px}
+.prompt{background:var(--blue-wash); border:1px solid #CDEBF8; border-radius:14px; padding:16px; white-space:pre-wrap; font-size:15px; line-height:1.55}
+.prompt-actions{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:10px}
+.copied{font-size:14px; font-weight:700; color:var(--green)}
+.note{display:flex; gap:10px; align-items:flex-start; background:var(--amber-soft); color:var(--amber-ink); border-radius:12px; padding:12px 14px; font-size:15px}
+.note svg{width:20px; height:20px; flex:none; margin-top:1px; stroke:var(--amber-ink); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.tool{font-size:14px; color:var(--muted); margin-top:8px}
+.sheet-actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; padding-top:18px; border-top:1px solid var(--line)}
+@media (max-width:640px){
+  .overlay{place-items:end center; padding:0}
+  .sheet{border-radius:20px 20px 0 0; max-height:92dvh; padding:24px max(18px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px))}
+  .sheet-actions .btn{flex:1 1 100%}
+}
+
+/* plán */
+.tray{position:fixed; left:calc(12px + env(safe-area-inset-left, 0px)); right:calc(12px + env(safe-area-inset-right, 0px)); margin:0 auto; width:fit-content; bottom:calc(14px + env(safe-area-inset-bottom, 0px)); z-index:25; display:flex; align-items:center; gap:14px; background:var(--ink); color:#fff; border-radius:999px; padding:8px 8px 8px 20px; box-shadow:var(--shadow-up); max-width:calc(100% - 24px)}
+.tray p{display:grid; min-width:0; line-height:1.25}
+.tray p b, .tray p span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.tray p b{font-size:14px; font-weight:700}
+.tray p span{font-size:12.5px; font-weight:500; color:#D9D4D2}
+@media (max-width:440px){ .tray .tr-pp{display:none} .tray{gap:10px; padding-left:18px} .tray .btn{padding:8px 16px} }
+@media (max-width:359px){ .proto{display:none} .tray p b{font-size:13px} .tray p span{font-size:12px} .tray .btn{padding:8px 13px; font-size:14px} }
+.tray .btn{min-height:40px; padding:8px 18px; flex:none}
+.plan{padding:64px 0 40px; scroll-margin-top:64px}
+.plan-grid{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:24px; align-items:start; margin-top:22px}
+@media (max-width:900px){ .plan-grid{grid-template-columns:minmax(0,1fr)} }
+.plan h2{font-size:clamp(26px,3.4vw,40px); line-height:1.15; font-weight:800; letter-spacing:-.03em; margin-top:10px}
+.box{background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:22px}
+.plist{list-style:none; margin:0; padding:0; display:grid; gap:10px}
+.plist li{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; align-items:center; padding:12px 14px; border-radius:12px; background:var(--blue-wash)}
+.plist .pt{font-weight:700}
+.plist .ps{font-size:13px; color:var(--muted); grid-column:1}
+.plist button{grid-row:1 / span 2; grid-column:2}
+.calc{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; margin-top:18px}
+@media (max-width:480px){ .calc{grid-template-columns:minmax(0,1fr)} }
+.field{display:grid; gap:6px}
+.field label{font-weight:700; font-size:14px}
+.field input, .field select{font:16px var(--font); color:var(--ink); min-height:48px; padding:10px 14px; border-radius:12px; border:1.5px solid #D4DEE4; background:#fff; width:100%}
+.field input:focus, .field select:focus{border-color:var(--blue); outline:0; box-shadow:0 0 0 3px rgba(0,180,241,.2)}
+.field small{color:var(--muted); font-size:13px}
+.save{margin-top:18px; padding:16px 18px; border-radius:14px; background:var(--navy); color:#fff}
+.save b{display:block; font-size:clamp(20px,2.4vw,26px); line-height:1.25; letter-spacing:-.01em}
+.save span{display:block; font-size:14px; color:#CFE3F5; margin-top:4px}
+.form-box{position:sticky; top:84px}
+@media (max-width:900px){ .form-box{position:static} }
+.form-box h3{font-size:22px; font-weight:800; letter-spacing:-.02em}
+.form-box .hint{color:var(--muted); font-size:15px; margin:6px 0 16px}
+form.lead{display:grid; gap:12px}
+.check{display:flex; gap:10px; align-items:flex-start; font-size:14px; color:var(--muted); cursor:pointer}
+.check input{width:18px; height:18px; margin-top:2px; flex:none; accent-color:var(--blue-ink)}
+.check.strong{color:var(--ink); font-weight:600; background:var(--blue-wash); border-radius:12px; padding:12px}
+.err{color:#B3261E; font-size:14px; font-weight:600}
+.ok{background:var(--green-soft); color:#0F5132; border-radius:12px; padding:14px; font-size:15px}
+.soft{font-size:13px; color:var(--muted)}
+
+/* jak to tým naučit */
+.learn{background:linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%); color:#fff; padding:56px 0 60px}
+.learn .kicker{color:#7FD6F7}
+.learn h2{font-size:clamp(26px,3.4vw,40px); line-height:1.15; font-weight:800; letter-spacing:-.03em; margin:10px 0 8px}
+.learn .lede{color:#CFE3F5}
+.cards2{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px; margin-top:26px}
+@media (max-width:820px){ .cards2{grid-template-columns:minmax(0,1fr)} }
+.lcard{background:#fff; color:var(--ink); border-radius:var(--r); padding:24px; display:flex; flex-direction:column; gap:12px}
+.lcard h3{font-size:22px; font-weight:800; letter-spacing:-.02em}
+.lcard p{color:var(--muted)}
+.lcard .badge{align-self:flex-start; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#fff; background:var(--blue-ink); border-radius:999px; padding:5px 11px}
+.sub-box{background:var(--blue-wash); border-radius:12px; padding:14px 16px}
+.sub-box b{display:block; font-size:20px; letter-spacing:-.01em}
+.ticks{list-style:none; margin:0; padding:0; display:grid; gap:6px; font-size:15px}
+.ticks li{display:flex; gap:8px; align-items:flex-start}
+.ticks li::before{content:""; width:18px; height:18px; flex:none; margin-top:3px; border-radius:50%; background:var(--blue-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230079B5' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/11px no-repeat}
+.lcard .btn{align-self:flex-start; margin-top:auto}
+.legal{font-size:13px; color:#B9D3EA; margin-top:22px; max-width:90ch}
+
+/* pohled obchodníka */
+.sales{margin:30px 0 0; border:1.5px dashed #C9D4DB; border-radius:var(--r); padding:16px 18px; background:#FAFCFD}
+.sales summary{cursor:pointer; font-weight:800; list-style:none; display:flex; justify-content:space-between; gap:10px}
+.sales summary::-webkit-details-marker{display:none}
+.sales summary::after{content:"Zobrazit"; font-size:13px; font-weight:700; color:var(--blue-ink)}
+.sales[open] summary::after{content:"Skrýt"}
+.sales .int{display:block; font-size:13px; font-weight:600; color:var(--muted)}
+.sales dl{display:grid; grid-template-columns:13em minmax(0,1fr); gap:6px 16px; margin:14px 0 0; font-size:14px}
+.sales dt{color:var(--muted); font-weight:600}
+.sales dd{margin:0}
+@media (max-width:560px){ .sales dl{grid-template-columns:minmax(0,1fr)} .sales dd{margin-bottom:8px} }
+.foot{padding:28px 0 90px; font-size:13px; color:var(--muted)}
+
+/* ukázková lekce ve stylu Grizletu */
+.gz-wrap{display:grid; gap:12px; justify-items:center}
+.gz-brand{display:flex; align-items:center; gap:8px; color:#fff; font:800 15px 'Nunito Sans', var(--font)}
+.gz-brand i{width:22px; height:22px; border-radius:7px; background:#fff; display:inline-grid; place-items:center; font-style:normal; color:#032B43; font:900 14px Nunito, var(--font)}
+.phone{width:min(380px, calc(100vw - 32px)); height:min(720px, calc(100dvh - 120px)); background:#fff; border:10px solid #032B43; border-radius:42px; display:flex; flex-direction:column; padding:22px 18px 18px; color:#032B43; font-family:'Nunito Sans', var(--font); box-shadow:var(--shadow-up); position:relative}
+.gz-prog{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px}
+.gz-prog i{height:5px; border-radius:4px; background:#D6E3EE}
+.gz-prog i.on{background:#2971AE}
+.gz-cat{margin-top:14px; font:800 12px 'Nunito Sans', var(--font); letter-spacing:.06em; text-transform:uppercase; color:#6B7C89}
+.gz-body{flex:1; overflow-y:auto; margin-top:6px; min-height:0}
+.gz-body h3{font:900 22px/1.25 Nunito, var(--font); color:#032B43; margin:0 0 12px}
+.gz-body p{font-size:16px; line-height:1.55; color:#1D3D52}
+.gz-body ol{margin:0; padding-left:20px; display:grid; gap:8px; font-size:16px; color:#1D3D52}
+.gz-opts{display:grid; gap:10px; margin-top:4px}
+.gz-opt{text-align:left; padding:14px 16px; border-radius:14px; border:2px solid #DCE6EE; background:#fff; font:600 15px/1.4 'Nunito Sans', var(--font); color:#032B43; cursor:pointer; display:flex; justify-content:space-between; gap:10px; align-items:center}
+.gz-opt:hover:not(:disabled){border-color:#9CC0DE}
+.gz-opt.ok{border-color:#3A9D5D; background:#EAF6EE}
+.gz-opt.ok::after{content:"✓"; color:#2E8B50; font-weight:900}
+.gz-opt.no{border-color:#E0A3A3; background:#FBEEEE}
+.gz-opt:disabled{cursor:default}
+.gz-fb{margin-top:12px; background:#EEF4F9; border-radius:12px; padding:12px 14px; font-size:15px; color:#1D3D52}
+.gz-fb b{color:#2E8B50}
+.gz-fb.bad b{color:#B3261E}
+.gz-btn{margin-top:14px; min-height:52px; border-radius:999px; border:0; background:#2971AE; color:#fff; font:800 17px 'Nunito Sans', var(--font); cursor:pointer}
+.gz-btn:disabled{opacity:.4; cursor:not-allowed}
+.gz-done{display:grid; gap:12px}
+.gz-done .big{font:900 26px/1.2 Nunito, var(--font)}
+.gz-close{color:#fff; background:none; border:0; font:700 15px var(--font); text-decoration:underline; cursor:pointer; padding:6px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#top" aria-label="LifeScale Business, začátek stránky">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="#00B4F1" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 27c4-4 8-12 8-18 0-3-1.5-4.5-3.2-4.5C9.6 4.5 8.5 7 9 11c.7 6 2.6 11 4.6 13.6 1.6 2 4.4 2.8 7.4 1.6 2.2-.9 4-2.5 5-4.2"/></svg>
+      <span>LifeScale <span class="sub">Business</span></span>
+    </a>
+    <span class="proto">Prototyp</span>
+    <a class="plan-pill" href="#plan">Můj plán <b id="pill-n">0</b></a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap hero-in">
+    <div class="hero-txt">
+    <span class="kicker">AI mapa pro firmy</span>
+    <h1>Najděte práci, kterou vám <span class="mark">AI zkrátí</span> na minuty</h1>
+    <p class="lede"><b id="hero-n">42 konkrétních možností</b> pro 7 oborů a 7 oddělení. U každé najdete hotový pokyn pro AI, odhad ušetřeného času a krátkou lekci, kterou pošlete týmu do mobilu.</p>
+    <div class="hero-facts"><span>Zdarma a bez registrace</span><span>Pokyny ke zkopírování</span><span>Plán v PDF pro vedení</span></div>
+    </div>
+    <div class="hero-vis" id="hero-vis" aria-hidden="true"></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="filters">
+    <div class="frow"><span class="flabel" id="lab-obor">Váš obor</span><div class="chips" id="f-obor" role="group" aria-labelledby="lab-obor"></div></div>
+    <div class="frow"><span class="flabel" id="lab-odd">Oddělení</span><div class="chips" id="f-odd" role="group" aria-labelledby="lab-odd"></div></div>
+    <div class="frow"><label class="flabel" for="f-q">Hledat</label>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="f-q" type="search" placeholder="Třeba faktury nebo nábor" autocomplete="off"></div>
+    </div>
+  </div>
+  <div class="res-head"><h2 id="res-title">Všechny možnosti</h2><p id="res-sub">Vyberte obor a oddělení, ať vidíte jen to, co se vás týká.</p></div>
+  <div class="grid" id="grid" aria-live="polite"></div>
+</div>
+
+<section class="plan" id="plan">
+  <div class="wrap">
+    <span class="kicker">Váš AI plán</span>
+    <h2 id="plan-title">Zatím nemáte v plánu nic</h2>
+    <div class="plan-grid">
+      <div class="box">
+        <ul class="plist" id="plist"></ul>
+        <p class="soft" id="plan-empty">Přidejte možnosti tlačítkem „Do plánu“. Plán pak uvidíte tady i s odhadem úspory.</p>
+        <div class="calc">
+          <div class="field"><label for="c-n">Kolik lidí bude úkoly dělat</label><input id="c-n" type="number" min="1" max="5000" value="10" inputmode="numeric"></div>
+          <div class="field"><label for="c-h">Náklady na hodinu práce v Kč</label><input id="c-h" type="number" min="100" max="5000" step="5" value="435" inputmode="numeric"><small>Průměrná mzda 51 966 Kč za 2. čtvrtletí 2026 podle ČSÚ i s odvody zaměstnavatele, 160 hodin měsíčně.</small></div>
+        </div>
+        <div class="save" id="save"><b id="save-h"></b><span id="save-k"></span></div>
+        <p class="soft" id="save-note" style="margin-top:10px"></p>
+      </div>
+      <div class="box form-box" id="form-box">
+        <h3>Stáhněte si plán v PDF</h3>
+        <p class="hint">Všechny vybrané možnosti s kroky, pokyny pro AI a odhadem úspory. Hodí se jako podklad pro vedení i pro tým.</p>
+        <form class="lead" id="lead" novalidate>
+          <div class="field"><label for="l-name">Jméno a příjmení</label><input id="l-name" type="text" autocomplete="name" placeholder="Jana Nováková"></div>
+          <div class="field"><label for="l-email">Firemní e-mail</label><input id="l-email" type="email" autocomplete="email" placeholder="jana.novakova@firma.cz"></div>
+          <div class="field"><label for="l-firm">Firma</label><input id="l-firm" type="text" autocomplete="organization" placeholder="Firma s.r.o."></div>
+          <div class="field"><label for="l-size">Počet zaměstnanců</label>
+            <select id="l-size"><option value="">Vyberte</option><option>do 10</option><option>10 až 49</option><option>50 až 249</option><option>250 a víc</option></select></div>
+          <label class="check strong"><input type="checkbox" id="l-pilot"><span>Mám zájem o pilot Grizletu: jeden náš materiál převedený na lekce do mobilu</span></label>
+          <label class="check"><input type="checkbox" id="l-consent"><span>Souhlasím se <a href="https://business.lifescale.cz/cz" target="_blank" rel="noopener">zpracováním osobních údajů</a>, aby se mi LifeScale mohl ozvat.</span></label>
+          <p class="err" id="l-err" hidden></p>
+          <button class="btn btn-primary" type="submit" id="l-submit">Stáhnout plán v PDF</button>
+        </form>
+        <div class="ok" id="lead-ok" hidden></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="learn">
+  <div class="wrap">
+    <span class="kicker">Jak to tým naučit</span>
+    <h2>Z plánu do každodenní práce</h2>
+    <p class="lede">Lidé se AI naučí nejrychleji na vlastních úkolech. Školení proto stavíme na možnostech z vašeho plánu a mezi lekcemi lidem posíláme krátká opakování do mobilu.</p>
+    <div class="cards2">
+      <div class="lcard">
+        <h3>Školení AI Akcelerátor</h3>
+        <p>Praktický kurz pro vaše oddělení. Lidé si s lektorem projdou úkoly z plánu, naučí se psát pokyny pro AI a odnesou si hotové postupy.</p>
+        <div class="sub-box"><span class="soft">Podpora z výzvy Vzdělávání pro firmy</span><b id="sub-sum"></b><span class="soft" id="sub-calc"></span></div>
+        <ul class="ticks"><li>Podpora se uzná účastníkovi, který absolvuje aspoň 50 hodin. Počítáme s 60 hodinami, aby byla rezerva.</li><li>U OSVČ a dodavatelů je podpora poloviční.</li><li>Proplácí se zpětně, školení tedy nejdřív zaplatíte.</li><li>S žádostí vám pomůžeme.</li></ul>
+        <a class="btn btn-ghost" href="https://business.lifescale.cz/cz" target="_blank" rel="noopener">Víc o firemních školeních</a>
+      </div>
+      <div class="lcard">
+        <span class="badge">Vstupní krok</span>
+        <h3>Pilot Grizletu</h3>
+        <p>Jeden váš materiál, třeba onboarding nebo pravidla pro AI, převedeme na krátké lekce do mobilu a rozešleme je týmu. Uvidíte, kdo lekci dokončil a s jakým skóre.</p>
+        <ul class="ticks"><li>Lekce se otevře odkazem, bez instalace a bez hesla.</li><li>Každá lekce zabere 3 až 4 minuty a končí kvízem se zpětnou vazbou.</li><li>Výsledky vidíte po lidech i po otázkách.</li></ul>
+        <button class="btn btn-primary" type="button" id="pilot-cta">Chci pilot Grizletu</button>
+      </div>
+    </div>
+    <p class="legal">AI Act od února 2025 ukládá firmám, které AI používají, zajistit lidem, kteří s ní pracují, dostatečnou gramotnost v AI. Školení s prezenční listinou je praktický způsob, jak to doložit.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <details class="sales"><summary><span><span class="int">Jen pro tým LifeScale, návštěvník tuto část neuvidí</span>Pohled obchodníka: co dorazí do Pipedrivu</span></summary><dl id="sales"></dl></details>
+  <p class="foot">Prototyp lead magnetu LifeScale Business, říjen 2026. Odhady úspory času jsou orientační a vycházejí z toho, jak dlouho úkoly obvykle trvají bez AI a s ní.</p>
+</div>
+</main>
+
+<div class="tray" id="tray" hidden><p id="tray-t"></p><a class="btn btn-primary" href="#plan">Zobrazit plán</a></div>
+<div class="overlay" id="ov" hidden role="dialog" aria-modal="true" aria-labelledby="d-title"><div class="sheet" id="sheet"></div></div>
+<div class="overlay" id="gz" hidden role="dialog" aria-modal="true" aria-label="Ukázková lekce v Grizletu">
+  <div class="gz-wrap"><div class="gz-brand"><i aria-hidden="true">g</i>Ukázková lekce v Grizletu</div><div class="phone" id="phone"></div><button class="gz-close" type="button" id="gz-close">Zavřít lekci</button></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* ---------- data: obory, oddělení, kvízy a AI use cases ---------- */
+const OBORY = [
+  ['stavebnictvi', 'Stavebnictví'], ['zdravotnictvi', 'Zdravotnictví'], ['logistika', 'Logistika'],
+  ['fin', 'Finanční služby'], ['pravo', 'Advokátní kanceláře'], ['vyroba', 'Výroba a průmysl'],
+  ['auto', 'Automobilový průmysl'], ['jine', 'Jiný obor']
+];
+const ODDELENI = [
+  ['vse', 'Všechna oddělení'], ['obchod', 'Obchod'], ['marketing', 'Marketing'], ['hr', 'HR a nábor'],
+  ['finance', 'Finance a účetnictví'], ['pece', 'Zákaznická péče'], ['provoz', 'Provoz a odborná práce'], ['vedeni', 'Vedení firmy']
+];
+const OBOR_LABEL = Object.fromEntries(OBORY);
+const ODD_LABEL = Object.fromEntries(ODDELENI);
+const OBOR_PRO = { stavebnictvi:'Pro stavebnictví', zdravotnictvi:'Pro zdravotnictví', logistika:'Pro logistiku', fin:'Pro finanční služby',
+                   pravo:'Pro advokátní kanceláře', vyroba:'Pro výrobu', auto:'Pro automotive' };
+const LEVEL = { s:'Snadné', m:'Střední' };
+const NASTROJ = {
+  chat: 'AI chat, třeba ChatGPT, Claude, Copilot nebo Gemini, ideálně ve firemní verzi',
+  dok: 'AI chat, do kterého nahrajete dokument nebo tabulku',
+  excel: 'Copilot v Excelu nebo AI chat s nahranou tabulkou',
+  prepis: 'Přepis schůzky v Teams nebo Google Meet a AI chat'
+};
+
+/* kvízy pro ukázkovou lekci, podle toho, na co si u úkolu dát pozor */
+const KVIZ = {
+  data: { q:'Kolega chce do veřejného AI chatu vložit tabulku s rodnými čísly zákazníků. Co mu poradíte?',
+    o:['Nevadí to, AI data nikomu neukáže.', 'Osobní údaje před vložením odstranit, nebo použít firemní nástroj, který to dovoluje.', 'Stačí tabulku vložit po částech.'], ok:1,
+    fb:'Osobní údaje do veřejných AI nástrojů nepatří. Použijte firemní verzi s ochranou dat, nebo data předem anonymizujte.' },
+  fakta: { q:'AI vám připravila podklad s čísly a fakty. Co uděláte před odesláním?',
+    o:['Pošlu ho, AI se nemýlí.', 'Fakta a čísla ověřím ve zdroji.', 'Požádám AI, ať potvrdí, že je to pravda.'], ok:1,
+    fb:'AI umí znít jistě, i když se plete. Fakta a čísla vždy ověřte ve zdroji.' },
+  prompt: { q:'Který pokyn dá AI lepší výsledek?',
+    o:['Napiš plán.', 'Napiš plán zaškolení obchodníka na 4 týdny, s cíli na každý týden, jako tabulku.', 'Napiš něco o zaškolení, ať je to dobré.'], ok:1,
+    fb:'Čím víc AI víte o roli, cíli a formátu, tím lepší výsledek dostanete.' },
+  ton: { q:'AI napsala odpověď zákazníkovi. Co je potřeba udělat?',
+    o:['Rovnou ji odeslat, ušetří to čas.', 'Přečíst ji, upravit tón a fakta a poslat pod svým jménem.', 'Poslat ji a připsat, že ji psala AI.'], ok:1,
+    fb:'Za odpověď odpovídáte vy. AI připraví návrh, člověk ho zkontroluje a odešle.' },
+  cisla: { q:'AI v tabulce spočítala součty a procenta. Jak to ověříte?',
+    o:['Nijak, počítač počítá dobře.', 'Přepočítám je v Excelu, aspoň na pár řádcích.', 'Zeptám se AI, jestli si je jistá.'], ok:1,
+    fb:'Jazykové modely s čísly občas chybují. Přepočet v Excelu zabere minutu.' },
+  lide: { q:'AI ohodnotila práci kolegů. Jak s výsledkem naložíte?',
+    o:['Podle něj rozdělím odměny.', 'Použiju ho jako podklad k rozhovoru a rozhodnu sám.', 'Pošlu ho celému týmu.'], ok:1,
+    fb:'O lidech rozhoduje člověk. Výstup AI je podklad, ne verdikt.' },
+  bezpecnost: { q:'AI připravila pracovní postup ke stroji. Kdo ho musí schválit?',
+    o:['Nikdo, AI zná normy.', 'Odpovědný technik nebo bezpečnostní technik.', 'Stačí, když si ho přečte operátor.'], ok:1,
+    fb:'Postupy s dopadem na bezpečnost schvaluje odpovědná osoba. AI vaše stroje nezná.' },
+  pravo: { q:'AI v textu ocitovala paragraf zákona. Co uděláte?',
+    o:['Nechám ho tam.', 'Ověřím ho v aktuálním znění zákona.', 'Smažu ho, AI zákony nezná.'], ok:1,
+    fb:'AI může citovat zastaralé nebo neexistující ustanovení. Vždy ho ověřte v aktuálním znění.' }
+};
+
+/* use cases: d = oddělení, i = obory (prázdné = všechny), u = úspora v hodinách týdně [od, do], l = obtížnost, n = nástroj, q = kvíz */
+const UC = [
+  /* OBCHOD */
+  { id:'o1', d:'obchod', i:[], u:[2,3], l:'s', n:'chat', q:'fakta', t:'Nabídka z poptávky za pár minut',
+    w:'Z e-mailu s poptávkou připraví přehled, co klient chce, otázky, které je potřeba doplnit, a návrh průvodního e-mailu k nabídce.',
+    s:['Vložte text poptávky bez osobních údajů.', 'Přidejte popis vašich služeb nebo ceník.', 'Návrh zkontrolujte a doplňte ceny podle ceníku.'],
+    p:'Jsi zkušený obchodník ve firmě [obor firmy]. Níže je poptávka od klienta a popis našich služeb.\n1) Shrň v pěti bodech, co klient potřebuje.\n2) Vypiš otázky, které musíme doplnit, než pošleme cenu.\n3) Napiš návrh průvodního e-mailu k nabídce, nejvýš 150 slov, věcně a bez frází.\n\nPoptávka: [vložte text]\nNaše služby a ceník: [vložte]',
+    x:'Ceny a termíny vždy zkontrolujte proti ceníku. AI si umí čísla domyslet.' },
+  { id:'o2', d:'obchod', i:[], u:[1,2], l:'s', n:'chat', q:'fakta', t:'Příprava na schůzku s novým klientem',
+    w:'Z vašich poznámek a informací z webu klienta připraví jednostránkový podklad: čím se firma zabývá, možné problémy, otázky a námitky.',
+    s:['Zkopírujte do AI text z webu klienta a své poznámky.', 'Nechte si připravit podklad a otázky.', 'Fakta ověřte na webu a v obchodním rejstříku.'],
+    p:'Připravuji se na první schůzku s firmou [název] z oboru [obor]. Tady jsou moje poznámky a informace z jejich webu: [vložte].\nPřiprav mi podklad na jednu stranu: čím se firma zabývá, tři problémy, se kterými jim můžeme pomoct, pět otevřených otázek na schůzku a dvě námitky, které můžou zaznít, i s návrhem odpovědi.',
+    x:'AI nemusí mít o firmě aktuální informace. Fakta si ověřte u zdroje.' },
+  { id:'o3', d:'obchod', i:[], u:[1,2], l:'s', n:'prepis', q:'data', t:'Zápis do CRM a další kroky po schůzce',
+    w:'Z přepisu nebo poznámek ze schůzky připraví shrnutí do CRM, seznam dalších kroků a e-mail klientovi.',
+    s:['Zapněte přepis schůzky, nebo si dělejte stručné poznámky.', 'Vložte přepis do AI s pokynem níže.', 'Shrnutí vložte do CRM a e-mail pošlete pod svým jménem.'],
+    p:'Tady je přepis (nebo moje poznámky) z obchodní schůzky: [vložte].\nNapiš:\n1) shrnutí do CRM v pěti odrážkách: potřeby, rozpočet, kdo rozhoduje, termíny, rizika,\n2) další kroky s termínem a odpovědnou osobou,\n3) follow-up e-mail klientovi do 120 slov, který shrne domluvené a navrhne další krok.',
+    x:'Schůzku nahrávejte jen se souhlasem klienta. Jména a čísla můžete nahradit zástupnými.' },
+  { id:'o4', d:'obchod', i:[], u:[1,2], l:'s', n:'chat', q:'prompt', t:'Trénink námitek s AI',
+    w:'AI hraje skeptického nákupčího a vy si zkoušíte odpovědi na námitky. Po každé odpovědi dostanete krátkou zpětnou vazbu.',
+    s:['Popište AI, co prodáváte a komu.', 'Nechte ji vznášet námitky a odpovídejte jako na schůzce.', 'Nejlepší odpovědi si uložte do sdílených argumentů týmu.'],
+    p:'Zahraj si roli nákupčího ve firmě [obor], který řeší nabídku na [produkt nebo službu]. Buď skeptický a vznášej typické námitky: cena, načasování, už máme dodavatele.\nPo každé mé odpovědi mi krátce řekni, co bylo dobře a co zlepšit. Začni první námitkou.',
+    x:'Je to trénink. Skutečné slevy a podmínky domlouvejte podle pravidel firmy.' },
+
+  /* MARKETING */
+  { id:'m1', d:'marketing', i:[], u:[2,3], l:'s', n:'chat', q:'ton', t:'Z jednoho článku deset příspěvků',
+    w:'Z článku, webináře nebo prezentace připraví příspěvky na LinkedIn, tipy do newsletteru a varianty titulků.',
+    s:['Vložte článek nebo přepis webináře.', 'Nechte si připravit příspěvky podle pokynu níže.', 'Vyberte nejlepší a upravte je do svého stylu.'],
+    p:'Jsi marketér firmy z oboru [obor]. Z tohoto textu připrav:\n- 3 příspěvky na LinkedIn, každý do 120 slov, krátké odstavce, bez emoji a bez hashtagů,\n- 2 krátké tipy do newsletteru,\n- 5 variant titulku.\nPiš věcně, česky a bez reklamních frází.\n\nText: [vložte]',
+    x:'Text si před zveřejněním přečtěte nahlas. Když zní jako reklama, nechte AI ubrat superlativy.' },
+  { id:'m2', d:'marketing', i:[], u:[1,2], l:'s', n:'chat', q:'ton', t:'Newsletter za hodinu místo za den',
+    w:'Z témat a poznámek připraví strukturu newsletteru: předmět, úvod, krátké bloky a výzvu k akci.',
+    s:['Sepište témata měsíce a k nim pár poznámek.', 'Nechte AI připravit návrh.', 'Doplňte odkazy a data akcí sami.'],
+    p:'Připrav návrh firemního newsletteru pro [cílová skupina]. Témata tohoto měsíce: [3 až 5 témat s poznámkami].\nStruktura: předmět e-mailu ve 3 variantách, úvod do 40 slov, krátký blok ke každému tématu s jedním odkazem, závěr s jednou výzvou k akci.\nTón: přátelský, věcný, bez superlativů.',
+    x:'Odkazy, data a ceny doplňte ručně. AI je může vymyslet.' },
+  { id:'m3', d:'marketing', i:[], u:[2,4], l:'m', n:'dok', q:'data', t:'Rozbor recenzí a dotazníků',
+    w:'Roztřídí odpovědi zákazníků do témat, spočítá zmínky, vybere typické citace a navrhne, co zlepšit nejdřív.',
+    s:['Vyexportujte odpovědi z dotazníku nebo recenze.', 'Odstraňte jména a kontakty.', 'Nahrajte je do AI a nechte si připravit rozbor.'],
+    p:'Níže je [počet] odpovědí zákazníků z dotazníku nebo recenzí: [vložte].\nRoztřiď je nejvýš do 6 témat. U každého uveď počet zmínek, dvě typické citace a jestli převažuje spokojenost, nebo nespokojenost.\nNa konci navrhni tři konkrétní kroky s největším dopadem.',
+    x:'Počty si namátkou ověřte. AI se při počítání zmínek může splést.' },
+  { id:'m4', d:'marketing', i:[], u:[1,3], l:'s', n:'chat', q:'fakta', t:'Popisy produktů a služeb na web',
+    w:'Z technických parametrů připraví jednotné popisy na web: titulek, perex, přínosy pro zákazníka a parametry.',
+    s:['Vložte parametry produktu nebo služby.', 'Nechte si připravit popis podle šablony.', 'Porovnejte text s podklady.'],
+    p:'Z těchto technických parametrů napiš popis produktu na web: titulek do 8 slov, perex do 30 slov, 4 odrážky s přínosy pro zákazníka a krátký odstavec s parametry. Nepřidávej vlastnosti, které nejsou v podkladech.\n\nParametry: [vložte]',
+    x:'AI ráda doplní vlastnosti, které produkt nemá. Text porovnejte s podklady.' },
+
+  /* HR */
+  { id:'h1', d:'hr', i:[], u:[1,2], l:'s', n:'chat', q:'lide', t:'Inzerát, na který se ozvou ti správní',
+    w:'Z popisu pozice připraví srozumitelný inzerát s jasnou náplní práce, požadavky a nabídkou.',
+    s:['Sepište náplň práce, požadavky a co nabízíte.', 'Nechte AI napsat inzerát.', 'Zkontrolujte, že neobsahuje diskriminační požadavky.'],
+    p:'Napiš inzerát na pozici [název pozice] ve firmě [obor, město].\nPodklady: náplň práce [vložte], požadavky [vložte], co nabízíme [vložte].\nStruktura: úvod do 40 slov, co budete dělat (5 odrážek), co potřebujeme (nejvýš 5 odrážek, rozliš nutné a výhodou), co nabízíme, jak se přihlásit.\nPiš genderově vyváženě a bez klišé typu dynamický kolektiv.',
+    x:'Inzerát nesmí obsahovat diskriminační požadavky, třeba na věk nebo pohlaví.' },
+  { id:'h2', d:'hr', i:[], u:[2,3], l:'s', n:'chat', q:'prompt', t:'Plán zaškolení na první měsíc',
+    w:'Připraví plán onboardingu po týdnech: cíle, s kým se potkat, co si přečíst a jak poznat, že to nováček zvládl.',
+    s:['Napište, co má nováček na konci měsíce umět.', 'Nechte si připravit plán po týdnech.', 'Projděte ho s vedoucím týmu.'],
+    p:'Připrav plán zaškolení na první 4 týdny pro pozici [pozice] v týmu [tým].\nCo musí člověk na konci měsíce umět: [vložte].\nPro každý týden uveď cíle, s kým se má potkat, co si má přečíst nebo vyzkoušet a jak poznáme, že to zvládl. Na konci navrhni 5 kontrolních otázek.',
+    x:'AI nezná vaše interní procesy, doplní je jen obecně. Plán upravte podle reality týmu.' },
+  { id:'h3', d:'hr', i:[], u:[1,2], l:'s', n:'chat', q:'lide', t:'Otázky k pohovoru a hodnoticí karta',
+    w:'Připraví otázky k pohovoru podle dovedností, které hledáte, a jednoduchou kartu pro férové porovnání uchazečů.',
+    s:['Vypište 4 až 6 dovedností, na kterých záleží.', 'Nechte si připravit otázky a kartu.', 'Rozhodnutí o uchazeči nechte na lidech.'],
+    p:'Pro pozici [pozice] připrav 8 otázek k pohovoru zaměřených na tyto dovednosti: [vložte].\nKe každé otázce napiš, co poznáme z dobré a ze slabé odpovědi. Přidej jednoduchou hodnoticí kartu se stupnicí 1 až 4.',
+    x:'O uchazeči rozhoduje člověk. AI, která sama vybírá nebo hodnotí uchazeče, patří podle AI Actu mezi vysoce rizikové systémy.' },
+  { id:'h4', d:'hr', i:[], u:[1,3], l:'m', n:'dok', q:'data', t:'Odpovědi na časté dotazy ze směrnic',
+    w:'Z firemních směrnic připraví srozumitelné odpovědi na časté dotazy zaměstnanců, třeba k dovolené, home office nebo benefitům.',
+    s:['Nahrajte směrnici do firemního AI nástroje.', 'Nechte si připravit otázky a odpovědi s odkazem na článek.', 'Odpovědi zveřejněte na intranetu.'],
+    p:'Tady je naše směrnice: [vložte text].\nPřiprav z ní 10 nejčastějších otázek zaměstnanců a ke každé srozumitelnou odpověď do 60 slov. U každé odpovědi uveď článek směrnice, ze kterého vychází. Když směrnice něco neřeší, napiš to a nic si nedomýšlej.',
+    x:'Interní dokumenty vkládejte jen do schváleného nástroje, ideálně ve firemní verzi s vypnutým učením na datech.' },
+
+  /* FINANCE */
+  { id:'f1', d:'finance', i:[], u:[1,3], l:'m', n:'excel', q:'cisla', t:'Komentář k odchylkám od rozpočtu',
+    w:'Najde největší odchylky skutečnosti od plánu a připraví srozumitelný komentář pro vedení.',
+    s:['Nahrajte tabulku plán proti skutečnosti.', 'Nechte si najít největší odchylky a navrhnout vysvětlení.', 'Čísla přepočítejte a vysvětlení ověřte u středisek.'],
+    p:'V příloze je tabulka plán proti skutečnosti za [měsíc] po nákladových střediscích.\nNajdi 5 největších odchylek v korunách i v procentech, navrhni možné vysvětlení a připrav komentář pro vedení do 150 slov. Výpočty ukaž v tabulce, ať je můžu zkontrolovat.',
+    x:'Každé číslo si přepočítejte v Excelu. Jazykové modely umí špatně sčítat.' },
+  { id:'f2', d:'finance', i:[], u:[0.5,1], l:'s', n:'chat', q:'ton', t:'Upomínky, které nezkazí vztah',
+    w:'Připraví tři stupně upomínky k neuhrazené faktuře, od přátelské po poslední před vymáháním.',
+    s:['Vložte číslo faktury, částku a splatnost.', 'Nechte si připravit tři verze.', 'Uložte si je jako šablony.'],
+    p:'Napiš tři verze upomínky k faktuře [číslo] na [částka] se splatností [datum]: první přátelskou po 7 dnech, druhou důraznější po 21 dnech a třetí před předáním k vymáhání. Každou do 90 slov, zdvořile a bez výhrůžek.',
+    x:'Částky, data a čísla účtů doplňte ručně a zkontrolujte.' },
+  { id:'f3', d:'finance', i:[], u:[1,2], l:'s', n:'chat', q:'cisla', t:'Vzorce v Excelu bez hledání na internetu',
+    w:'Napíše vzorec pro český Excel, vysvětlí ho krok za krokem a poradí, jak ověřit, že počítá správně.',
+    s:['Popište, co máte v jakém sloupci a co potřebujete spočítat.', 'Nechte si napsat vzorec a vysvětlení.', 'Vyzkoušejte ho nejdřív na kopii souboru.'],
+    p:'V Excelu mám ve sloupci A datum, ve sloupci B středisko a ve sloupci C částku. Potřebuji vzorec, který sečte částky za [středisko] v [měsíc].\nNapiš vzorec pro český Excel s oddělovačem středník, vysvětli ho krok za krokem a ukaž, jak ověřím, že počítá správně.',
+    x:'Vzorec otestujte na pár řádcích, kde výsledek znáte.' },
+  { id:'f4', d:'finance', i:[], u:[1,3], l:'m', n:'dok', q:'fakta', t:'Kontrola faktury proti objednávce',
+    w:'Porovná fakturu s objednávkou nebo smlouvou a vypíše rozdíly v položkách, cenách, DPH a splatnosti.',
+    s:['Nahrajte fakturu a objednávku.', 'Nechte si vypsat rozdíly do tabulky.', 'Platbu schvalujte až po kontrole člověkem.'],
+    p:'Porovnej tuto fakturu [vložte] s objednávkou [vložte]. Vypiš všechny rozdíly v položkách, množství, cenách, DPH a splatnosti do tabulky. Když něco nejde porovnat, napiš to.',
+    x:'AI je dobrá na první kontrolu, ne na schválení. Platbu vždy schvaluje člověk.' },
+
+  /* ZÁKAZNICKÁ PÉČE */
+  { id:'z1', d:'pece', i:[], u:[2,4], l:'s', n:'chat', q:'ton', t:'Odpověď na stížnost, která uklidní',
+    w:'Připraví odpověď na stížnost, která uzná problém, vysvětlí další postup a nabídne konkrétní krok.',
+    s:['Vložte stížnost bez osobních údajů a pravidla reklamací.', 'Nechte si připravit odpověď.', 'Upravte ji a pošlete pod svým jménem.'],
+    p:'Jsi pracovník zákaznické péče firmy z oboru [obor]. Zákazník napsal tuto stížnost: [vložte bez osobních údajů].\nNaše pravidla pro reklamace: [vložte].\nNapiš odpověď do 120 slov: uznej problém, vysvětli, co uděláme a do kdy, a nabídni jeden konkrétní další krok. Bez frází typu „vážíme si vaší zpětné vazby“.',
+    x:'Neslibujte nic, co pravidla nedovolují. Odpověď posílá člověk.' },
+  { id:'z2', d:'pece', i:[], u:[2,3], l:'m', n:'dok', q:'data', t:'Šablony na nejčastější dotazy',
+    w:'Z dotazů za poslední měsíc najde nejčastější témata a ke každému připraví šablonu odpovědi.',
+    s:['Vyexportujte dotazy za měsíc bez jmen a kontaktů.', 'Nechte AI najít témata a napsat šablony.', 'Šablony uložte do helpdesku.'],
+    p:'Tady je 30 dotazů zákazníků za poslední měsíc: [vložte bez jmen a kontaktů].\nSeskup je do témat. U 5 nejčastějších napiš šablonu odpovědi do 80 slov a místa, která je potřeba doplnit ručně, označ hranatými závorkami.',
+    x:'Z dotazů odstraňte jména, e-maily a čísla objednávek, pokud nepoužíváte firemní AI s ochranou dat.' },
+  { id:'z3', d:'pece', i:[], u:[1,2], l:'s', n:'chat', q:'fakta', t:'Zákazník píše anglicky, německy nebo ukrajinsky',
+    w:'Přeloží zprávu zákazníka, shrne, co chce, a vaši odpověď přeloží zpátky do jeho jazyka.',
+    s:['Vložte zprávu zákazníka.', 'Odpověď napište česky.', 'Nechte ji přeložit a zkontrolujte čísla a termíny.'],
+    p:'Přelož tuto zprávu od zákazníka do češtiny a napiš mi, co přesně chce: [vložte].\nPak moji odpověď [napište česky] přelož do jazyka zákazníka, zdvořile a srozumitelně.',
+    x:'U cen, termínů a právních formulací nechte překlad zkontrolovat člověkem, který jazyk ovládá.' },
+  { id:'z4', d:'pece', i:[], u:[1,2], l:'m', n:'dok', q:'lide', t:'Zpětná vazba k odpovědím týmu',
+    w:'Ohodnotí vzorek odpovědí týmu podle srozumitelnosti, empatie a toho, jestli řeší problém, a ke každé dá radu.',
+    s:['Vyberte 10 odpovědí bez osobních údajů.', 'Nechte si je ohodnotit.', 'Výsledky použijte jako podklad ke koučinku.'],
+    p:'Tady je 10 odpovědí našeho týmu zákazníkům: [vložte bez osobních údajů].\nOhodnoť každou na stupnici 1 až 5 podle srozumitelnosti, empatie a toho, jestli řeší problém. Ke každé napiš jednu konkrétní radu, jak ji zlepšit.',
+    x:'Hodnocení od AI je podklad ke koučinku, ne hodnocení výkonu člověka.' },
+
+  /* PROVOZ A ODBORNÁ PRÁCE */
+  { id:'p1', d:'provoz', i:[], u:[1,3], l:'s', n:'chat', q:'bezpecnost', t:'Pracovní postup z poznámek',
+    w:'Z poznámek zkušeného kolegy připraví přehledný postup: účel, pomůcky, kroky v pořadí, časté chyby a kontrolu.',
+    s:['Sepište nebo nadiktujte, jak činnost děláte.', 'Nechte AI připravit postup.', 'Postup nechte schválit odpovědnou osobou.'],
+    p:'Z těchto poznámek napiš pracovní postup pro [činnost]: [vložte].\nStruktura: účel, potřebné nářadí a ochranné pomůcky, očíslované kroky v pořadí, nejčastější chyby a kontrola na konci. Piš krátkými větami, aby to šlo číst i v telefonu na provozu.',
+    x:'Postup musí schválit odpovědný technik nebo bezpečnostní technik.' },
+  { id:'p2', d:'provoz', i:[], u:[1,2], l:'s', n:'chat', q:'fakta', t:'Hledání příčiny opakovaného problému',
+    w:'Projde s vámi problém metodou 5x proč, ptá se po jedné otázce a na konci shrne pravděpodobnou příčinu a opatření.',
+    s:['Popište problém, kdy a jak často nastává.', 'Odpovídejte na otázky AI.', 'Závěr ověřte měřením nebo pozorováním.'],
+    p:'Opakuje se nám problém: [popis, kde, kdy a jak často]. Proveď se mnou analýzu příčin metodou 5x proč. Ptej se mě po jedné otázce a nic si nedomýšlej. Na konci shrň pravděpodobnou příčinu a navrhni opatření.',
+    x:'AI je partner na přemýšlení, ne odborník na váš provoz. Závěry ověřte.' },
+  { id:'p3', d:'provoz', i:[], u:[1,2], l:'s', n:'chat', q:'data', t:'Předávka směny bez zmatků',
+    w:'Z poznámek ze směny připraví stručnou předávací zprávu: co se stalo, co je rozpracované a na co si dát pozor.',
+    s:['Vložte poznámky ze směny.', 'Nechte si připravit předávku do 10 odrážek.', 'Bezpečnostní události hlaste i podle interních pravidel.'],
+    p:'Tady jsou poznámky ze směny: [vložte].\nPřiprav předávací zprávu pro další směnu: co se stalo, co zůstalo rozpracované, na co si dát pozor a co je potřeba nahlásit údržbě. Nejvýš 10 odrážek.',
+    x:'Bezpečnostní události patří do evidence podle interních pravidel, ne jen do souhrnu.' },
+  { id:'p4', d:'provoz', i:[], u:[1,2], l:'s', n:'dok', q:'bezpecnost', t:'Školení BOZP do mobilu',
+    w:'Ze směrnice BOZP připraví krátkou lekci: čtyři karty s hlavními pravidly a tři kvízové otázky.',
+    s:['Nahrajte směrnici BOZP.', 'Nechte AI připravit karty a kvíz.', 'Obsah nechte schválit odpovědnou osobou a pošlete ho lidem do mobilu.'],
+    p:'Z této směrnice BOZP připrav krátkou lekci na 3 minuty: 4 karty s hlavními pravidly, každá do 40 slov, a 3 kvízové otázky s možnostmi a vysvětlením správné odpovědi. Piš srozumitelně pro lidi na provozu.\n\nSměrnice: [vložte]',
+    x:'Obsah školení BOZP musí odpovídat vaší dokumentaci a schválit ho má odpovědná osoba.' },
+
+  /* VEDENÍ FIRMY */
+  { id:'v1', d:'vedeni', i:[], u:[1,2], l:'s', n:'excel', q:'cisla', t:'Týdenní přehled pro vedení na jednu stranu',
+    w:'Z tabulky s čísly připraví přehled: tři hlavní zprávy, co se zlepšilo, co zhoršilo a jaká rozhodnutí jsou potřeba.',
+    s:['Nahrajte tabulku s týdenními čísly.', 'Nechte si připravit přehled.', 'Čísla v textu porovnejte s tabulkou.'],
+    p:'Tady jsou čísla za tento týden a minulý měsíc: [vložte tabulku].\nNapiš přehled pro vedení na jednu stranu: tři hlavní zprávy, co se zlepšilo, co se zhoršilo a proč, a dvě rozhodnutí, která je potřeba udělat. Čísla uváděj přesně podle tabulky.',
+    x:'AI čísla občas zaokrouhlí nebo prohodí. Zkontrolujte je proti tabulce.' },
+  { id:'v2', d:'vedeni', i:[], u:[1,1.5], l:'s', n:'chat', q:'prompt', t:'Porada s jasným výsledkem',
+    w:'Připraví program porady s časy, odpovědnými lidmi a výstupy a šablonu zápisu s úkoly.',
+    s:['Napište téma, účastníky a rozhodnutí, které potřebujete.', 'Nechte si připravit program.', 'Pošlete ho účastníkům předem i s podklady.'],
+    p:'Připrav program porady na 45 minut na téma [téma]. Účastníci: [role]. Cíl porady: [rozhodnutí, které potřebujeme].\nKe každému bodu uveď čas, kdo ho vede a jaký má být výstup. Na konci navrhni šablonu zápisu s úkoly.',
+    x:'Program je návrh. Podklady a čísla doplňte sami.' },
+  { id:'v3', d:'vedeni', i:[], u:[1,2], l:'s', n:'chat', q:'fakta', t:'Oponentura strategického rozhodnutí',
+    w:'AI hraje kritického člena představenstva: najde argumenty proti, přehlédnutá rizika a otázky, na které chcete znát odpověď.',
+    s:['Popište rozhodnutí a klíčová čísla.', 'Nechte AI hledat slabá místa.', 'Otázky proberte s týmem.'],
+    p:'Zvažujeme [rozhodnutí, třeba otevřít pobočku v Brně]. Naše situace: [klíčová čísla a omezení].\nZahraj roli kritického člena představenstva: vypiš 5 nejsilnějších argumentů proti, rizika, která nevidíme, a otázky, na které musíme mít odpověď, než rozhodneme.',
+    x:'AI nezná váš trh tak dobře jako vy. Je to nástroj na lepší otázky, ne na rozhodnutí.' },
+  { id:'v4', d:'vedeni', i:[], u:[0.5,1], l:'m', n:'chat', q:'data', t:'Pravidla pro používání AI ve firmě',
+    w:'Připraví návrh interních pravidel: jaké nástroje používat, co do nich nevkládat, kdy výstup kontroluje člověk a koho se ptát.',
+    s:['Popište firmu a nástroje, které používáte.', 'Nechte si připravit návrh pravidel.', 'Návrh nechte zkontrolovat právníkem.'],
+    p:'Připrav návrh interních pravidel pro používání AI nástrojů v naší firmě ([obor], [počet] zaměstnanců). Pokryj: které nástroje smíme používat, jaká data do nich nesmíme vkládat, kdy musí výstup zkontrolovat člověk, jak označovat obsah vytvořený s AI a koho se ptát. Nejvýš dvě strany, srozumitelně pro všechny zaměstnance.',
+    x:'AI Act od února 2025 ukládá firmám zajistit lidem, kteří s AI pracují, dostatečnou gramotnost v AI. Pravidla jsou dobrý první krok.' },
+
+  /* STAVEBNICTVÍ */
+  { id:'s1', d:'obchod', i:['stavebnictvi'], u:[2,4], l:'m', n:'dok', q:'cisla', t:'Kontrola výkazu výměr proti nabídce',
+    w:'Porovná výkaz výměr z poptávky s vaší cenovou nabídkou a najde chybějící položky a jiná množství nebo jednotky.',
+    s:['Nahrajte výkaz výměr a vaši nabídku.', 'Nechte si vypsat rozdíly do tabulky.', 'Množství ověřte v projektové dokumentaci.'],
+    p:'Porovnej výkaz výměr z poptávky [vložte] s naší cenovou nabídkou [vložte]. Najdi položky, které v nabídce chybí nebo mají jiné množství či jednotku, a vypiš je do tabulky. Na konci shrň, kde hrozí, že budeme kvůli chybě dražší nebo levnější.',
+    x:'Výsledek je pomůcka pro rozpočtáře, ne náhrada kontroly.' },
+  { id:'s2', d:'provoz', i:['stavebnictvi'], u:[1,3], l:'s', n:'prepis', q:'fakta', t:'Zápis z kontrolního dne',
+    w:'Z poznámek a hlasového přepisu z kontrolního dne připraví zápis se stavem prací, vadami, termíny a odpovědnými firmami.',
+    s:['Na stavbě si nadiktujte poznámky do telefonu.', 'Vložte přepis do AI.', 'Zápis před rozesláním projděte.'],
+    p:'Tady jsou moje poznámky a hlasový přepis z kontrolního dne na stavbě [název]: [vložte].\nPřiprav zápis: účastníci, stav prací podle objektů, zjištěné vady s termínem odstranění a odpovědnou firmou, požadavky na investora a termín dalšího kontrolního dne.',
+    x:'Termíny a odpovědné firmy musí sedět s tím, co na kontrolním dni zaznělo.' },
+
+  /* ZDRAVOTNICTVÍ */
+  { id:'zd1', d:'pece', i:['zdravotnictvi'], u:[1,2], l:'s', n:'chat', q:'data', t:'Srozumitelné pokyny pro pacienta',
+    w:'Přepíše odborné pokyny po vyšetření nebo zákroku do srozumitelné češtiny pro laika, nic medicínsky nemění.',
+    s:['Vložte obecné pokyny bez údajů o pacientovi.', 'Nechte je přepsat srozumitelně.', 'Výsledek musí zkontrolovat zdravotník.'],
+    p:'Přepiš tyto pokyny po zákroku do srozumitelné češtiny pro laika: krátké věty, nejdůležitější informace nahoře, co dělat a co nedělat a kdy volat lékaře. Nic nepřidávej ani neměň medicínsky.\n\nPokyny: [vložte, bez jména a dalších údajů pacienta]',
+    x:'Údaje o zdravotním stavu konkrétních pacientů do běžných AI nástrojů nikdy nevkládejte.' },
+  { id:'zd2', d:'vedeni', i:['zdravotnictvi'], u:[1,3], l:'m', n:'excel', q:'lide', t:'Rozpis služeb a zástupů',
+    w:'Navrhne rozpis služeb podle vašich pravidel a upozorní, kde je nejde splnit.',
+    s:['Sepište pravidla: počty na směnu, noční, požadavky na volno.', 'Nechte si navrhnout rozpis v tabulce.', 'Zkontrolujte ho proti zákoníku práce.'],
+    p:'Potřebuji rozpis služeb na [měsíc] pro [počet] sester na oddělení [oddělení]. Pravidla: [počet lidí na směnu, nejvyšší počet nočních, požadavky na volno].\nNavrhni rozpis v tabulce a vypiš, kde pravidla nejde splnit.',
+    x:'Rozpis zkontrolujte proti zákoníku práce a domluveným výjimkám. AI se v pravidlech může splést.' },
+
+  /* LOGISTIKA */
+  { id:'l1', d:'pece', i:['logistika'], u:[2,4], l:'m', n:'chat', q:'fakta', t:'Odpověď na dotaz, kde je zásilka',
+    w:'Ze stavu v systému připraví odpověď zákazníkovi: kde zásilka je, kdy dorazí a co dělat, když nebude doma.',
+    s:['Vložte stav zásilky ze systému.', 'Nechte si připravit odpověď.', 'Termín doručení vždy berte ze systému.'],
+    p:'Zákazník se ptá na zásilku [číslo]. Stav z našeho systému: [vložte].\nNapiš odpověď do 70 slov: kde zásilka je, kdy dorazí a co může zákazník udělat, když nebude doma. Když stav není jasný, napiš, že to prověříme, a uveď do kdy.',
+    x:'Termín doručení si AI nesmí odhadnout sama. Musí vycházet ze stavu v systému.' },
+  { id:'l2', d:'vedeni', i:['logistika'], u:[1,3], l:'m', n:'excel', q:'cisla', t:'Rozbor škod a reklamací za měsíc',
+    w:'Najde v reklamacích a škodách opakující se vzorce podle tras, typů a dnů a navrhne opatření s největším dopadem.',
+    s:['Vyexportujte reklamace a škody za měsíc.', 'Jména řidičů nahraďte kódy.', 'Nechte si připravit rozbor a součty ověřte v Excelu.'],
+    p:'V tabulce jsou reklamace a škody za [měsíc]: datum, trasa, kód řidiče, typ škody a částka: [vložte].\nNajdi opakující se vzorce podle tras, typů a dnů, spočítej součty podle typu a navrhni tři opatření s největším dopadem. Výpočty ukaž v tabulce.',
+    x:'Součty si ověřte v Excelu. Závěry o konkrétních lidech nedělejte jen podle AI.' },
+
+  /* FINANČNÍ SLUŽBY */
+  { id:'fs1', d:'obchod', i:['fin'], u:[1,2], l:'m', n:'dok', q:'data', t:'Přehled firmy z výroční zprávy',
+    w:'Z výroční zprávy klienta připraví přehled hlavních ukazatelů, změn a rizik a otázky na schůzku.',
+    s:['Nahrajte výroční zprávu do schváleného nástroje.', 'Nechte si připravit přehled s odkazy na strany.', 'Čísla ověřte ve zprávě.'],
+    p:'Z této výroční zprávy připrav přehled pro schůzku s klientem: tržby, zisk, zadlužení a cash flow za dva roky, hlavní změny a rizika a 5 otázek, které klientovi položit. U každého čísla uveď stranu, kde je ve zprávě.\n\nZpráva: [nahrajte PDF]',
+    x:'Neveřejné údaje klientů vkládejte jen do schváleného firemního nástroje.' },
+  { id:'fs2', d:'marketing', i:['fin'], u:[1,2], l:'s', n:'chat', q:'pravo', t:'Srozumitelné vysvětlení produktu',
+    w:'Vysvětlí finanční produkt člověku bez finančního vzdělání: co to je, pro koho se hodí, poplatky a rizika.',
+    s:['Vložte popis produktu a podmínky.', 'Nechte si připravit srozumitelný text.', 'Text nechte projít compliance.'],
+    p:'Vysvětli tento finanční produkt pro člověka bez finančního vzdělání: co to je, pro koho se hodí a pro koho ne, jaké má poplatky a rizika. Nejvýš 200 slov, bez slibů výnosu.\n\nProdukt a podmínky: [vložte]',
+    x:'Texty o finančních produktech musí odpovídat pravidlům ČNB a projít compliance.' },
+
+  /* ADVOKÁTNÍ KANCELÁŘE */
+  { id:'a1', d:'provoz', i:['pravo'], u:[2,4], l:'m', n:'dok', q:'pravo', t:'První verze smlouvy z vaší šablony',
+    w:'Podle vaší šablony a podmínek obchodu připraví první verzi smlouvy, změny označí a nejasná místa vypíše jako otázky.',
+    s:['Vložte šablonu a podmínky obchodu.', 'Nechte si připravit první verzi.', 'Smlouvu vždy kontroluje advokát.'],
+    p:'Jsi koncipient v advokátní kanceláři. Na základě naší šablony [vložte] a těchto podmínek obchodu [vložte] připrav první verzi smlouvy. Změny proti šabloně označ a nejasná místa vypiš na konec jako otázky pro advokáta. Bez upozornění nepřidávej ustanovení, která v šabloně nejsou.',
+    x:'Údaje klientů vkládejte jen do nástrojů se smluvně zajištěnou mlčenlivostí.' },
+  { id:'a2', d:'provoz', i:['pravo'], u:[2,4], l:'m', n:'dok', q:'pravo', t:'Časová osa a shrnutí spisu',
+    w:'Z dokumentů ke kauze sestaví časovou osu s odkazy na dokumenty, shrne stanoviska stran a najde rozpory.',
+    s:['Nahrajte dokumenty ke kauze do schváleného nástroje.', 'Nechte si sestavit časovou osu.', 'Data a citace ověřte v originálech.'],
+    p:'Z těchto dokumentů ke kauze sestav časovou osu událostí s datem, popisem a odkazem na dokument. Pak shrň stanoviska stran v pěti bodech a vypiš rozpory mezi dokumenty.\n\nDokumenty: [nahrajte]',
+    x:'Odkazy na paragrafy a judikaturu kontrolujte v aktuálním znění.' },
+
+  /* VÝROBA A PRŮMYSL */
+  { id:'vy1', d:'provoz', i:['vyroba'], u:[1,2], l:'s', n:'dok', q:'bezpecnost', t:'Návod ke stroji v jazyce operátora',
+    w:'Přepíše návod ke stroji do krátkého postupu pro operátora a přeloží ho, třeba do ukrajinštiny nebo vietnamštiny.',
+    s:['Nahrajte návod výrobce.', 'Nechte si připravit postup a překlad.', 'Překlad dejte zkontrolovat kolegovi, který jazyk ovládá.'],
+    p:'Tento návod ke stroji přepiš do krátkého postupu pro operátora: 8 až 12 kroků, jednoduché věty a bezpečnostní upozornění zvlášť a výrazně. Pak ho přelož do [ukrajinštiny nebo vietnamštiny].\n\nNávod: [vložte]',
+    x:'Bezpečnostní části musí sedět s originálem výrobce.' },
+  { id:'vy2', d:'provoz', i:['vyroba'], u:[1,2], l:'m', n:'excel', q:'fakta', t:'Plán preventivní údržby',
+    w:'Z intervalů v návodech a historie poruch navrhne plán údržby na čtvrtletí a upozorní, kde interval nestačí.',
+    s:['Vložte intervaly z návodů a seznam poruch.', 'Nechte si navrhnout plán.', 'Plán porovnejte s revizními povinnostmi.'],
+    p:'Tady jsou intervaly údržby z návodu výrobce [vložte] a seznam poruch za poslední rok [vložte].\nNavrhni plán preventivní údržby na čtvrtletí: co, jak často, kdo a kolik času to zabere. Upozorni na stroje, kde poruchy naznačují, že interval nestačí.',
+    x:'Plán musí respektovat pokyny výrobce a vaše revizní povinnosti.' },
+
+  /* AUTOMOTIVE */
+  { id:'au1', d:'provoz', i:['auto'], u:[2,4], l:'m', n:'chat', q:'fakta', t:'Návrh 8D reportu k reklamaci',
+    w:'Připraví pracovní verzi 8D reportu a u každého kroku napíše, co chybí a koho se zeptat.',
+    s:['Popište vadu, díl, počet kusů a zákazníka bez jmen.', 'Nechte si připravit kroky D1 až D8.', 'Report doplní a schválí tým kvality.'],
+    p:'Připrav návrh 8D reportu k reklamaci: [popis vady, díl, počet kusů, zákazník bez jmen].\nVyplň kroky D1 až D8 podle dostupných informací a u každého kroku napiš, co chybí a koho se zeptat. Nic si nedomýšlej.',
+    x:'Závěry musí doložit měření a odpovědný inženýr.' },
+  { id:'au2', d:'vedeni', i:['auto'], u:[1,3], l:'m', n:'dok', q:'fakta', t:'Příprava na audit podle IATF',
+    w:'Projde váš postup a vypíše otázky, které auditor pravděpodobně položí, i důkazy, které máte mít připravené.',
+    s:['Nahrajte postup procesu.', 'Nechte si připravit otázky a důkazy.', 'Požadavky ověřte v aktuálním znění normy.'],
+    p:'Připravujeme se na audit podle IATF 16949 pro proces [proces]. Tady je náš postup: [vložte].\nVypiš otázky, které auditor pravděpodobně položí, a u každé, jaký důkaz bychom měli mít připravený. Označ místa, kde náš postup vypadá slabě.',
+    x:'AI normu nemusí citovat přesně. Požadavky ověřte v jejím aktuálním znění.' }
+];
+/* Figtree (SIL Open Font License), podmnožina latinky pro PDF */
+const FONT_R = 'AAEAAAAPAIAAAwBwR0RFRgq8CrkAAFHkAAAAgkdQT1NZJxM2AABSaAAAEbhHU1VCuPq49AAAZCAAAAAqT1MvMl+T/GQAAEw8AAAAYFNUQVTne8soAABkTAAAAEhjbWFwEgRFUwAATJwAAAMwZ2FzcAAAABAAAFHcAAAACGdseWYRqdhwAAAA/AAAQsZoZWFkI2CIwgAARpAAAAA2aGhlYQdYBuwAAEwYAAAAJGhtdHiuZz3NAABGyAAABVBsb2NhIuESMwAAQ+QAAAKqbWF4cAFlAL0AAEPEAAAAIG5hbWUuXUsiAABPzAAAAe5wb3N0/58AMgAAUbwAAAAgAAIACQAAApsCvAAHAAoAAHMBMwEjJyEHEyEDCQEdWAEdWVH+w1FuAQKBArz9RMfHARMBPwADAAkAAAKbA2EABwAKAA4AAHMBMwEjJyEHEyEDJzczBwkBHVgBHVlR/sNRbgECgUR2ZoACvP1Ex8cBEwE/lHt7AP//AAkAAAKbA2sGJgABAAAABwFFAKkAr///AAkAAAKbA3cGJgABAAAABwFDAKQAr///AAkAAAKbA3sGJgABAAAABwE9ALMAr///AAkAAAKbA2wGJgABAAAABwE/AF0Ar///AAkAAAKbAzcGJgABAAAABwFIALwAr///AAn/LAKwArwGJgABAAAABwFMAdQAAP//AAkAAAKbA5UGJgABAAAABwFGAMIAr///AAkAAAKbA20GJgABAAAABwFHAFgArwACAAkAAAOWArwADwATAABzASEVIRUhFSEVIRUhNSEHEzMRIwkBqwHh/rcBLP7UAUr+Yf7reaXpFQK8TeJM9E3HxwETAVwAAwBdAAACNQK8ABAAGQAiAABzETMyFhYVFAYHFhYVFAYGIyczMjY1NCYjIzUzMjY1NCYjI13dSGY4Lio0OTZjRaaiQktWTYyeOkJNRocCvCxVPTNNGBlUOj1VLUw/NztDST43OT0AAQAu//QCrQLIACEAAEUiJiY1NDY2MzIWFhcHLgIjIgYGFRQWFjMyNjY3Fw4CAYRkmlhXmWM/dFwZSRRGVi9JdEFCdUowVkUUShpbdQxdo2pqo10tUTUlKj4jSYBUVIJJJ0QsJTdWMP//AC7/9AKtA2sGJgANAAAABwFAAFcAr///AC7/9AKtA2sGJgANAAAABwFEANUAr///AC7/LgKtAsgGJgANAAAABgFLWQD//wAu//QCrQN3BiYADQAAAAcBQwDUAK///wAu//QCrQN7BiYADQAAAAcBPgFPAK8AAgBdAAACggK8AAoAFwAAcxEzMhYWFRQGBiMnMzI+AjU0LgIjI13VY5dWVpdjgIA1WkUnJ0VaNYACvFmeZ2aeWk4pTGM4OGNMKf//AF0AAAKCA2sGJgATAAAABwFEAIcAr///AEkAAALBArwGBgAWAAAAAwBJAAACwQK8AAMADgAbAABTNSEVAxEzMhYWFRQGBiMnMzI+AjU0LgIjI0kBP+vVYpdWVpdigYE0W0UmJkVbNIEBOkZG/sYCvFmeZ2aeWk4pTGM4OGNMKQAAAQBdAAAB/QK8AAsAAHMRIRUhFSEVIRUhFV0Bnv63ASz+1AFLArxN4kz0TQACAF0AAAH9A2EACwAPAABzESEVIRUhFSEVIRUBNzMHXQGe/rcBLP7UAUv+73ZngQK8TeJM9E0C5nt7AP//AF0AAAH9A2sGJgAXAAAABwFEAIQAr///AF0AAAH9A3cGJgAXAAAABwFDAIMAr///AF0AAAH9A3sGJgAXAAAABwE9AJEAr///AF0AAAH9A3sGJgAXAAAABwE+AP8Ar///AF0AAAH9A2wGJgAXAAAABwE/ADsAr///AF0AAAH9AzcGJgAXAAAABwFIAJsAr///AF3/LAIRArwGJgAXAAAABwFMATUAAAABAF0AAAH9ArwACQAAcxEhFSEVIRUhEV0BoP61AST+3AK8Te9N/s0AAQAu//QC1ALIACQAAEUiJiY1NDY2MzIWFhcHLgIjIgYGFRQWFjMyNjY3IzUzFRQGBgGaa6RdXaRrOGpYG0MURFEpUX5IR39RQ2k8Aaz9UY4MXaNpa6NdJUApLiAzHEmAVVKBSjhkQElCW4hMAP//AC7/9ALUA4QGJgAhAAAABwFFANgAyP//AC7/9ALUA3gGJgAhAAAABwFDANgAsP//AC7/OALUAsgGJgAhAAAABwFKAToAAP//AC7/9ALUA5QGJgAhAAAABwE+AU8AyAABAF0AAAKSArwACwAAcxEzESERMxEjESERXVUBjFRU/nQCvP7TAS39RAFC/r4AAgAFAAAC6gK8AAMADwAAUzUhFQERMxEhETMRIxEhEQUC5f1zVQGMVFT+dAH1RUX+CwK8/tMBLf1EAUL+vv//AF0AAAKSA3cGJgAmAAAABwFDAMwArwABAF0AAACyArwAAwAAcxEzEV1VArz9RP//AF3/9AK+ArwEJgApAAAABwAyAQ8AAAACAEQAAAEgA2EAAwAHAABzETMRAzczB11VbnVngQK8/UQC5nt7////3AAAATEDdwYmACkAAAAHAUP/2gCvAAMAFwAAAP0DewALABcAGwAAUyImNTQ2MzIWFRQGIyImNTQ2MzIWFRQGExEzEc0THR0TFBwcmhQcHBQUHBwCVQMbHRMUHBwUEx0cFBQcHBQUHPzlArz9RP//AFYAAAC6A3sGJgApAAAABwE+AFYAr///ABIAAADwA2wGJgApAAAABwE//5IAr////+8AAAEhAzcGJgApAAAABwFI//IAr///AA//LADGArwGJgApAAAABgFM6gAAAQAH//QBrwK8ABQAAFciLgInNxYWMzI2NjURMxEUDgLFJD0wIgtAFT0tJEUsVCdDVAwVIy0YJSUwIlBBAcj+FzdUOBwA//8AB//0AiwDeAYmADIAAAAHAUMA1QCwAAEAXQAAAlwCvAALAABzETMRATMBASMBBxFdUQE3av7TATpn/vY9Arz+vQFD/sX+fwFIQP74//8AXf84AlwCvAYmADQAAAAHAUoA0QAAAAEAXQAAAfwCvAAFAABzETMRIRVdVQFKArz9kU0A//8AQwAAAfwDawYmADYAAAAHAUD/XQCv//8AXQAAAfwC9gYmADYAAAAHAUIA1QA7//8AXf84AfwCvAYmADYAAAAHAUoAvQAAAAIAAwAAAfwCvAADAAkAAFM1JRUDETMRIRUDASDGVQFKAQJKhUn+eAK8/ZFNAAABAF0AAALwArwACwAAcxEzExMzESMRAwMRXVjy8ldU9fUCvP6aAWb9RAI0/pMBa/3OAAEAXQAAAqkCvAAJAABzETMBETMRIwERXVYBoVVV/l4CvP3OAjL9RAI1/cv//wBdAAACqQNoBiYAPAAAAAcBQABTAKz//wBdAAACqQNoBiYAPAAAAAcBRADSAKz//wBd/zgCqQK8BiYAPAAAAAcBSgEjAAD//wBdAAACqQNqBiYAPAAAAAcBRwCDAKwAAgBd/ysCqQK8AA0AFwAARSInNxYWMzI1ETMRFAYlETMBETMRIwERAhEmOR8XIQpFUU3+AVYBoVVV/l7VGkQKClgB1v4oT1HVArz9zgIy/UQCNf3LAAACAC7/9ALaAsgADwAfAABFIiYmNTQ2NjMyFhYVFAYGJzI2NjU0JiYjIgYGFRQWFgGHZZxYV5plZZtWVplkS3JBQnNMS3RCQnYMXKRqa6NcXaNqaqRcTUmAVFOBSUmBU1SASQAAAwAu//QC2gNhAA8AHwAjAABFIiYmNTQ2NjMyFhYVFAYGJzI2NjU0JiYjIgYGFRQWFhM3MwcBh2WcWFeaZWWbVlaZZEtyQUJzTEt0QkJ2AntrhgxcpGpro1xdo2pqpFxNSYBUU4FJSYFTVIBJAqV7ewD//wAu//QC2gN3BiYAQgAAAAcBQwDWAK///wAu//QC2gN7BiYAQgAAAAcBPQDlAK///wAu//QC2gNsBiYAQgAAAAcBPwCPAK///wAu//QC2gNrBiYAQgAAAAcBQQDuAK8AAwAu//QC2gM3AA8AHwAjAABFIiYmNTQ2NjMyFhYVFAYGJzI2NjU0JiYjIgYGFRQWFgM1IRUBh2WcWFeaZWWbVlaZZEtyQUJzTEt0QkJ2cwF3DFykamujXF2jamqkXE1JgFRTgUlJgVNUgEkCrUlJAAMAKf/0AucCyAADABMAIwAAcwEzAQUiJiY1NDY2MzIWFhUUBgYnMjY2NTQmJiMiBgYVFBYWKQJiXP2cAQdlm1lYmmRlm1dXmWRLckJDc0xKdUJDdgK8/UQMXKRqa6NcXaNqaqRcTUmAVFOBSUmBU1SASQD//wAu//QC2gNtBiYAQgAAAAcBRwCJAK8AAwAu//EEGQLLAA8AHwArAABFIiYmNTQ2NjMyFhYVFAYGJzI2NjU0JiYjIgYGFRQWFgURIRUhFSEVIRUhFQGHZZxYV5plXZBRUY5cSG0+P29ISnRCQnUBPwGe/rYBLf7TAUsPXaRsa6VdVqNzdKRWTUOBXFyAREqCVFSCSj4CvE3iTPRNAAACAF0AAAIpArwADAAVAABzETMyFhYVFAYGIyMRETMyNjU0JiMjXeREaTs2Xj6lpTdHVEGOArw4ZEJAZDn+/wFOUT9BUAAAAgBfAAECLAK9AA4AFwAAdxEzFTMyFhYVFAYGIyMVNTMyNjU0JiMjX1WPRGo7Nl89pqQ4R1RBjgECvHY4ZUFAZTmK2FBAQVAAAgAu/9kC2wLIABUAKgAARScGBiMiJiY1ND4CMzIWFhUUBgcXJTI2Nyc3FzY2NTQmJiMiBgYVFBYWAqVYKWQ5ZZxYMlt+S2WbViwoVf6sKEYdZzhoHB5Cc0xLdEJCdidZHiBcpGpQhWA1XaNqSoAuVjEXFmg1aiZeOVOBSUmBU1SASQAAAgBdAAACRQK8ABEAGwAAcxEzMhYWFRQGBxMjAwYiIyMRETMyNjY1NCYjI13kRGk7T0CrXaEHDgd5myY8JVNCjQK8NmA+RWcY/twBFAH+7QFhIz0nPEsA//8AXQAAAkUDawYmAE8AAAAHAUD/9wCv//8AXQAAAkUDawYmAE8AAAAHAUQAdgCv//8AXf84AkUCvAYmAE8AAAAHAUoA2QAAAAEAM//0AjMCyAAsAABFIi4CJzcWFjMyNjU0JicnLgI1NDYzMhYWFwcmJiMiBhUUFhcXFhYVFAYGAT06WkIqClEPW0JRXFJDTS9PL3t0RWQ/DVATWkBDTz4yTWZtOG0MGS03HxwsQUA1MT0RFAwvSTNfay1FKBwyOUE4MDMMExhvQDdbNQD//wAz//QCMwNrBiYAUwAAAAcBQAATAK///wAz//QCMwNrBiYAUwAAAAcBRACRAK///wAz/y4CMwLIBiYAUwAAAAYBSxEA//8AM//0AjMDdwYmAFMAAAAHAUMAkACvAAEACwAAAh0CvAAHAABzESM1IRUjEerfAhLfAm9NTf2RAP//AAsAAAIdA2sGJgBYAAAABwFEAGgArwABAFP/8QJwArwAFQAARSImJjURMxEUFhYzMjY2NREzERQGBgFfT3lEVS9UNjdVL1REfA9Dd04Bw/49N1UvL1U3AcP+PU53QwACAFP/8QJwA2kAFQAZAABFIiYmNREzERQWFjMyNjY1ETMRFAYGAzczBwFfT3lEVS9UNjdVL1REfJJ1Z4APQ3dOAcP+PTdVLy9VNwHD/j1Od0MC+ICA//8AU//xAnADawYmAFoAAAAHAUUAuQCv//8AU//xAnADdwYmAFoAAAAHAUMAtACv//8AU//xAnADewYmAFoAAAAHAT0AwwCv//8AU//xAnADbAYmAFoAAAAHAT8AbQCv//8AU//xAnADawYmAFoAAAAHAUEAzACv//8AU//xAnADNwYmAFoAAAAHAUgAzACv//8AU/86AnACvAYmAFoAAAAHAU0BgQAO//8AU//xAnADlQYmAFoAAAAHAUYA0QCvAAEACQAAAqsCvAAGAABhATMTEzMBASv+3ln4+Fn+3gK8/aQCXP1EAAABAAkAAAO2ArwADAAAcwMzExMzExMzAyMDA9/WVa+pVKaxVdlboqcCvP3FAjv9xwI5/UQCM/3N//8ACQAAA7YDcgYmAGUAAAAHAUMBMgCqAAEACgAAAlwCvAALAABzEwMzExMzAxMjAwMK+vllxMJl+PlmwsQBYwFZ/usBFf6n/p0BH/7hAAEACQAAAlMCvAAIAABhEQMzExMzAxEBBPtiw8Rh+wElAZf+vwFB/mn+2wD//wAJAAACUwNmBiYAaAAAAAcBQAADAKr//wAJAAACUwNyBiYAaAAAAAcBQwCAAKr//wAJAAACUwN2BiYAaAAAAAcBPQCPAKoAAQAvAAACUgK8AAkAAHM1ASE1IRUBIRUvAbn+SgIg/kcBtk4CIE5O/eBOAP//AC8AAAJSA2sGJgBsAAAABwFAABYAr///AC8AAAJSA2sGJgBsAAAABwFEAJUAr///AC8AAAJSA3sGJgBsAAAABwE+AQ8ArwACACn/9AHGAgAAGwAnAABXIiY1NDYzMyYmIyIGByc+AjMyFhYHAyMnBgYnMjY2NTUjIgYVFBbkWGNlW4sFPDwpOxNIEzZILkZbLgEBSgQWSi4rQCN7Rjs6DFFITFFHRyEkHCMzGzdrT/7xQyYpRiVEMBQuKyctAP//ACn/9AHGArwGJgBwAAAABgFA0QD//wAp//QBxgK8BiYAcAAAAAYBRVIA//8AKf/0AcYCyAYmAHAAAAAGAUNOAP//ACn/9AHGAswGJgBwAAAABgE9XQD//wAp//QBxgK9BiYAcAAAAAYBPwcA//8AKf/0AcYCiAYmAHAAAAAGAUhmAP//ACn/LAHZAgAGJgBwAAAABwFMAP0AAP//ACn/9AHGAuYGJgBwAAAABgFGawD//wAp//QBxgK+BiYAcAAAAAYBRwEAAAQAKf/0A04CAAAQACYAPgBHAABlJy4CIyIGByc2NjMyFhUVByImNTQ2MzMVIyIGFRQWMzI2NTcUBiEiJiY1NDY2MzIWFhUhFhYzMjY3Fw4CAyEuAiMiBgYBfAcGGDUvLD4USCJiQ2Vk2ldjY1e2o0I7OjRCS0RwASRJcD8/b0hGZjj+dwVeSDVJFEUTP1XVAS0DJz4nJkYusVc7TygjIx03OHp4Xb1RSEtQPzArKS5jUANyh0N2TU12Q0V8VFJcMikjJzogATorPiIhPwAAAgBG//QCIQK8ABIAIgAARSImJwcjETMRNjYzMhYWFRQGBicyNjY1NCYmIyIGBhUUFhYBPzdWHARMUBxWN0NmOTlmVS9JKylKLyxFJydEDDQtVQK8/uQtM0J2Tk13QkkwVjc3VjAwVjc3VjAAAQAp//QB/gIAAB0AAEUiJiY1NDY2MzIWFwcmJiMiBgYVFBYWMzI2NxcGBgElSnJAP3JJSHIeSRRMMTFLKytNMTFNFEkecgxDdk1NdkNCPCEoLTBVNzdVMDItIUBI//8AKf/0Af4CvAYmAHwAAAAGAUD4AP//ACn/9AH+ArwGJgB8AAAABgFEdwD//wAp/y4B/gIABiYAfAAAAAYBS/oA//8AKf/0Af4CyAYmAHwAAAAGAUN1AP//ACn/9AH+AswGJgB8AAAABwE+APEAAAACACn/9AIEArwAEgAjAABFIiYmNTQ2NjMyFhcRMxEjJwYGJzI2Njc1LgIjIgYGFRQWFgELQ2Y5OWZDN1cbUEwEG1clLEMnAQEnRCwvSikqSgxCd01OdkIzLQEc/URVLTRJL1U1BzZVLzBWNzdWMAD//wAp//QCoAK8BiYAggAAAAcBQgIFAAAAAwAp//QCUAK8AAMAFgAnAABBNSEVASImJjU0NjYzMhYXETMRIycGBicyNjY3NS4CIyIGBhUUFhYBFAE8/rtDZjk5ZkM3VxtQTAQbVyUsQycBASdELC9KKSpKAjc/P/29QndNTnZCMy0BHP1EVS00SS9VNQc2VS8wVjc3VjAAAgAp//QCFQLgACAAMAAARSImJjU0NjYzMhcmJicHJzcmJzcWFhc3FwceAhUUBgYnMjY2NTQmJiMiBgYVFBYWASBIcD89bkZaPA0oG0geOD5cEEBnKEQcNyo0Fz5vSDFJKipLMTBKKitLDEF0S0xzQkIoQhsvLiMoFUkNLCArLSMrcIRLTXVCSS9SNjZTLy9TNjZSLwAAAgAp//QCAwIAABcAIAAARSImJjU0NjYzMhYWFSEWFjMyNjcXDgIDIS4CIyIGBgEhSXA/P29IRmY4/ncFXkg1SRRFEz9V1QEtAyc+JyZGLgxDdk1NdkNFfFRSXDIpIyc6IAE6Kz4iIT8A//8AKf/0AgMCvAYmAIYAAAAGAUD1AP//ACn/9AIDArwGJgCGAAAABgFEcwD//wAp//QCAwLIBiYAhgAAAAYBQ3IA//8AKf/0AgMCzAYmAIYAAAAHAT0AgAAA//8AKf/0AgMCzAYmAIYAAAAHAT4A7QAA//8AKf/0AgMCvQYmAIYAAAAGAT8qAP//ACn/9AIDAogGJgCGAAAABwFIAIoAAP//ACn/OgIRAgAGJgCGAAAABwFNATIADgABABwAAAFuAsoAFwAAcxEjNTM1NDYzMhYXByYmIyIGFRUzFSMReFxcSUsUMhweFyALIyORkQGvRTlOTw4NPwkKLS8zRf5RAAACACn/LAIFAgAAIgAyAABFIiYmJzceAjMyNjY1NQYGIyImJjU0NjYzMhYXNTMRFAYGAzI2NjU0JiYjIgYGFRQWFgEOME83DB4NMEElME0rG1g3Q2Y5OWZDN1gbUEBwNyxEJidDLS9JKSpJ1BMXCEEHFQ8nU0E1LTNAc0pMc0AyLlT+PFZ0OgEdMFM3NVMvL1M1N1MwAP//ACn/LAIFArwGJgCQAAAABgFFawD//wAp/ywCBQLIBiYAkAAAAAYBQ2cA//8AKf8sAgUCyQYmAJAAAAAHAUkA6AAA//8AKf8sAgUCzAYmAJAAAAAHAT4A4wAAAAEARgAAAfcCvAAVAABzETMRNjYzMhYWBxEjETQmJiMiBhURRlAZUDU6WDEBUCM8JkJJArz+7yksL2ZT/ugBAEpOHV1V/v0AAAIAAAAAAfcCvAADABkAAFE1IRUDETMRNjYzMhYWBxEjETQmJiMiBhURATz2UBlQNTpYMQFQIzwmQkkCNz8//ckCvP7vKSwvZlP+6AEASk4dXVX+/QD////CAAAB9wOQBiYAlQAAAAcBQ//AAMj//wBCAAAApgLMBiYAmQAAAAYBPkIAAAEASwAAAJsB9AADAABzETMRS1AB9P4M//8AMAAAAQwCvAYmAJkAAAAHAUD/SQAA////yAAAAR0CyAYmAJkAAAAGAUPGAAADAAEAAADnAswACwAXABsAAFMiJjU0NjMyFhUUBiMiJjU0NjMyFhUUBhMRMxG3Ex0dExQcHJoTHR0TFBwcBlACbB0TFBwcFBMdHBQUHBwUFBz9lAH0/gz////+AAAA3AK9BiYAmQAAAAcBP/9+AAD////zAAAA9QKIBiYAmQAAAAYBTt4A////+f8sALACzAYmAJkAAAAmAT5CAAAGAUzUAP//AEL/KQGyAs4EJgCZAAAAJgE+QgAABwChAOgAAAAC/8v/KQDLAs4ACwAZAABTIiY1NDYzMhYVFAYDIic3FhYzMjURMxEUBpgUHh4UFR4ehCU5HhghCkRQTAJpHhQWHR0WFB78wBpDCQpXAir91E5RAAAB/8v/KQDAAfQADQAAVyInNxYWMzI1ETMRFAYpJTkeGCEKRFBM1xpDCQpXAir91E5R////y/8pAUICyAYmAKIAAAAGAUPqAAABAEYAAAHkArwACwAAcxEzETczBxMjJwcVRlDVZbrOY6BLArz+VuLI/tTyT6P//wBG/zgB5AK8BiYApAAAAAcBSgCZAAAAAQBGAAAAlgK8AAMAAHMRMxFGUAK8/UT//wAqAAABBgNrBiYApgAAAAcBQP9DAK///wBGAAABNAK8BiYApgAAAAcBQgCYAAD//wAa/zgAnwK8BiYApgAAAAYBSg4AAAIAEQAAAQkCvAADAAcAAFM1NxUDETMREfilUAECSHlH/oQCvP1EAAABAEYAAAMbAgAAJAAAcxEzFzY2MzIWFzY2MzIWBxEjETQmJiMiBhURIxE0JiYjIgYVEUZLBBdIMDxVExVROFRhAVAfNCI7QlAfNSI6QgH0RigqODk3OnBy/uIBAEpOHV1V/v0BAEpOHV1V/v0AAAEARgAAAfYCAAAVAABzETMXNjYzMhYWBxEjETQmJiMiBhURRksEGVA1O1cxAVAiPCZCSQH0SyotL2ZT/ugBAEpOHV1V/v0A//8ARgAAAfYCvAYmAKwAAAAGAUDrAP//AEYAAAH2ArwGJgCsAAAABgFEagD//wBG/zgB9gIABiYArAAAAAcBSgC2AAD//wBGAAAB9gK+BiYArAAAAAYBRxsAAAEARv8pAfYCAAAfAABFIic3FhYzMjURNCYmIyIGFREjETMXNjYzMhYWBxEUBgFeJTkfFyEKRCI8JkJJUEsEGVA1O1cxAUzXGkMJClcBNkpOHV1V/v0B9EsqLS9mU/6wTlEAAgAp//QCGwIAAA8AHwAARSImJjU0NjYzMhYWFRQGBicyNjY1NCYmIyIGBhUUFhYBI0lxQD9xSEpxPz9wSTJKKytMMjFLKytNDEN2TU12Q0N2TU12Q0owVDg4VDAwVDg3VTAA//8AKf/0AhsCvAYmALIAAAAGAUD2AP//ACn/9AIbAsgGJgCyAAAABgFDcwD//wAp//QCGwLMBiYAsgAAAAcBPQCCAAD//wAp//QCGwK9BiYAsgAAAAYBPywA//8AKf/0AhsCvAYmALIAAAAHAUEAiwAA//8AKf/0AhsCiAYmALIAAAAHAUgAiwAAAAMAHP/0AicCAAADABMAIwAAcwEzARciJiY1NDY2MzIWFhUUBgYnMjY2NTQmJiMiBgYVFBYWHAG0V/5LsEpxQD9xSUlxPz9wSDFLKitMMTFMKyxMAfT+DAxDdk1NdkNDdk1NdkNKMFQ4OFQwMFQ4N1Uw//8AKf/0AhsCvgYmALIAAAAGAUcmAP//ACn/9AO7AgAEJgCyAAAABwCGAbgAAAACAEv/OAImAgAAEgAiAABXETMXNjYzMhYWFRQGBiMiJicREzI2NjU0JiYjIgYGFRQWFktLBBxXN0NmOTlmQzdWHJcvSSspSi8sRScnRMgCvFUtNEJ2Tk13QjMt/uQBBTBWNzdWMDBWNzdWMAACAEb/OAIhArwAEgAiAABXETMRNjYzMhYWFRQGBiMiJicREzI2NjU0JiYjIgYGFRQWFkZQHFY3Q2Y5OWZDN1Ycly9JKylKLyxFJydEyAOE/uQtM0J2Tk13QjMt/uQBBTBWNzdWMDBWNzdWMAACACn/OAIEAgAAEgAiAABFEQYGIyImJjU0NjYzMhYXNzMRAzI2NjU0JiYjIgYGFRQWFgG0G1c3Q2Y5OWZDN1cbBEznLEQnJ0QtL0kqKkrIARwtM0J3TU52QjQtVf1EAQUwVjc3VjAwVjc3VjAAAAEARgAAAUcB9gAMAABzETMVNjYzFSIGBhURRlAeXzQsUTQB9FkvLEsdQjn+7f//AEYAAAFHArwGJgC/AAAABwFA/3YAAP////QAAAFKArwGJgC/AAAABgFE9AD//wAx/zgBRwH2BiYAvwAAAAYBSiUAAAEAKf/0AawCAAArAABXIiYmJzcWFjMyNjU0JicnJiY1NDYzMhYWFwcmJiMiBhUUFhcXHgIVFAYG9TdSNwxGEUQpL0AvLjBETF1cLEg0DEYNPCsuNCsqMjFCIjBSDCE2IB0iKiUiHyYMDRJJLkdPGi8gHyIeJyMUIwsNDC88Ii1CI///ACn/9AGsArwGJgDDAAAABgFAzQD//wAp//QBrAK8BiYAwwAAAAYBREwA//8AKf8uAawCAAYmAMMAAAAGAUvKAP//ACn/9AGsAsgGJgDDAAAABgFDSgAAAQBGAAACBgLIACoAAHMRNDY2MzIWFhUUBgcWFhUUBgYjIzUzMjY1NCYjIzUzMjY2NTQmIyIGFRFGN2E/P182LCk0NjViRTIuQ0pKQC0GPEUcSTk6SgIAPVoxMFg7OFIXF1Y9O1ItTD00OkBWHTYmNkJGOP4AAAEAEv/0AVwCkAAXAABFIiY1ESM1MzUzFTMVIxEUFjMyNjcXBgYBAklQV1dQlpYpJQwXEx8aKgxMRQEoR5ycR/7gJikHDkERDQAAAgAS//QBbQLRABcAGwAARSImNREjNTM1MxUzFSMRFBYzMjY3FwYGAzczBwECSVBXV1CWliklDBcTHxoqMTJUQgxMRQEoR5ycR/7gJikHDkERDQI6o6MAAAEAOf/0AegB9AAVAABXIiYmNREzERQWFjMyNjURMxEjJwYG+zpXMVAiPSZBSVBLBBlQDC9nUgEY/wBKTh1eVAED/gxLKi0A//8AOf/0AegCvAYmAMsAAAAGAUDsAP//ADn/9AHoArwGJgDLAAAABgFFbQD//wA5//QB6ALIBiYAywAAAAYBQ2kA//8AOf/0AegCzAYmAMsAAAAHAT0AdwAA//8AOf/0AegCvQYmAMsAAAAGAT8hAP//ADn/9AH/ArwGJgDLAAAABwFBAIAAAP//ADn/9AHoAogGJgDLAAAABwFIAIEAAP//ADn/LAH9AfQGJgDLAAAABwFMASEAAP//ADn/9AHoAuYGJgDLAAAABwFGAIYAAAABAAkAAAH/AfQABgAAcwMzExMzA9rRU6inVNEB9P5pAZf+DAABAAoAAAMGAfQADAAAcwMzExMzExMzAyMDA7SqUYKEUIKCUapQg4QB9P58AYT+fwGB/gwBh/55//8ACgAAAwYCyAYmANYAAAAHAUMA2wAAAAEACgAAAdEB9AALAABzEyczFzczBxMjJwcKuaxfeXdfqbVggoQBA/GwsPL+/sLCAAEACf8sAgYB9AAUAABXIiYnNxYWMzI2NzcDMxMTMwMOAnMTMhweFyMKGyMMItdVqqhW8BMpOtQPDEMKCh0bVAHy/msBlf3GLEAiAP//AAn/LAIGArwGJgDZAAAABgFA3AD//wAJ/ywCBgLIBiYA2QAAAAYBQ1kA//8ACf8sAgYCzAYmANkAAAAGAT1nAAABAC0AAAG+AfQACQAAczUBITUhFQEhFS0BJ/7ZAY/+2AEqQAFuRj7+kEYA//8ALQAAAb4CvAYmAN0AAAAGAUDKAP//AC0AAAG+ArwGJgDdAAAABgFESAD//wAtAAABvgLMBiYA3QAAAAcBPgDCAAAAAgAcAYkBJALDABAAJQAAUycuAiMiBgcnNjYzMhYVFQciJjU0NjMzFSMiFRQWMzI2NTcUBuQFAQsdGxcdCj8UPytDRZg1Ozs1ZE5AHBkhJiA8AZCaHykXExAWIiVLRKQHMSstMC8uEhUrIgU/SAACABwBiQFRAsMADgAaAABTIiYmNTQ2NjMyFhUUBgYnMjY1NCYjIgYVFBa3LUYoKEYsRVYoRS0lLS4lJC4vAYkoRy4uRyhYRS5HKEA0KSk0NCkpNAACAC7/9AJTAsgADwAfAABFIiYmNTQ2NjMyFhYVFAYGJzI2NjU0JiYjIgYGFRQWFgFAUHxGRntRUXtHRnxROFcxMVc4OFYxMVcMXaNqaqNdXaNqaqNdTEqAVFSBSUmBVFSASgAAAQA8AAABLAK8AAsAAHMRBgYnNRY2NjczEdkmTygVOj4XTAJNHycBTQEeMBr9RAAAAQAcAAAB9ALIACQAAHM1NDY2Nzc+AjU0JiYjIgYGByc+AjMyFhYVFAYHBwYGByEVORszJZEaJxYiPiopPigJVgw/YjxGZjk8OYkoKwMBXkYhQUAcbRIvMxgjOSIfMx0RLU4wNVs6N2IuaB5CJEsAAAEAO//0AfECyAAwAABFIiYmJzceAjMyNjU0JiYjIzUzMjY1NCYmIyIGBgcnPgIzMhYWFRQGBxYWFRQGBgENM1M7EUYLITQmRFIxXEATE1ZlID0oGy8nEEITO0wtPWE4PDQ8RT1oDB8yHCcOIxhOOy0+IEg7Nx4zHw8dFiYfLhowUzQ1TRcaW0E+XTMAAgArAAACTwK8AAoADQAAYTUhNQEzETMVIxUlMxEBbv69AT9Wj4/+zOKqQQHR/jlLqvUBTAAAAQA7//QCEAK8ACEAAEUiJiYnNxYWMzI2NTQmIyIGBycTIRUhBzY2MzIWFhUUBgYBIipXTRlEI1IsRVdURCVIFEwiAXX+1hUcRCNAZDo9awwZNCknLChVRURWIRgSAXJM3xEUOGRBRGc6AAIALf/0AhgCyAAfAC8AAEUiLgI1ND4CMzIWFwcmJiMiBhcnNjYzMhYWFRQGBicyNjY1NCYmIyIGBhUUFhYBKkhiOhklRmQ/NGcoLyBKImZqBhIYakhDaTs8a0ctRScnRS0sRigoRgw3XntFWo5jNCEdPBYZrK8SPUc6Z0JBZzlKJ0UtLUUmJkUtLUUnAAABACoAAAH7ArwABgAAcwEhNSEVAVIBTP6MAdH+tAJvTUb9igADADf/9AIvAsgAGwApADUAAEUiJiY1NDY3JiY1NDY2MzIWFhUUBgcWFhUUBgYnMjY1NCYjIgYGFRQWFhMyNjU0JiMiBhUUFgEyS3I+RDsvNjhmQ0VlOTYvO0Q/cU1KXl5KMEsrK0swQFBQQD5QUAwxVzo+XxgXUjY4VjAwVjg2UhcYXz46VzFKRzk6SSE7JyY6IAFSPzM4RUU4Mz8AAAIAHv/0AgkCyAAfAC8AAEEyHgIVFA4CIyImJzcWFjMyNicXBgYjIiYmNTQ2NhciBgYVFBYWMzI2NjU0JiYBC0pgOxkmRmM/NGcpLyBLImZrBxIYakhEaDs8a0YsRicnRiwuRScnRQLIN157RVqOYzQhHTwWGayuET1IO2ZDQmU6SidFLS1FJydFLS1FJwACACoBGADKArwABAAMAABTETczEQM1MjY3FwYGhAc/oBQ2Fy4kRgEYAX0n/lwBJ0EkGC4mLAACABQBGAE/AsMAHgAjAABTJzQ2Njc3NjY1NCYjIgYHJz4CMzIWFRQGBwcOAgc1NzMVbEgUJRhGFCAlIR4mB0oGKD4oQ08pJEUOGxFKN+QBRwgSKSkSMw8oFBsjIxYOHTEfRzgmOhwyChwdOzcKQQAAAgApAREBQgLDABgAMQAAUyImJzcWFjMyNjU0JiYjIzUzMhYWFRQGBic1MzI2NTQmIyIGByc+AjMyFhYVFAYGI7U3SQxCCx8bIScVLCIWEzFQLydAXBYsLyMeEyMMQAonNh4nPCQuTSwBETAkFhEaJh0UHhEzHjgoJjcd0DIdHBchExYWGiUTHTMhJTIaAAMAHgEYAXMCvAADAAgADQAAUycTFwM1NyEVBxEnMxFTNbws6CsBKpIHTAGMHgESKf7dOgU/WAF7Kf5cAAH/UwAAAYYCvAADAABjATMBrQHhUv4fArz9RP//ACoAAAMzArwEJgDtAAAAJwDxARkAAAAHAO4B8/7o//8AKgAAAycCvAQmAO0AAAAnAPEBGQAAAAcA8AG0/uj//wApAAADcALDBCYA7wAAACcA8QFiAAAABwDwAf3+6P//ACoBfADKAyAGBgDtAGT//wAUAXwBPwMnBgYA7gBk//8AKQF1AUIDJwYGAO8AZAABADD/8gCfAGEACwAAVyImNTQ2MzIWFRQGaBchIRcXICAOIRYXISEXFiEAAAEAKP+NALsAYAADAABXNzMHKDlaTnPT0wAAAgBG//4AtwH2AAsAFwAAUyImNTQ2MzIWFRQGAyImNTQ2MzIWFRQGfhchIRcWISEVFyAgFxchIQGHIBcXISEXFyD+dyEXFyAgFxchAAIAKv+NALwB9QALAA8AAFMiJjU0NjMyFhUUBgM3Mwd6FiEhFhchIWc5WU0BhiEWFyEhFxYh/gfT0///ADD/8gI1AGEEJgD6AAAAJwD6AMsAAAAHAPoBlQAAAAIAXf/yAMwCvAADAA8AAHcDMwMHIiY1NDYzMhYVFAZsA1cCKRchIRcXICDLAfH+D9kgFxchIRcXIAACAF3/NgDMAgAAAwAPAABTEyMTNzIWFRQGIyImNTQ2vgJXAykXICAXFyEhASf+DwHx2SEXFiEhFhchAAACACD/8gHKAsgAGAAkAAB3Jzc2NjU0JiMiBgcnNjYzMhYWFRQGBgcVByImNTQ2MzIWFRQGrwE0QlRPPy5FDEsUaU1CZDozWjwpGCAgGBgfH7yyAgFJPzlLKyAXOEc1Xjw5WDUFcsogFxggIBgXIAAAAgAQ/ysBuwIBABgAJAAAQRcHBgYVFBYzMjY3FwYGIyImJjU0NjY/AjIWFRQGIyImNTQ2ASsBNEJUUD4uRQxME2tNQWU6M1s7ASkXICAXGCAgATezAQFJPzpKKyAYOEY1Xjw6VzUEc8ogGBcgIBcYIAD//wBIAQ4AtwF9BAcA+gAXARwAAQCMALIBXQGDAA8AAHciJiY1NDY2MzIWFhUUBgb0HS8cHC8dHTAcHDCyHS8dHS8cHC8dHS8dAAAFAEEBfgGgAswAAwAHAAsADwATAABBJzcXByc3FwcnNxcHJzMHByc3FwE9XyxszjptLB+nFqIjCUYIEw+iFQGBkR+HLCqHIAkuQz4ara0aMz1CAAAEAAoAAAJrArwAAwAHAAsADwAAYRMzAyU3IQcFEzMDAzchBwFUbkFu/nUIAjII/jduQG6DCQIyCQK8/UTDODjDArz9RAG8ODgAAAEAD/+sAXYC6wADAABXATMBDwEUU/7uVAM//MEAAAEAD/+sAXYC6wADAABFIwEzAXZV/u5TVAM/AAABADoBBQFmAU4AAwAAUzUhFToBLAEFSUkAAAEAAAEFAiYBTgADAABRNSEVAiYBBUlJAAEAAAEFBEwBTgADAABRNSEVBEwBBUlJAAEAE/+3AaMAAAADAABXNSEVEwGQSUlJAAEAOf+cATEDIAARAABXLgI1NDY2NzMOAhUUFhYX3y5MLCxMLlIuTCwsTC5kPY+gVlefjz1Akp1TUp6RQQAAAQAv/5wBJwMgABEAAFcjPgI1NCYmJzMeAhUUBgaBUi9LLCxLL1IvSywsS2RBkZ5SU52SQD2Pn1dWoI8AAgA6/5wBRwMgABIAJQAAUzUyNjY1ND4CMxUOAhUUBgYTIi4CNTQmJiM1MhYWFRQWFhc6KCoRDiZDMyUnEB1NxjNDJg4RKihHTR0QKCQBUysWODRWcEAaRwElXFZFTB3+SRpAcFY0OBYrHUtGVV0lAQAAAgA6/5wBRwMgABIAJQAAQSImJjU0JiYnNTIeAhUUFhYzATU+AjU0NjYzFSIGBhUUDgIBR0ZOHQ8oJTRCJg8QKyf+8yUoDx1ORicrEA8mQgFTHUxFVlwlAUcaQHBWNDgW/h5HASVdVUZLHSsWODRWcEAaAAABAF3/nAD6AyAABwAAVxEzFSMRMxVdnU5OZAOES/0SSwAAAQBJ/5wA5gMgAAcAAFcjNTMRIzUz5p1PT51kSwLuS///ACj/jQC7AGAEBgD7AAAAAgAR/40BOABgAAMABwAAVzczByM3MwemOVlO2ThaTnPT09PTAAACABEB6AE4ArwAAwAHAABTByM3MwcjN6M5WU3aOVlNArzU1NTUAAIAEgHoATkCvAADAAcAAFM3MwcjNzMHpzlZTtk5WU4B6NTU1NQAAQARAegAowK8AAMAAFMHIzejOVlNArzU1P//ABIB6ACkArwEBwD7/+oCXP//ADEAYAHuAfQEJwEbAMEAAAAGARsAAAACADkAYAH2AfQABQALAAB3IzcnMxcXIzcnMxeaYZmZYZsmYJmZYJtgysrKysrKygABADEAYAEtAfQABQAAdyc3MwcXzJubYZmZYMrKysoAAAEAOgBgATYB9AAFAAB3IzcnMxebYZmZYZtgysrK//8APAHiAQQCzAQmAR4AAAAGAR54AAABADwB4gCMAswAAwAAUyczB0QIUAgB4urqAAIALv8sA68CywBDAFIAAEUiLgI1ND4CMzIeAhUUBgYjBiYnBgYjIiYmNTQ2NjMyFhc1MxEUFjMyNjY1NC4CIyIOAhUUHgIzMjY3FwYGAzI2NzUmJiMiBgYVFBYWAgNoq31FRX2sZ16cdD4wVzczPQMcWzlBZDk5ZEE4WhtPGBMhMx01XoNNWJBqOjpqkFgnWyAkKnBOPlUICFY+L0cpKUjURH2pZmapfEREfKlmTnhFATlELDI9bEVGaj0wK1D+ihkdNFo7V5BqOjpqkFdXkGo7FRA4FhsBK049Nj1MKkkxMEsrAAEAN//yAnoCygA8AABFIiYmNTQ2Njc3PgI1NCYjIgYVFBYXFxMjAycuAjU0NjYzMhYWFRQGBgcHDgIVFBYzMj4CNTMUBgYBAztcNSI5IlsZMSI1KSQzJBt7+mbYeBclFC1LLzJRLipHLUkWKhpFNTRaRSVRVZUOLlQ1LEY5GD4SJi8dJy4wIx4vIJT+0QEEkRwyMhstRSgnRjAnRT0fMw8lMSMxPiNCXDddklIAAAQAGv+sAcUCvAAKAA4AEgAWAABTIiYmNTQ2NjMzEQMRMxEzETMRAzUzFew+XjY2Xj43IUkxSXw9AQE5ZEBCZDj+Rf6rAxD88AMQ/PACw01NAAACAFj/pgHhAsgAKQBUAABFIiYmJzcWFjMyNjU0JicnJiY1NDYzMhYWFwcmJiMiBhUUFhcXFhYVFAYnIiYmJzceAjMyNjU0JicnJiY1NDYzMhYWFwcmJiMiBhUUFhcXFhYVFAYBJDlVNApIDEAvOUA4Lz44TGBZM0guCj4NSyktNCwkPktRYGAySy4ILwgnNiAzPDkvPThNYVk0TDELRw0/LjE3LCQ9TFBgWiI3HxkhLi4lIiwLDw9GOkpSIjYgFiIqLychJQkPE1QyQVj6IzogFBQjFSwkIisMEA9FOkpSITUgGCIqLyYiJQgPE1UyQVgAAAMALv/1AwECyAATADMAQwAARSIuAjU0PgIzMh4CFRQOAiciJiY1NDY2MzIWFxcHJyYmIyIGFRQWMzI2NzcXBwYGBzI2NjU0JiYjIgYGFRQWFgGYTINkNzdkg0xLhGI4OGKETTZUMDBTNjFXFQ09DQ02HTNBQjMeNQ8KQAwXWC9Ug0tLg1RUhEtLhAs3Y4NMTINkNzdkg0xMg2M3ozJZOztZMjQpGxgVGR9JOjpJIxwUGBktOGJMhlZXhkxMhldWhkwABAApAKsCRgLIABMAIwAxADoAAGUiLgI1ND4CMzIeAhUUDgInMjY2NTQmJiMiBgYVFBYWJxEzMhYVFAYHFyMnIxU1MzI2NTQmIyMBNzdjSioqSmM3OWJKKipKYjk/YDY2YD8+YDY2YCdpLTofGkU7PDE3FBscFzOrKkpjNzliSioqSmI5N2NKKjg2YT9AYDc3YEA/YTZIASQzKhwsC3RqapoZFBUZAAIACAEYAygCvAALABMAAEEnESMRMxc3MxEjEQERIzUhFSMRAlmHSU+BgU5I/aiAAUmBAYLF/tEBpL+//lwBMf7PAWJCQv6eAAIALwG6AUICywAPABsAAFMiJiY1NDY2MzIWFhUUBgYnMjY1NCYjIgYVFBa4JT8lJT8lJUAlJUAlHCgoHBsoKAG6JkAlJT0kJD0lJUAmQC0eHSkpHR4tAAABAF3/JACkAxYAAwAAVxEzEV1H3APy/A4AAAIAZP8kAKsDFgADAAcAAFMRMxEDETMRZEdHRwFeAbj+SP3GAbj+SAACABkAAAHGArwABQALAABzEyczBxMBNRc3FSfHDApPCgv/ANfW1gHR6+v+LwGtSwoKSwoAAwAa/zgBxwK8AAkADwAVAABXNyc3JzMHFwcXJzUXNxUnAzUXNxUnxwsICApPCgkJDP7X1dXY1tbWyOja1+vr19roxEkJCUkKAahJCQlJCQACACkAAAH+ArwAAwAhAABhETMRJyImJjU0NjYzMhYXByYmIyIGBhUUFhYzMjY3FwYGAQI8GUpyQD9ySUhyHkkUTDExSysrTTExTRRJHnICvP1EYkN2TU12Q0I8ISgtMFU3N1UwMi0hQEgABgBNAJYB3gIoAA8AEwAfACMAJwArAABlIiYmNTQ2NjMyFhYVFAYGByc3FzcyNjU0JiMiBhUUFicnNxcTJzcXJyc3FwEYME8tLU8wMU0vLk7LMVMzRSw0NCwrNDRKVjBY2EoySVEzUzGzL00vLksuLksuL00vHTFTLw43Liw0NCwuN6hVMlb+xEswSuEvUTIAAgAz/5kCAAMMACsALwAAZSImJic3FhYXMjY1NCYnJy4CNTQ2MzIWFhcHJiYjIgYVFBYXFxYWFRQGBgcRMxEBI0VjPAxKD1A6R1FJOkUrRylwaT1aOQtLEU84O0Q1LEZbYTJibUoXKEEkGiY4ATktKzYPEQssQy9VYShAIxsqNDkvLC0LEBZmOjJSMH4Dc/yNAAADABL/9AJyAsgAIQAlACkAAEUiJiY1NDY2MzIWFhcHLgIjIgYGFRQWFjMyNjY3Fw4CATUhFSU1IRUBflOBSUiAUjRgSxVIEDVEIzlZMjJaOyRDNQ9JFUxf/mABtf5LAbUMXaNqaqNdLVA0JSk9I0mAVFOCSCVDKyU2Vi8BDTk5gTk5AAABADAAAAISAsgAIgAAczUzMjY1NSM1MzU0NjYzMhYWFSc0JiMiBhUVMxUjFRQHIRUwGhUeTU00XDw7WjRTQjQ1RMnJEgFUTSQZlkiYPVoxMFpCCjZCRjiYSIcsIE0ABQAJAAACFgLGAAMABwALAA8AEwAAQScTMwERMxEnNSEVJTUhFSMDMxMBOEfGX/7PVeABa/6VAWvf3V7GASYgAYD9OgFQ/rC9OztpOzsBoP6AAAIAVQBHAhoCDQADAAcAAGURMxElNSEVARVH/vkBxUcBxv46v0dHAAACAHYAaAH6AewAAwAHAABlATcBBScBFwHI/q4wAVT+rDABUjJoAVIy/q0xMQFTMgADAHUAYwH6AfAAAwAPABsAAFM1IRUHIiY1NDYzMhYVFAYDIiY1NDYzMhYVFAZ1AYXCEhwcEhMaGhMTGxsTExoaAQZHR6MbExMaGhMTGwEyGxITGxsTEhsAAgBwAKICAAGxAAMABwAAUzUhFQU1IRVwAZD+cAGQAWpHR8hHRwABAJEAYwHoAfEABgAAdzUlJTUFFZEBAP8AAVdjTnp3T59OAAABAIgAZAHeAfIABgAAQRUFBRUlNQHe/wABAP6qAfJOendPn04AAAMAVQAFAhoCLQADAAcACwAAUzUhFQE1IRUlETMRVQHF/jsBxf77RwE8Rkb+yT8/jQGb/mUAAAIAggC+AewBbQADAAcAAFM1IRUHNTMVggFqSEgBJUhIZ6+vAAEAOgDeAf0BmwAcAABlIiYmJyYmIyIGByM+AjMyFhcWFjMyNjczDgIBehwrIA8WIBAbHgZFAyE6JSc9FQ4jEhseBkUDIjjeEBwRGhooISlEKCIdDyMoISpDKAAAAgBOAXUB2AK8AAMABwAAQQMzEyETMwMBi6JSnf52m1GeAXUBR/65AUf+uQADADn/OAHoAfQADgAUABkAAEUiJjc3FBYWMzI2NTMUBgURMxEHESUnETMRAQZOXQEtIj0mQUknXv7YUAQBGAVQDHByHkpOHV5Ud4a8Arz+WgH+68hcAZj+DAAFAC//8ALiAswAAwATAB8ALwA7AABzATMBBSImJjU0NjYzMhYWFRQGBicyNjU0JiMiBhUUFgEiJiY1NDY2MzIWFhUUBgYnMjY1NCYjIgYVFBZhAfFd/gwBiy1HJydHLS5GKChGLicwMCclMTH+qi5GKChGLi5GKChGLiYwMCYlMTECvP1EECtLMDFKKytKMTBLK0A6LCw6OiwsOgFQK0swMUorK0oxMEsrQDosLDo6LCw6AAAC//QCbAFLAswACwAXAABBIiY1NDYzMhYVFAYhIiY1NDYzMhYVFAYBGxQcHBQUHBz+9RMdHRMUHBwCbB0TFBwcFBMdHBQUHBwUFBwAAQAAAmgAZALMAAsAAFMiJjU0NjMyFhUUBjIUHh4UFR0dAmgeFBUdHRUUHgABAIACOwFeAr0AAwAAQSczFwECgmZ4AjuCggAAAQDnAjsBwwK8AAMAAFM3MwfndWeBAjuBgQACAAECOwF+ArwAAwAHAABTNzMHITczB7VjZm7+8WJnbgI7gYGBgQAAAQAWAhMAnAK7AAMAAFM3MwcWMVVCAhOoqAACAAICRgFXAsgABAAJAABTJzUzFyE3MxUH/4Nief6reWKDAkZ/A4KCA38AAAIAAAI7AVYCvAAEAAkAAFM1NzMHIyczFxV/fVp5ZHlafQI7AYCBgYABAAEAAAI0AVICvAAPAABTIiYmNTMUFjMyNjUzFAYGqjFNLE00KSgzTSpMAjQjPicfKCgfJz4jAAIAMAItAPAC5gAPABcAAFMiJiY1NDY2MzIWFhUUBgYnMjU0IyIVFJEaLBsbKxsaLBkZLBokJCUCLRkqGRoqGRkqGhkqGTYmJycmAAABAG0CNgGxAr4AGAAAQSIuAiMiBgcjPgIzMh4CMzI2NzMGBgFNHSQXFA0QEQVBAxktHRwiGBUPERADQAUyAjYWHBYRFRsvHBYcFhQSKD4AAAH//QI/AS8CiAADAABDNSEVAwEyAj9JSQAAAQAAAkUAkgLJAAMAAFMHIzeSOVlOAsmEhAABAAz/OACR/8QAAwAAVzczBwwuV0HIjIwAAAEArP8uAW8ABgAVAABFIiYnNxYWMzI2NTQmJzcXBxYWFRQGAQwTLh8UDyMOEh0lJx41CyUfL9IKETAHDg4WGRkGRgwaDS8aJzUAAQAl/ywA3AAKABQAAFciJiY1NDY3FwYGFRQWMzI2NxcGBpciNBw7JkEhOBMRERsFGQ0j1BUqHyVAGwoYOiIOEQkCOQkKAAEAEf8sAN8AJgAWAABXIiYmNTQ2NjczDgIVFBYzMjY3FwYGkCY6Hx42JRIZHg0aFxEhDBgRKdQWKB0gOjITFi8uFhYaBgU5CgkAAQAVAj8BFwKIAAMAAFM1IRUVAQICP0lJAP//ADACbAGHAswEBgE9PAD//wAAAjsA3gK9BAcBP/+AAAD//wABAjsA3QK8BAcBQP8aAAD////9Aj8BLwKIBAYBSAAA//8ACv8uAMwABgQHAUv/XgAAAAAAAQAAAVQAVQAGAGYABwABAAAAAAAAAAAAAAAAAAMAAQAAAAAAGgA7AEcAUwBfAGsAdwCDAI8AmwC+APEBJQExAT0BSAFUAWABhQGRAZkBxgHcAfoCBgISAh4CKgI2AkICTgJiApkCpQKxAr0CyQLgAv8DCwMXAyMDNgNCA24DegOGA5IDnQPAA8wD5wPzBAIEDgQaBCYEPQRWBGwEeASEBJAEnATHBPkFMgU+BUoFVgViBZoF1AXgBiMGRgZqBqwG2AbkBvAG/Ac/B0sHVwdiB24HfweLB68H2gfmB/IH/ggKCBYIIgguCDoITghqCHYIkQinCLMIvwjLCOEI7Qj5CQUJQQlMCVcJYgltCXgJgwmPCZoJpQoMCkIKcQp8CocKkgqdCqkK4QrtCywLdwusC7cLwgvNC9kL5QvwC/wMCAwsDHcMggyNDJkMpQzJDPQNAA0LDRcNIw0uDVoNZg1xDX8Njg24DdEN3A3zDf8OCw4XDiMOLg5CDnkOnQ6oDrMOvw7KDvsPLQ84D0MPTw9aD2YPcg+rD7YPwg/4EC4QZRB8EIgQkxCeEN8Q6hD1EQARCxFGEWsRlxG7EcYR0RHcEegR8xH/EgsSFxIjEjUSURJdEnUSmxKmErESvBLSEt0S6BL0EysTVROHE58T1xQdFDgUbRS0FMYVFRVcFXcVrxX2FhQWIhYyFkIWUhZaFmIWahZqFmoWgBaNFrMW0BbgFv0XGxdTF4wXlRexF9sYABgPGB0YKhg2GEIYThhtGIsYxBj+GQ8ZHxknGToZTRlgGW0ZdhmCGZoZqhm5GcQZ0RpDGpoawxs8G50b8BwUHEAcTRxhHHscoxzYHSAdaR2rHdoeAx4XHi8eWx5uHoAekx6uHsAe7h8EHzEfix+xH8cf1R/iH/YgAyAZIC4gSSBvIJcgpCCxIL4g4yEGISshOCFAIUkhUiFaIWMAAAABAAAAAgCDrvV/pl8PPPUAAwPoAAAAANyNNWgAAAAA5BwPO/9T/yQETAOVAAAABgACAAAAAAAAAsQAZAKlAAkCpQAJAqUACQKlAAkCpQAJAqUACQKlAAkCpQAJAqUACQKlAAkD6QAJAmMAXQLRAC4C0QAuAtEALgLRAC4C0QAuAtEALgKwAF0CsABdAu8ASQLvAEkCUABdAlAAXQJQAF0CUABdAlAAXQJQAF0CUABdAlAAXQJQAF0CHwBdAvgALgL4AC4C+AAuAvgALgL4AC4C7wBdAu8ABQLvAF0BDwBdAxEAXQEPAEQBD//cARMAFwEPAFYBDwASAQ//7wEPAA8CAwAHAgMABwJiAF0CYgBdAggAXQIIAEMCCABdAggAXQIIAAMDTgBdAwYAXQMGAF0DBgBdAwYAXQMGAF0DBgBdAwgALgMIAC4DCAAuAwgALgMIAC4DCAAuAwgALgMQACkDCAAuBG0ALgJDAF0CRwBfAwwALgJyAF0CcgBdAnIAXQJyAF0CZgAzAmYAMwJmADMCZgAzAmYAMwIoAAsCKAALAsMAUwLDAFMCwwBTAsMAUwLDAFMCwwBTAsMAUwLDAFMCwwBTAsMAUwK1AAkDwAAJA8AACQJmAAoCXAAJAlwACQJcAAkCXAAJAoEALwKBAC8CgQAvAoEALwH+ACkB/QApAf0AKQH9ACkB/QApAf0AKQH9ACkB/QApAf0AKQH9ACkDbgApAkoARgIdACkCHQApAh0AKQIdACkCHQApAh0AKQJKACkCSgApAkoAKQJIACkCIgApAiMAKQIjACkCIwApAiMAKQIjACkCIwApAiMAKQIjACkBcQAcAksAKQJLACkCSwApAksAKQJLACkCLgBGAi4AAAIu/8IA6ABCAOgASwDoADAA6P/IAOgAAQDo//4A6P/zAOj/+QH0AEIBDf/LAQL/ywEC/8sB5QBGAeUARgDcAEYA3AAqANwARgDcABoBGgARA1MARgIuAEYCLgBGAi4ARgIuAEYCLgBGAi4ARgJEACkCRAApAkQAKQJEACkCRAApAkQAKQJEACkCQwAcAkQAKQPaACkCTwBLAkoARgJCACkBUgBGAVIARgFS//QBUgAx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AN//0QDg/9EAIQAB/9UAQv/9AKv/+wCs//sArf/7AK7/+wCv//sAsP/7ALH/+wC8//sAv//7AMD/+wDB//sAwv/7AMP/+wDE//sAxf/7AMb/+wDH//sAy//7AMz/+wDN//sAzv/7AM//+wDQ//sA0f/7ANL/+wDT//sA1P/7AN3/+wDe//sA3//7AOD/+wBSAAH/3wBw/9cAcf/XAHL/1wBz/9cAdf/XAHb/1wB3/9cAeP/XAHn/1wB6/9cAfP/XAH3/1wB+/9cAf//XAID/1wCB/9cAgv/XAIP/1wCE/9cAhf/XAIb/1wCH/9cAif/XAIr/1wCL/9cAjP/XAI3/1wCO/9cAkP/XAJH/1wCT/9cAlP/XAKv//QCs//0Arf/9AK7//QCv//0AsP/9ALH//QCy/9cAs//XALT/1wC1/9cAtv/XALf/1wC4/9cAuf/XALr/1wC7/9cAvP/9AL7/1wC///0AwP/9AMH//QDC//0Aw//9AMT//QDF//0Axv/9AMf//QDL//0AzP/9AM3//QDO//0Az//9AND//QDR//0A0v/9ANP//QDU//0A1f//ANb//wDX//8A2f//ANr//wDb//8A3P//AN3//QDe//0A3//9AOD//QAyAHD/6QBx/+kAcv/pAHP/6QB1/+kAdv/pAHf/6QB4/+kAef/pAHr/6QB8/+kAff/pAH7/6QB//+kAgP/pAIH/6QCC/+kAg//pAIT/6QCF/+kAhv/pAIf/6QCJ/+kAiv/pAIv/6QCM/+kAjf/pAI7/6QCQ/+kAkf/pAJP/6QCU/+kAsv/pALP/6QC0/+kAtf/pALb/6QC3/+kAuP/pALn/6QC6/+kAu//pAL7/6QDV//gA1v/4ANf/+ADZ//gA2v/4ANv/+ADc//gAUQBw/8QAcf/EAHL/xABz/8QAdf/EAHb/xAB3/8QAeP/EAHn/xAB6/8QAfP/EAH3/xAB+/8QAf//EAID/xACB/8QAgv/EAIP/xACE/8QAhf/EAIb/xACH/8QAif/EAIr/xACL/8QAjP/EAI3/xACO/8QAkP/EAJH/xACT/8QAlP/EAKv/5ACs/+QArf/kAK7/5ACv/+QAsP/kALH/5ACy/8QAs//EALT/xAC1/8QAtv/EALf/xAC4/8QAuf/EALr/xAC7/8QAvP/kAL7/xAC//+QAwP/kAMH/5ADC/+QAw//kAMT/5ADF/+QAxv/kAMf/5ADL/+QAzP/kAM3/5ADO/+QAz//kAND/5ADR/+QA0v/kANP/5ADU/+QA1f/2ANb/9gDX//YA2f/2ANr/9gDb//YA3P/2AN3/4gDe/+QA3//kAOD/5AABAKEANgArAHD//QBx//0Acv/9AHP//QB1//0Adv/9AHf//QB4//0Aef/9AHr//QB8//0Aff/9AH7//QB///0AgP/9AIH//QCC//0Ag//9AIT//QCF//0Ahv/9AIf//QCJ//0Aiv/9AIv//QCM//0Ajf/9AI7//QCQ//0Akf/9AJP//QCU//0Asv/9ALP//QC0//0Atf/9ALb//QC3//0AuP/9ALn//QC6//0Au//9AL7//QABAKEAGgAUAHQATgCIAE4AjwBOAJUATgCWAE4AmABOAJoATgCbAE4AnABOAJ0ATgCeAE4ApABOAKUATgCmAE4ApwBOAKgATgCpAE4AqgBOAMkATgDKAE4AAQEO//4AAQEO//0AAQDDAAAAFAB0AF8AiABfAI8AXwCVAF8AlgBfAJgAXwCaAF8AmwBfAJwAXwCdAF8AngBfAKQAXwClAF8ApgBfAKcAXwCoAF8AqQBfAKoAXwDJAF8AygBfAAEAoQAcAAEBGAAbAAEAsgAAAEoAcP/9AHH//QBy//0Ac//9AHX//QB2//0Ad//9AHj//QB5//0Aev/9AHz//QB9//0Afv/9AH///QCA//0Agf/9AIL//QCD//0AhP/9AIX//QCG//0Ah//9AIn//QCK//0Ai//9AIz//QCN//0Ajv/9AJD//QCR//0Ak//9AJT//QCr//4ArP/+AK3//gCu//4Ar//+ALD//gCx//4Asv/9ALP//QC0//0Atf/9ALb//QC3//0AuP/9ALn//QC6//0Au//9ALz//gC+//0Av//+AMD//gDB//4Awv/+AMP//gDE//4Axf/+AMb//gDH//4Ay//+AMz//gDN//4Azv/+AM///gDQ//4A0f/+ANL//gDT//4A1P/+AN3//gDe//4A3//+AOD//gALAAEAIQACACEAAwAhAAQAIQAFACEABgAhAAcAIQAIACEACQAhAAoAIQALACEAAQDD/70AAgCIAAQAAADyAWgACgAGAAAAAAAA//gAAAAAAAAAAAAA//MAAP/7AAAAAP/3AAAAAAAAAAD/3wAAAAAAAAAAAAD/9AAAAAAAAAAAAAAAAAAA//QAAAAAAAAAAAAAAAAATgAAAAD//QAAAAAAAAAAAAD/9QAAAAAAAAAAAAD/+wAAAAAAAAAAAAIAEQABAAcAAAAJAAoABwATABYACQBCAEoADQBYAGYAFgBoAGsAJQBwAIEAKQCDAIMAOwCGAIcAPACJAI0APgCVAJUAQwCkAKUARACoAKgARgCrALAARwCyAL0ATQDJAMoAWQDVANwAWwACABMAAQAHAAUACQAKAAUAEwAWAAIAQgBKAAIAWABZAAMAWgBjAAIAZABmAAMAaABrAAMAegCBAAEAgwCDAAYAhgCHAAEAiQCNAAEApAClAAgAqACoAAYAsgC9AAEAyQDKAAcA1QDXAAQA2ADYAAkA2QDcAAQAAgAWAFgAWQACAGQAZgACAGgAawACAHAAcwABAHUAegABAHwAhwABAIkAjgABAJAAkQABAJMAlAABALIAuwABAL4AvgABANUA1wADANgA2AAFANkA3AADAP8A/wAEAQEBAQAEAQUBBQAEAQ4BDgAEARABEAAEARIBEgAEARUBFgAEAR0BHgAEAAEAAAAKACYAKAACREZMVAAObGF0bgAYAAQAAAAA//8AAAAAAAAAAAAAAAAAAQABAAgAAgAAABQAAgAAACQAAndnaHQBAAAAaXRhbAEWAAEABAAUAAMAAAACAAIBkAAAArwAAAADAAEAAgEXAAAAAAABAAA=';
+const FONT_B = 'AAEAAAAPAIAAAwBwR0RFRgq8CrkAAFHIAAAAgkdQT1NO9wTJAABSTAAAEbhHU1VCuPq49AAAZAQAAAAqT1MvMmC//FQAAEwsAAAAYFNUQVTl58wyAABkMAAAAERjbWFwEgRFUwAATIwAAAMwZ2FzcAAAABAAAFHAAAAACGdseWZFD0rXAAAA/AAAQrZoZWFkI1uI4gAARoAAAAA2aGhlYQdSBqYAAEwIAAAAJGhtdHjCnzHMAABGuAAABVBsb2NhHUAMmAAAQ9QAAAKqbWF4cAFlAL0AAEO0AAAAIG5hbWUs4EytAABPvAAAAeJwb3N0/58AMgAAUaAAAAAgAAIACAAAAsICvAAHAAoAAHMBMwEjJyEHEzMnCAEUkgEUkTz+4DxpxmMCvP1EmpoBE/4AAwAIAAACwgNuAAcACgAOAABzATMBIychBxMzJyc3MwcIARSSARSRPP7gPGnGY1RylIECvP1EmpoBE/7ag4MA//8ACAAAAsIDeAYmAAEAAAAHAUUAqwC8//8ACAAAAsIDhAYmAAEAAAAHAUMAmwC8//8ACAAAAsIDlwYmAAEAAAAHAT0AhwC8//8ACAAAAsIDeQYmAAEAAAAHAT8AeQC8//8ACAAAAsIDXwYmAAEAAAAHAUgAzwC8//8ACP8sAuACvAYmAAEAAAAHAUwB8wAA//8ACAAAAsIDtQYmAAEAAAAHAUYAwwC8//8ACAAAAsIDfwYmAAEAAAAHAUcAYQC8AAIACAAAA7gCvAAPABMAAHMBIRUhFSEVIRUhFSE1IwcTMxEjCAGMAiD+0QEF/vsBM/5B/liXvxcCvH2feql9mpoBEwEsAAADAEwAAAJBArwAEAAZACIAAHMRMzIWFhUUBgcWFhUUBgYjJzMyNjU0JiMjNTMyNjU0JiMjTO1IbDwpJTE1OmhGh3oxOD42b2otNDoyXwK8LFlCKUUZGVM6QFoueTEpKzFwLioqLgABACP/9AK8AsgAIQAARSImJjU0NjYzMhYWFwcuAiMiBgYVFBYWMzI2NjcXDgIBgWaeWlqdZkh8XRl/EThIKj1fNTZgPitHNxF/GV18DF2jamqjXTNbOy8lNx89akZGaz0hOiYuPV40//8AI//0ArwDeAYmAA0AAAAHAUAAPAC8//8AI//0ArwDeAYmAA0AAAAHAUQAvAC8//8AI/8uArwCyAYmAA0AAAAGAUtRAP//ACP/9AK8A4QGJgANAAAABwFDALYAvP//ACP/9AK8A5kGJgANAAAABwE+ATQAvAACAEwAAAKZArwACgAXAABzETMyFhYVFAYGIyczMj4CNTQuAiMjTOBrpV1dpWtXVzBSPSIiPVIwVwK8Wp1nZp5agCI8US8vUTwi//8ATAAAApkDeAYmABMAAAAHAUQAbQC8//8AOAAAAscCvAYGABYAAAADADgAAALHArwAAwAOABsAAFM1IRUBETMyFhYVFAYGIyczMj4CNTQuAiMjOAFJ/vnga6VdXaVrV1cwUj0iIj1SMFcBLGRk/tQCvFqdZ2aeWoAiPFEvL1E8IgABAEwAAAILArwACwAAcxEhFSEVIRUhFSEVTAG7/s4BCP74ATYCvH2feql9AAIATAAAAgsDbgALAA8AAHMRIRUhFSEVIRUhFQE3MwdMAbv+zgEI/vgBNv7JcZSBArx9n3qpfQLrg4MA//8ATAAAAgsDeAYmABcAAAAHAUQAZAC8//8ATAAAAgsDhAYmABcAAAAHAUMAXgC8//8ATAAAAgsDlwYmABcAAAAHAT0ASgC8//8ATAAAAgsDmQYmABcAAAAHAT4A3AC8//8ATAAAAgsDeQYmABcAAAAHAT8APAC8//8ATAAAAgsDXwYmABcAAAAHAUgAkgC8//8ATP8sAikCvAYmABcAAAAHAUwBOwAAAAEATAAAAg0CvAAJAABzESEVIRUhFSERTAHB/sgBBP78Arx9qH3+5gABACP/9ALOAsgAJAAARSImJjU0NjYzMhYWFwcuAiMiBgYVFBYWMzI2NjcjNSEVDgIBkWulXl6la0BsUxxwETdCIUJmOjloRDNQMAOiASYCUo4MXaNqaqNdJkMrRhsqGD1qRkVsPSdGL2tVYIdH//8AI//0As4DhAYmACEAAAAHAUUAywDI//8AI//0As4DhAYmACEAAAAHAUMAvQC8//8AI/84As4CyAYmACEAAAAHAUoBGAAA//8AI//0As4DpQYmACEAAAAHAT4BOQDIAAEATAAAAqICvQALAABzETMRIREzESMRIRFMiQFEiYn+vAK9/ugBF/1EASf+2QACAAUAAALpAr0AAwAPAABTNSEVAREzESERMxEjESERBQLk/WOJAUSJif68AfZkZP4KAr3+6AEX/UQBJ/7Z//8ATAAAAqIDhQYmACYAAAAHAUMAsQC9AAEATAAAANUCvAADAABzETMRTIkCvP1E//8ATP/yAwcCvAQmACkAAAAHADIBIQAAAAIAPgAAAUMDbgADAAcAAHMRMxEDNzMHTImXcZSBArz9RALrg4P////OAAABTwOEBiYAKQAAAAcBQ//IALwAA///AAABMQOXAAsAFwAbAABTIiY1NDYzMhYVFAYjIiY1NDYzMhYVFAYDETMR7BsqKhscKSnEHCkpHBwpKRSJAw0qGxwpKRwbKikcHSgoHRwp/PMCvP1E//8ARgAAAN4DmQYmACkAAAAHAT4ARgC8////9wAAAP4DeQYmACkAAAAHAT//pQC8////8AAAATQDXwYmACkAAAAHAUj//AC8//8AIf8sAPMCvAYmACkAAAAGAUwFAAABAAj/8gHmArwAFAAAVyIuAic3FhYzMjY2NREzERQOAuczTzcgBnQQNSgeNiGIJkVdDiE0PBwsLDAcPjEBwv4WNFM6HwD//wAI//ICVgOGBiYAMgAAAAcBQwDPAL4AAQBMAAACkgK8AAsAAHMRMxEBMwEBIwMHFUyHAQOx/tgBM6njMwK8/uwBFP7E/oABIDbq//8ATP84ApICvAYmADQAAAAHAUoA1AAAAAEATAAAAgkCvAAFAABzETMRIRVMiQE0Arz9wX0A//8APAAAAgkDeAYmADYAAAAHAUD/TAC8//8ATAAAAgkC9wYmADYAAAAHAUIA7AA7//8ATP84AgkCvAYmADYAAAAHAUoApAAAAAIAAgAAAgkCvAADAAkAAHc1JRUDETMRIRUCATftiQE073CecP5zArz9wX0AAQBMAAADDQK8AAsAAHMRMxMTMxEjEQMDEUyVzMyUiNjYArz+0gEu/UQB5v7CAT3+GwABAEwAAAK5ArwACQAAcxEzAREzESMBEUyPAVaIiP6kArz+KgHW/UQB3/4h//8ATAAAArkDbAYmADwAAAAHAUAAPACw//8ATAAAArkDbAYmADwAAAAHAUQAvQCw//8ATP84ArkCvAYmADwAAAAHAUoBCwAA//8ATAAAArkDcwYmADwAAAAHAUcAfACwAAIATP8qArkCvAANABcAAEUiJzcWFjMyNTUzFRQGJREzAREzESMBEQIHOjQ1EBsKL4dc/e+PAVaIiP6k1h9uCQk/5e5VXNYCvP4qAdb9RAHf/iEAAAIAI//0AvACxwAPAB8AAEUiJiY1NDY2MzIWFhUUBgYnMjY2NTQmJiMiBgYVFBYWAYxqo1xcoWlqoVxboWhAYTc4YkE/Yzg4ZAxdo2lro1xdo2ppo119PWpFRmo9PWpGRWo9AAADACP/9ALwA24ADwAfACMAAEUiJiY1NDY2MzIWFhUUBgYnMjY2NTQmJiMiBgYVFBYWAzczBwGMaqNcXKFpaqFcW6FoQGE3OGJBP2M4OGQXdJaEDF2jaWujXF2jammjXX09akVGaj09akZFaj0CeoODAP//ACP/9ALwA4QGJgBCAAAABwFDAMAAvP//ACP/9ALwA5cGJgBCAAAABwE9AKwAvP//ACP/9ALwA3kGJgBCAAAABwE/AJ0AvP//ACP/9ALwA3gGJgBCAAAABwFBAN8AvAADACP/9ALwA18ADwAfACMAAEUiJiY1NDY2MzIWFhUUBgYnMjY2NTQmJiMiBgYVFBYWAzUhFQGMaqNcXKFpaqFcW6FoQGE3OGJBP2M4OGSEAYQMXaNpa6NcXaNqaaNdfT1qRUZqPT1qRkVqPQJ8cnIAAwAf//QC+ALHAAMAEwAjAABzATMBFyImJjU0NjYzMhYWFRQGBicyNjY1NCYmIyIGBhUUFhYfAl57/aHyaqNcXKFpaqFcW6FoQGE3OGJBP2M4OGQCvP1EDF2jaWujXF2jammjXX09akVGaj09akZFaj3//wAj//QC8AN/BiYAQgAAAAcBRwCFALwAAwAj//IEGALJAA8AHwArAABFIiYmNTQ2NjMyFhYVFAYGJzI2NjU0JiYjIgYGFRQWFgURIRUhFSEVIRUhFQGMaqNcXKFpX5FSUpBdPF00NV49P2E3N2MBDQG6/s4BCP74ATcOXaRraqRdWaJub6RbgTlpSUhqOTxrREVqPHMCvH2feql9AAACAEwAAAJMArwADAAVAABzESEyFhYVFAYGIyMVETMyNjU0JiMjTAEESnJAPmxHhoMuO0EzeAK8O2lFRGo96AFmPTAwPAAAAgBSAAECVQK9AA4AFwAAdxEzFTMyFhYVFAYGIyMVNTMyNjU0JiMjUox7SnJAPmxHhoAuO0EzdQECvG07aUVEajx8+T0wMD0AAgAj/9YC8ALIABUAKgAARScGBiMiJiY1ND4CMzIWFhUUBgcXJTI2Nyc3FzY2NTQmJiMiBgYVFBYWApJNJ140aqNcNWCCT2qhXCklRv6kGSoUU1hXEhM4YkE/Yzg4ZCpPGBldo2lQhWE1XaRqRXguR0YNC1NTWRxEJ0ZrPT1rRkVqPQAAAgBMAAACaAK8ABEAGwAAcxEhMhYWFRQGBxMjJyIiIyMVETMyNjY1NCYjI0wBBEpyQEo8opuPBg0HT3wfMR1BM3UCvDplQ0VpG/7v+PgBdRouHS04AP//AEwAAAJoA3gGJgBPAAAABwFA/+MAvP//AEwAAAJoA3gGJgBPAAAABwFEAGQAvP//AEz/OAJoArwGJgBPAAAABwFKAMkAAAABACj/9AI2AsgALAAARSIuAic3FhYXFjY1NCYnJy4CNTQ2MzIWFhcHJiYjIgYVFBYXFxYWFRQGBgE3NVxILweGDUIyNUM1LlszTiyDeENlRBKFDEAxMjktJ1xaZDxyDBovOiAoIjEBATAmIS0MGA01TjRjbydIMSkiMC4qISYKFxZyRj5dNAD//wAo//QCNgN4BiYAUwAAAAcBQP/zALz//wAo//QCNgN4BiYAUwAAAAcBRABzALz//wAo/y4CNgLIBiYAUwAAAAYBSwYA//8AKP/0AjYDhAYmAFMAAAAHAUMAbQC8AAEADgAAAjoCvAAHAABzESM1IRUjEeDSAizRAj99ff3BAP//AA4AAAI6A3gGJgBYAAAABwFEAGAAvAABAEL/8gJ+ArwAFQAARSImJjURMxEUFhYzMjY2NREzERQGBgFeV4BFiSVDLS1DJYlHgQ5Ee1QBt/5JLUMkJEMtAbf+SVR7RAACAEL/8gJ+A3IAFQAZAABFIiYmNREzERQWFjMyNjY1ETMRFAYGAzczBwFeV4BFiSVDLS1DJYlHgapxlIEORHtUAbf+SS1DJCRDLQG3/klUe0QC+oaG//8AQv/yAn4DeAYmAFoAAAAHAUUApgC8//8AQv/yAn4DhAYmAFoAAAAHAUMAlgC8//8AQv/yAn4DlwYmAFoAAAAHAT0AggC8//8AQv/yAn4DeQYmAFoAAAAHAT8AdAC8//8AQv/yAn4DeAYmAFoAAAAHAUEAtQC8//8AQv/yAn4DXwYmAFoAAAAHAUgAygC8//8AQv8zAn4CvAYmAFoAAAAHAU0BbwAH//8AQv/yAn4DtQYmAFoAAAAHAUYAvgC8AAEACAAAAsoCvAAGAABhATMTEzMBAR/+6ZPPzZP+6gK8/eYCGv1EAAABAAgAAAPRArwADAAAcwMzExMzExMzAyMDA9fPi46HiIiOi9GQhIYCvP4WAer+HQHj/UQB5v4a//8ACAAAA9EDcgYmAGUAAAAHAUMBIgCqAAEACgAAAp0CvAALAABzEwMzFzczAxMjJwcK/fijoqGj+P2lpKUBZgFW6Oj+q/6Z9vYAAQAHAAACgAK8AAgAAHMRAzMTEzMDEf/4nKChnPgBJwGV/vQBDP5s/tj//wAHAAACgANmBiYAaAAAAAcBQP//AKr//wAHAAACgANyBiYAaAAAAAcBQwB5AKr//wAHAAACgAOFBiYAaAAAAAcBPQBlAKoAAQAmAAACUgK8AAkAAHM1ASE1IRUBIRUmAXv+iAIp/oUBeIABvICA/kSAAP//ACYAAAJSA3gGJgBsAAAABwFA//kAvP//ACYAAAJSA3gGJgBsAAAABwFEAHkAvP//ACYAAAJSA5kGJgBsAAAABwE+APEAvAACAB7/9AHmAgAAGwAnAABXIiY1NDYzMyYmIyIGByc+AjMyFhYHAyMnBgYnMjY2NTUjIgYVFBbbWmNrYXYHLCkgNBJ0DjZXP0xlMQEDewITRRwgNB5LQTIoDFBJUFEuMRwdKCA9JzppSP7rOiIkbh4wGgIfHBYZAP//AB7/9AHmArwGJgBwAAAABgFAuAD//wAe//QB5gK8BiYAcAAAAAYBRUIA//8AHv/0AeYCyAYmAHAAAAAGAUMyAP//AB7/9AHmAtsGJgBwAAAABgE9HgD//wAe//QB5gK9BiYAcAAAAAYBPxAA//8AHv/0AeYCowYmAHAAAAAGAUhmAP//AB7/LAH+AgAGJgBwAAAABwFMAREAAP//AB7/9AHmAvkGJgBwAAAABgFGWgD//wAe//QB5gLDBiYAcAAAAAYBR/cAAAQAHv/0A1QCAAAQACYAPgBHAABlJy4CIyIGByc2NjMyFhUVByImNTQ2MzMVIyIGFRQWMzI2NTcUBiEiJiY1NDY2MzIWFhUhFhYzMjY3Fw4CAzMuAiMiBgYBZgYEECsrIS4RdSJqS2Vr8VdiYlekdzIwKSQzO2l+ARFKckFDdUxCb0P+kgVMMCk0DnYVQ1yn2AMiLhYVMSWoVi9DJBscKDpBfW9stFBJTE5UIyEbHkY6C29+Q3ZNTXZDRYVfMjsjHC4qPSABRR8mEhEmAAIAOf/0AjYCvAASACIAAEUiJicHIxEzETY2MzIWFhUUBgYnMjY2NTQmJiMiBgYVFBYWAVQzTBoFfYQZTDJFZTg4ZWckNyAfNyQiNh4eNQwrKEcCvP70JylAdVFQdkB5JEApKUAjJD8pKUAkAAEAHv/0Ag4CAAAdAABFIiYmNTQ2NjMyFhcHJiYjIgYGFRQWFjMyNjcXBgYBKk56RER4Tkt8HHwOOyQlOCAgOiUkOw59HXsMQ3dMTXZDSkYsHSMjPikpPSQmHyxHTv//AB7/9AIOArwGJgB8AAAABgFA4wD//wAe//QCDgK8BiYAfAAAAAYBRGQA//8AHv8tAg4CAAYmAHwAAAAGAUv5////AB7/9AIOAsgGJgB8AAAABgFDXgD//wAe//QCDgLdBiYAfAAAAAcBPgDcAAAAAgAe//QCGgK8ABIAIwAARSImJjU0NjYzMhYXETMRIycGBicyNjY3NS4CIyIGBhUUFhYBAEVlODhlRTFNGIR9BBlOECEzHgICHjQhJDcfIDcMQHZQUXVAKSYBC/1ERicreSE8JhQmOyEjQCkpQCQA//8AHv/0AsgCvAYmAIIAAAAHAUICGwAAAAMAHv/0AlsCvAADABYAJwAAQTUhFQEiJiY1NDY2MzIWFxEzESMnBgYnMjY2NzUuAiMiBgYVFBYWAQwBT/6lRWU4OGVFMU0YhH0EGU4QITMeAgIeNCEkNx8gNwIrVVX9yUB2UFF1QCkmAQv9REYnK3khPCYUJjshI0ApKUAkAAIAHv/0AhQC3QAgADAAAEUiJiY1NDY2MzIXJiYnByc3Jic3FhYXNxcHHgIHFAYGJzI2NjU0JiYjIgYGFRQWFgEZSXJAOmtHRDgIIBdKJDY2TxhEaihLJD4qLxIBQHFJIzIdHTQjITMdHTQMPm1HR2w+LSE3FjI1JB4SbgssHjM1Ki50g0VKc0F3IDckIzcfHzcjJDcgAAIAHv/0AhYCAAAXACAAAEUiJiY1NDY2MzIWFhUhFhYzMjY3Fw4CAzMuAiMiBgYBG0pyQUN1TEJvQ/6SBUwwKTQOdhVDXKfYAyIuFhUxJQxDdk1NdkNFhV8yOyMcLio9IAFFHyYSESb//wAe//QCFgK8BiYAhgAAAAYBQN8A//8AHv/0AhYCvAYmAIYAAAAGAURfAP//AB7/9AIWAsgGJgCGAAAABgFDWQD//wAe//QCFgLbBiYAhgAAAAcBPQBFAAD//wAe//QCFgLdBiYAhgAAAAcBPgDXAAD//wAe//QCFgK9BiYAhgAAAAYBPzcA//8AHv/0AhYCowYmAIYAAAAHAUgAjQAA//8AHv8zAh4CAAYmAIYAAAAHAU0BJAAHAAEAGAAAAYoCzwAXAABzESM1MzU0NjMyFhcHJiYjIgYVFTMVIxFrU1NSVB1BGzEQGgsbGnt7AYpqMlBZFA5fCAglKRxq/nYAAAIAHv8rAiACAAAiADIAAEUiJiYnNx4CMzI2NjU1BgYjIiYmNTQ2NjMyFhc1MxEUBgYDMjY2NTQmJiMiBgYHHgIBGjlYPBM0Di5AKig9IxlQM0VlODhlRTNQGYRAdUUiMxwdMyIjNh4BAR431RAaDWoIFQ8fQTIwJy08bEpOcz8vK07+QlR5PgFSIz0nKDwiIjwoJz0j//8AHv8rAiACvAYmAJAAAAAGAUVpAP//AB7/KwIgAsgGJgCQAAAABgFDWQD//wAe/ysCIALJBiYAkAAAAAcBSQDYAAD//wAe/ysCIALdBiYAkAAAAAcBPgDXAAAAAQA6AAACCgK8ABUAAHMRMxE2NjMyFhYVESMRNCYmIyYGFRE6hBlKLjxTLIQYKhwzNwK8/vglJzBlUP7lAQAzOBkBQD/++gAAAgAAAAACCgK8AAMAGQAAUTUhFQERMxE2NjMyFhYVESMRNCYmIyYGFREBUP7qhBlKLjxTLIQYKhwzNwIrVVX91QK8/vglJzBlUP7lAQAzOBkBQD/++v///7cAAAIKA5AGJgCVAAAABwFD/7EAyP//ADcAAADPAt0GJgCZAAAABgE+NwAAAQBBAAAAxQH0AAMAAHMRMxFBhAH0/gz//wAvAAABNAK8BiYAmQAAAAcBQP8/AAD///+/AAABQALIBiYAmQAAAAYBQ7kAAAP/6gAAARwC2wALABcAGwAAUyImNTQ2MzIWFRQGIyImNTQ2MzIWFRQGAxEzEdcbKSkbHCkpxBwpKRwcKSkKhAJRKhscKSkcGyopHB0oKB0cKf2vAfT+DP///+gAAADvAr0GJgCZAAAABwE//5cAAP////cAAAEPAqMGJgCZAAAABgFO7QD//wAR/ywA4wLdBiYAmQAAACYBPjcAAAYBTPUA//8AN/8pAfIC3gQmAJkAAAAmAT43AAAHAKEBBgAAAAL/wv8pAOwC3gALABkAAFMiJjU0NjMyFhUUBgMiJzcWFjMyNREzERQGniAuLiAgLi6POTQ1EBsKMIRcAkIuICAuLiAgLvznH20ICT8CEf3mVVwAAAH/wv8pAOAB9AANAABXIic3FhYzMjURMxEUBi85NDUQGwowhFzXH20ICT8CEf3mVVz////C/ykBWwLIBiYAogAAAAYBQ9QAAAEAOQAAAhQCvAALAABzETMRNzMHEyMnBxU5hKudvcybhTcCvP5+utP+38I8hv//ADn/OAIUArwGJgCkAAAABwFKAJMAAAABADkAAAC9ArwAAwAAcxEzETmEArz9RP//ACcAAAEsA3gGJgCmAAAABwFA/zcAvP//ADkAAAFrArwGJgCmAAAABwFCAL8AAP//ABX/OADEArwGJgCmAAAABgFKAgAAAgAIAAABFgK8AAMABwAAdzUlFQMRMxEIAQ7JhOZqimr+kAK8/UQAAAEAOQAAAzgCAAAkAABzETMXNjYzMhYXNjYzMhYVESMRNCYmIyYGFREjETQmJiMmBhUROXwGF0gsPVMTFlA1WFyEFiYaMDSEFScaMDMB9EEmJzQ2Mzdvc/7iAQAzOBkBQD/++gEAMzgZAUA//voAAQA5AAACCQIAABUAAHMRMxc2NjMyFhYHESMRNCYmIyYGFRE5fAYYSzA7VCwBhBcqHDM3AfREJykwZVD+5QEAMzgZAUA//vr//wA5AAACCQK8BiYArAAAAAYBQNUA//8AOQAAAgkCvAYmAKwAAAAGAURVAP//ADn/OAIJAgAGJgCsAAAABwFKAKAAAP//ADkAAAIJAsMGJgCsAAAABgFHFAAAAQA5/ykCCQIAAB8AAEUiJzcWFjMyNRE0JiYjJgYVESMRMxc2NjMyFhYHERQGAVc4NDUQGwovFyocMzeEfAYYSzA7VCwBW9cfbQgJPwEdMzgZAUA//voB9EQnKTBlUP6/VVwAAAIAHv/0AicCAAAPAB8AAEUiJiY1NDY2MzIWFhUUBgYnMjY2NTQmJiMiBgYVFBYWASRMd0NCdkxNdkJCdUwlOB8gOSUkOSAgOgxDdk1NdkNDdk1NdkN6JD8pKT8kJD8pKT8kAP//AB7/9AInArwGJgCyAAAABgFA2wD//wAe//QCJwLIBiYAsgAAAAYBQ1YA//8AHv/0AicC2wYmALIAAAAHAT0AQgAA//8AHv/0AicCvQYmALIAAAAGAT8zAP//AB7/9AIyArwGJgCyAAAABwFBAHUAAP//AB7/9AInAqMGJgCyAAAABwFIAIoAAAADABH/9AIxAgAAAwATACMAAHMBMwEXIiYmNTQ2NjMyFhYVFAYGJzI2NjU0JiYjIgYGFRQWFhEBrXP+U51NdkNCdkxMd0JCdUwkOCAgOSUlOCAgOgH0/gwMQ3ZNTXZDQ3ZNTXZDeiQ/KSk/JCQ/KSk/JP//AB7/9AInAsMGJgCyAAAABgFHGwD//wAe//QDzwIABCYAsgAAAAcAhgG5AAAAAgA+/zgCOwIAABIAIgAAVxEzFzY2MzIWFhUUBgYjIiYnERMyNjY1NCYmIyIGBhUUFhY+fAYZTTNFZTg4ZUUyTBl1JDcgHzckIjYeHjXIArxHKCtAdVFQdkAqJv70ATUkQCkpQCMkPykpQCQAAgA5/zgCNgK8ABIAIgAAVxEzETY2MzIWFhUUBgYjIiYnERMyNjY1NCYmIyIGBhUUFhY5hBlMMkVlODhlRTJMGXUkNyAfNyQiNh4eNcgDhP70JylAdVFQdkAqJv70ATUkQCkpQCMkPykpQCQAAgAe/zgCGwIAABIAIgAARREGBiMiJiY1NDY2MzIWFzczEQMyNjY1NCYmIyIGBhUUFhYBlxlMMkVlODhlRTNOGAV9+SI1Hh41IyQ2ICA3yAEMJipAdlBRdUAsJ0f9RAE1JEApKUAjI0ApKUAkAAABADkAAAFuAfYADAAAcxEzFTY2MxUiBgYVETmEH18zLlEyAfRcLy+AFjIn/vn//wA5AAABbgK8BiYAvwAAAAcBQP9qAAD////rAAABbgK8BiYAvwAAAAYBROsA//8AL/84AW4B9gYmAL8AAAAGAUocAAABAB7/9AG+AgAAKwAAVyImJic3FhYzMjY1NCYnJyYmNTQ2MzIWFhcHJiYjIgYVFBYXFx4CFRQGBvQwVEAScQ80IiEkHRkuSFNjWy9ROgttBzYbGx0cGkExOxs1WwwdNyg0GCMTEhIRBgwTUzZNVBwyITIUGRcUDREGEAw1QR8tRSb//wAe//QBvgK8BiYAwwAAAAYBQLMA//8AHv/0Ab4CvAYmAMMAAAAGAUQzAP//AB7/LwG+AgAGJgDDAAAABgFLxAH//wAe//QBvgLIBiYAwwAAAAYBQy0AAAEAOQAAAigCyAAqAABzETQ2NjMyFhYVFAYHFhYVFAYGIyM1MzI2NTQmIyM1MzI2NjU0JiMiBhUROTxsR0VpOyMhLi04ZkQ2KTE4ODAoCSgyFzorLzkB7UhhMi9aQyxKGhhUPj5WLnkwJSgvfBYqHSkvODH+EwABAA7/9AF3ApAAFwAARSImNTUjNTM1MxUzFSMVFBYzMjY3FwYGAQdTVVFRhH19HBsKGA0uGDsMUkzycJyccNUgIQkJYxIXAAACAA7/9AGbAsYAFwAbAABFIiY1NSM1MzUzFTMVIxUUFjMyNjcXBgYDNzMHAQdTVVFRhH19HBsKGA0uGDskJHc2DFJM8nCcnHDVICEJCWMSFwJGjIwAAAEAMP/0Af8B9AAVAABXIiYmNREzERQWFjMWNjURMxEjJwYG6zxTLIQXKxs0NoR8BRlLDDBlUAEb/wAyORkBQT4BBv4MRCYq//8AMP/0Af8CvAYmAMsAAAAGAUDWAP//ADD/9AH/ArwGJgDLAAAABgFFYAD//wAw//QB/wLIBiYAywAAAAYBQ1AA//8AMP/0Af8C2wYmAMsAAAAHAT0APAAA//8AMP/0Af8CvQYmAMsAAAAGAT8uAP//ADD/9AItArwGJgDLAAAABwFBAHAAAP//ADD/9AH/AqMGJgDLAAAABwFIAIQAAP//ADD/LAIeAfQGJgDLAAAABwFMATAAAP//ADD/9AH/AvkGJgDLAAAABwFGAHgAAAABAAcAAAIlAfQABgAAcwMzExMzA9TNiIeHiM0B9P6jAV3+DAABAAoAAAM5AfQADAAAcwMzExMzExMzAyMDA7SqhmhpgmdphqqCa2wB9P6+AUL+wwE9/gwBUv6u//8ACgAAAzkCyAYmANYAAAAHAUMA2AAAAAEACgAAAg4B9AALAABzEyczFzczBxMjJwcKuq2cWlmcrLidZGUBA/GGhvL+/peXAAEABP8sAjwB9AAUAABXIiYnNxYWMzI2NzcDMxMTMwMOAp0bQRkxER0LFSAKFeKRjoiR4xUuQ9QVDmsJCxcWMwHu/qcBWf3hMk0qAP//AAT/LAI8ArwGJgDZAAAABgFA2wD//wAE/ywCPALIBiYA2QAAAAYBQ1YA//8ABP8sAjwC2wYmANkAAAAGAT1CAAABACAAAAG9AfQACQAAczUTIzUhFQMzFSD39wGc9/hgASdtX/7XbAD//wAgAAABvQK8BiYA3QAAAAYBQKoA//8AIAAAAb0CvAYmAN0AAAAGAUQqAP//ACAAAAG9At0GJgDdAAAABwE+AKIAAAACABUBiQEwAsMAEAAlAABTJy4CIyIGByc2NjMyFhUVByImNTQ2MzMVIyIVFBYzMjY1NxQG1gMBBxcaEBUKVRVCMEZNrDU6OzRcOTITERkeIDoBkJUYJRQODhwkKUxApwcwLC4uOSILDR8aCUBHAAIAFQGJAVUCwwAOABoAAFMiJiY1NDY2MzIWFRQGBicyNjU0JiMiBhUUFrYvSSkpSC9HWSlILhojIxsbIiMBiShHLi5HKFhFLkcoWSYeHicnHh4mAAIAI//0AmUCyAAPAB8AAEUiJiY1NDY2MzIWFhUUBgYnMjY2NTQmJiMiBgYVFBYWAURVgkpKgVVVg0pKglUtRygoRy4tRicnRwxdo2pqo11do2pqo118PWtGRmw9PWxGRms9AAABAC8AAAFGArwACwAAcxEGBic1FjY2NzMRwyNKJxk6ORd0AhAYGwJ8Ah0vF/1EAAABABgAAAIXAskAJAAAczU0NjY3Nz4CNTQmJiMiBgYHJz4CMzIWFhUUBgcHBgYHIRUzJEArahYnGRkwIx4vHgaNCkJrRE5wPUc+Xx0qCwE/ZR1GRh5MDyYtFRoqGBgoFxgyVjU4YUBBZSxFFDAdeAAAAQAn//QCBgLIADAAAEUiJiYnNx4CMzI2NTQmJiMjNTMyNjU0JiYjIgYGByc+AjMyFhYVFAYHFhYVFAYGARk+ZEMNfgcYKiIyOx5DNioqRkQYLB0TKCEKfA5FYDNBaDw9MzpEQmwMJUUvJQwjGDcsHi4ZcDAqGCYWDR0bJTFDIzFWODdNFxtZPD9bMAACABoAAAJbArwACgANAABhNSE1ATMRMxUjFSUzEQFg/roBNpF6ev7GuYptAcX+Q3WK/wEPAAABACz/9AIfArwAIQAARSImJic3FhYzMjY1NCYjIgYHJxMhFSEHNjYXMhYWFRQGBgElMGVRE30WPSE0QT80HzQOeyoBjP7pFBtCJjleN0BwDCBALyUgHj81MUIcExsBf3yoDxMBN18/R2w9AAACACX/9AImAsgAHwAvAABFIi4CNTQ+AjMyFhcHJiYjIgYXJzY2MzIWFhUUBgYnMjY2NTQmJiMiBgYVFBYWAStHYz8dIkVsTDdpKkQfRx5NWAIbF2BCQ2c7PnFMITQeHjQhITUeHjUMM1p3RVCPbj4gHmQWFIiTEzdCPmtCQWc6dB40IiI1Hx81IiI0HgAAAQAhAAACDgK8AAYAAHMBITUhFQFdARn+qwHt/ucCP31l/akAAwAq//QCOgLIABsAKQA1AABFIiYmNTQ2NyYmNTQ2NjMyFhYVFAYHFhYVFAYGJzI2NTQmIyIGBhUUFhYTMjY1NCYjIgYVFBYBMVR2PT87MDM5bEtMbDo0MDtAPnZVN0ZGNyQ3ICA3JDA9PTAvPDwMMVc6P18aF1E0OFYwMFY4NFEXGl8/OlcxcjcrLzoaMB8dLBkBODQoKzU1Kyg0AAACAB7/8wIfAscAHwAvAABBMh4CFRQOAiMiJic3FhYzMjYnFwYGIyImJjU0NjYXIgYGFRQWFjMyNjY1NCYmARlHYz8dIkVsTDdpKkMgRx1OWQQcF2BDQmg6PnFMITQeHjQhITQfHzQCxzNad0RRj20/IR1kFRWJkhI3Qz9qQ0JlOnMeNCIiNh4eNiIiNB4AAgAhARgA1QK9AAQADAAAUxE3MxEDNRY2NxcGBncKVLQXMxY/J04BGAFvNf5cARJaAiMYPSwuAAACABEBGAFQAsQAHgAjAABTJzQ2Njc3NjY1NCYjIgYHJz4CMzIWFRQGBwcOAgc1NzMVgmEYKxszEiIcHBUdBWYGKUMrSVQvJjMOHBVjSeYBUA8QKywTIwwiEhQZGxIRIDUiSzwrPBojChsbQUcQVwAAAgAbAREBSALDABgAMQAAUyImJzcWFjMyNjU0JiYjIzUzMhYWFRQGBic1MzI2NTQmIyIGByc+AjMyFhYVFAYGI7c9VQpeBhcbFxwLHx4hHS5QMipCYSEkHhkVEB4HXAYtPyInQSYyTikBETczFQ0dGhYMFw1AHzgmJzUcyjsZFRIYEhgVIy8YHjMjKDMZAAMAEgEYAXYCvAADAAgADQAAUycTFwM1NyEVBxEnMxFZR7c68TYBLqAMagGLJQEMN/7bUARUSAFwNP5cAAH/TQAAAZECvAADAABjATMBswHhY/4fArz9RP//ACEAAANGAr0EJgDtAAAAJwDxARgAAAAHAO4B9v7o//8AIQAAAzECvQQmAO0AAAAnAPEBGAAAAAcA8AG7/uj//wAbAAADfALDBCYA7wAAACcA8QFjAAAABwDwAgb+6P//ACEBfADVAyEGBgDtAGT//wARAXwBUAMoBgYA7gBk//8AGwF1AUgDJwYGAO8AZAABACz/8QDMAJIACwAAVyImNTQ2MzIWFRQGfCEvLyEhLy8PMCEgMDAgITAAAAEAHf+OAOMAegADAABXNzMHHT2JYnLs7AAAAgBG//8A5wH1AAsAFwAAUyImNTQ2MzIWFRQGAyImNTQ2MzIWFRQGliEvLyEhLy8gIS8vISEvLwFUMCEgMDAgITD+qy8hIS8vISEvAAIAI/+OAOkB8gALAA8AAFMiJjU0NjMyFhUUBgM3MweVIS8vISEvL5M9iWIBUi8hIS8vISEv/jzs7P//ACz/8QKZAJIEJgD6AAAAJwD6AOYAAAAHAPoBzQAAAAIATP/xAOwCvAADAA8AAHcDMwMHIiY1NDYzMhYVFAZcCZIJQCEvLyEhLy/kAdj+KPMvISEvLyEhLwACAEz/NQDsAgAAAwAPAABTEyMTNzIWFRQGIyImNTQ23AmSCUAhLy8hIS8vAQ3+KAHY8y8hIS8vISEvAAACABf/8QHeAsgAGAAkAAB3Jzc2NjU0JiMiBgcnNjYzMhYWFRQGBg8CIiY1NDYzMhYVFAajBUo0Qz4yIzMKeBRxU0ZsPS5VOAI/IS8vISEvL8mwBQM2NCw6IxoiQlA5Y0E1VDQHXtgvIiEvLyEiLwAAAgAH/yoBzwIAABgAJAAAQRcHBgYVFBYzMjY3FwYGIyImJjU0NjY/AjIWFRQGIyImNTQ2AUMESTVCPjEkMwp4E3NTRms+L1U4Aj8hLy8hIS8vASmwBgI3Myw6IxoiQ085ZEA2UzMHX9cvISEvLyEhLwD//wAyAQIA0gGiBAcA+gAGARAAAQByAKYBYgGUAA8AAHciJiY1NDY2MzIWFhUUBgbqITcgIDchITcgIDemITYhITUgIDUhITYhAAAFADQBXwG0AswAAwAHAAsADwATAABBJzcXByc3FwcnNxcHJzMHByc3FwE8Yjd53E55Nye1HqwsDmAPFxSsHgFhnyiOOzmOKAwsXEggurogQEdbAAAEAAoAAAJtArwAAwAHAAsADwAAYRMzAyU3IQcFEzMDAzchBwFBbmFu/mgNAjIN/i5uYW6gEAIyEAK8/US1XV21Arz9RAGXXV0AAAEAD/+sAaEC6wADAABXATMBDwEUfv7uVAM//MEAAAEAD/+sAaEC6wADAABFIwEzAaGA/u5+VAM/AAABADYA8QFiAWIAAwAAdzUhFTYBLPFxcQABAAAA8QImAWIAAwAAdTUhFQIm8XFxAAABAAAA8QRMAWIAAwAAdTUhFQRM8XFxAAABABH/jwGhAAAAAwAAVzUhFREBkHFxcQABADD/nAFYAyAAEQAAVy4CNTQ2NjczDgIVFBYWF9YuTCwsTC6CLkwsLEwuZD2PoFZXn489QJKdU1KekUEAAAEAJv+cAU4DIAARAABXIz4CNTQmJiczHgIVFAYGqIIvSywsSy+CL0ssLEtkQZGeUlOdkkA9j59XVqCPAAIANv+cAVQDIAASACUAAFM1MjY2NTQ+AjMVIgYGFRQGBhMiLgI1NCYmIzUyFhYVFBYWFzYmKBARK0o6HyEMI1vKOkorERAoJlRbIw0hHgFTPBMxLVZwQBpqIE1IRUwd/kkaQHBWLTETPB1LRkdOHwEAAAIANv+cAVQDIAASACUAAEEiJiY1NCYmIzUyHgIVFBYWMwE1PgI1NDY2MxUiBgYVFA4CAVRUWyMMIR86SisRECgm/uIfIQwiXVMmKBARK0oBUx1MRUhNIGoaQHBWLTET/g1qAR9OR0ZLHTwTMS1WcEAaAAEATP+cASADIAAHAABXETMVIxEzFUzUYGBkA4R3/Wp3AAABADj/nAEMAyAABwAARSM1MxEjNTMBDNRgYNRkdwKWdwD//wAd/44A4wB6BAYA+wAAAAIACP+OAZIAegADAAcAAFc3MwchNzMHzD2JYv7YPohicuzs7OwAAgAIAdIBkgK+AAMABwAAUwcjNyEHIzfOPohiASg+iGECvuzs7OwAAAIADQHQAZcCvAADAAcAAFM3MwchNzMH0T2JYv7YPYliAdDs7OzsAAABAAgB0ADOArwAAwAAUwcjN84+iGICvOzs//8ADQHQANMCvAQHAPv/8AJC//8ALwBgAkUB9AQnARsA6wAAAAYBGwAAAAIAMwBgAkkB9AAFAAsAAHcjNyczFxcjNyczF8qXj4+XlFeXjo6XlGDKysrKysrKAAEALwBgAVoB9AAFAAB3JzczBxfDlJSXj49gysrKygAAAQA2AGABYQH0AAUAAHcjNyczF82Xj4+XlGDKysr//wA8AcwBYALMBCYBHgAAAAcBHgCnAAAAAQA8AcwAuQLMAAMAAFMDMwNKDn0OAcwBAP8AAAIAI/8uA70CywBDAFIAAEUiLgI1ND4CMzIeAhUUBgYjIiYnBgYjIiYmNTQ2NjMyFhc1MxEUFjMyNjY1NC4CIyIOAhUUHgIzMjY3FwYGAzI2NycmJiMiBgYVFBYWAgRqsIBHRoGwamCidkE1XDwzSQocUzM9XjU1Xj0vThtuGBMdLBkzW35LVYxmODhmjFUjUBs2Km4/Lj8GAQZCMCM1HyE30kR8qWVmqXxERHypZk54RTU2JCo9bEVGaj0jIDn+lxkVLlE1UYZjNjZjhlFRhmI2FRFNGR8BTj0xKC87IDkmJTshAAEAKv/zAosCyQA8AABXIiYmNTQ2Njc3PgI1NCYjIgYVFBYXFxMjJycuAjU0NjYzMhYWFRQGBgcHDgIVFBYzMj4CNTMUBgb+PmA2HDIfhBAlHSogHikgFYX1mrqMGyMQM1c2O1w1KlE6RxAbEC8lKlJDJntcog0wVDcmQDcVWwscJxkdISIbGicaoP7Y3qojNS0XMEorK0wzKUVGKDELHCMXIiwaNEwxXI9QAAAEAA//rAH9ArwACgAOABIAFgAAZSImJjU0NjYzMxEDETMRMxEzEQM1MxUBAEdsPj5sRzAiYC9glUDoPWpERWk7/iz+xAMQ/PADEPzwApN9fQAAAgA6/6UBzwLIACkAVAAARSImJic3FhYXMjY1NCYnJyYmNTQ2MzIWFhcHJiYjIgYVFBYXFxYWFRQGJyImJic3HgIzMjY1NCYnJyYmNTQ2MzIWFhcHJiYjIgYVFBYXFxYWFRQGAQs3WTkIZQk2Jys0KiRHO0tnXDJLMw1eCTglJiwkHkhFTWVfMVE0B1AHJC0UKDIqJUY7S2ZdNE01DWQJMyYpLSUeR0ZMZVskOSEgHCcBJR8bIwkSEEs8TFYfNyYeGyUlIRkeBxMSVzZIWPMlOyIbER8SJB8aIwkTEEs8TFYeNyUgGyUlIRoeBxIRWDZIWAADACP/9QL2AsgAEwAzAEMAAEUiLgI1ND4CMzIeAhUUDgInIiYmNTQ2NjMyFhcXBycmJiMiBhUUFjMyNjc3FwcGBgcyNjY1NCYmIyIGBhUUFhYBjU2FYjY2YoVNTYRiNjZihE05VC0tUzkwVhcNUQ0NKhUrMjMrFisPCFQLGFcyT3hFRXlOTnlGRnkLNmKETU6EYjY2YoROTYRiNqMxWTw8WTEzKxofExQXPDExPB0XDx4VMDlLRnxPUHxGRnxQT3xGAAQAHgCdAkkCyAATACMAMQA6AABlIi4CNTQ+AjMyHgIVFA4CJzI2NjU0JiYjIgYGFRQWFicRNzIWFRQGBxcjJyMVNTMyNjU0JiMjATQ6ZUwrK0xlOjllTCsrTGU5Pl41NV4+P141NV4rci88HRlCSjgmLxIXGBMtnStMZTk6ZUwrK0xlOjllTCtCNWA+QF42Nl5APmA1SQEjATYrHC0MbmJinhUQEBUAAAIACQEYA0cCvAALABMAAEEnESMRMxc3MxEjEQERIzUhFSMRAmx4Y21ubm1j/Z96AVZ5AXOv/vYBpKOj/lwBC/71AUlbW/63AAIAJgGmAVQCzAAPABsAAFMiJiY1NDY2MzIWFhUUBgYnMjY1NCYjIgYVFBa9KUUpKUUpKEYpKUUpFiEgFxYhIQGmKEQpKEInJ0IoKUQoWCQZFyIiFxkkAAABAEz/JAC0AxYAAwAAVxEzEUxo3APy/A4AAAIAZP8kAMwDFgADAAcAAFMRMxEDETMRZGhoaAFeAbj+SP3GAbj+SAACAB0AAAHKArwABQALAABzEyczBxMBNRc3FSexHRd6Fx3+5tfW1gG+/v7+QgGCehcXehcAAwAb/zgBzAK8AAkADwAVAABXNyc3JzMHFwcXJTUXNxUnAzUXNxUnrx0RERd6FxERHf7q19bW29fW1sj8xsT+/sTG/MN0FBR0FAF2dBQUdBQAAAIAHgAAAg4CvAADACEAAHMRMxEnIiYmNTQ2NjMyFhcHJiYjIgYGFRQWFjMyNjcXBgb9SBtOekREeE5LfBx8DjskJTggIDolJDsOfR17Arz9RGJDd0xNdkNKRiwdIyM+KSk9JCYfLEdOAAAGAEQAdwISAkUADwATAB8AIwAnACsAAGUiJiY1NDY2MzIWFhUUBgYHJzcXNzI2NTQmIyIGFRQWJyc3FxMnNxcnJzcXAS06WzQ0Wzk6WzQ0WtlJck0pJCwtJCMtLUp7Sny+cUxvd0x5Spo0WDg3WDMzWDc4WDQjSnRJHi4mJS0tJSYueXhKef6rcUhvykhySgACACj/mQIBAwwAKwAvAABlIiYmJzcWFhcWNjU0JicnLgI1NDYzMhYWFwcmJiMiBhUUFhcXFhYVFAYGBxEzEQEcQGhDCXoLOy0vOy8pUi5GJnVsPFs+EHoKOSwrMiciU1FZNmZ+bhgoRCckHisBASojHCkKFA0wRy9ZZCJBLSUdKykkHSMIFRRnPzlULn8Dc/yNAAMADv/0Ap4CyAAhACUAKQAARSImJjU0NjYzMhYWFwcuAiMiBgYVFBYWMzI2NjcXDgIBNSEVJTUhFQGOWo1PT4xaP2pQFXgNLjohMU0rLE4yIzkrDnkWUGv+QQHJ/jcByQxdo2pqo10xWDovIzUdPWpGRWw8HzckLjtbMwEMRkZ2RkYAAAEALAAAAi0CyAAiAABzNTMyNjU1IzUzNTQ2NjMyFhYVJzQmIyIGFRUzFSMVFAchFSwUFR5HRzhlQ0BiOIUxJSgyzc0XAUx9JBlea2pIYTIvXkcLKS44MWprUighfQAFAAcAAAJNAsEAAwAHAAsADwATAABBJxMzAREzESU1IRUlNSEVJQMzEwFre8Oa/pmJ/ugBpf5bAaX+7uOaxAEjHwF//T8BUP6wsExMcUxMAgGe/oEAAAIAVQBDAiMCEQADAAcAAGURMxElNSEVAQdr/uMBzkMBzv4ysWtrAAACAG0AWwILAfkAAwAHAABlATcBBScBFwHB/qxKAVT+rEoBU0pbAVRK/qxKSgFUSgADAG8ASgIJAgkAAwAPABsAAHc1IRUHIiY1NDYzMhYVFAYDIiY1NDYzMhYVFAZvAZrNGCMjGBgkJBgYJCQYGCMj821tqSMYGSMjGRgjAUgkGBgjIxgYJAAAAgB0AJACBAHDAAMABwAAUzUhFQU1IRV0AZD+cAGQAVhra8hrawABAIQATwH5AgUABgAAdzU3JzUFFYTu7gF1T3dlY3ejbgAAAQB/AE8B9AIGAAYAAEEVBxcVJTUB9O7u/osCBndmYnijbwAAAwBVABICIwJIAAMABwALAABTNSEVATUhFSURMxFVAc7+MgHO/uRrAUJlZf7QXFyQAab+WgAAAgCCAKEB8AGEAAMABwAAUzUhFQc1MxWCAW5tbQEXbW124+MAAQA2ALYCZQHDABwAAGUiJiYnJiYjIgYHIz4CMzIWFxYWMzI2NzMOAgG+JTopEBEfFx0dBWoBLEsuNlAZCyMVGh8EagIrSrYYJhYXIiYgOVozJi8TJSQiOVozAAACAEoBdQH7ArwAAwAHAABBAzMTIRMzAwGHonmd/k+beJ4BdQFH/rkBR/65AAMAMP84Af8B9AAOABQAGQAARSImNzcUFhYzFjY1MxQGBREzEQcRNycRMxEBEEVQATgXKxs0Ni1N/tWEDNsIhAxvcx4yORkBQT53g7wCvP5lAf7gyFwBmP4MAAUAKf/xAwQCzAADABMAHwAvADsAAHMBMwEFIiYmNTQ2NjMyFhYVFAYGJzI2NTQmIyIGFRQWASImJjU0NjYzMhYWFRQGBicyNjU0JiMiBhUUFloB8YT+DAGGL0opKUovMEkqKkkwHyYmHx4nJ/6JMEkqKUowMEkpKUowHycnHx4mJgK8/UQPLE8yM04sLU0zMk8sWDEkJDExJCQxASksTzIzTiwtTTMyTyxYMSQkMDAkJDEAAAIAGAJRAaQC2wALABcAAEEiJjU0NjMyFhUUBiEiJjU0NjMyFhUUBgFfGykpGxwpKf7iHCkpHBwoKAJRKhscKSkcGyopHB0oKB0cKQABAAACRQCYAt0ACwAAUyImNTQ2MzIWFRQGTB4uLh4fLS0CRS0fHy0tHx8tAAEAUQIyAVkCvQADAABTJzMX1IOUdAIyi4sAAQDwAjIB9gK8AAMAAFM3MwfwcpSBAjKKigACAAICMgG+ArwAAwAHAABTNzMHITczB9BkinX+uWKJcwIyioqKigAAAQASAh4ArAK8AAMAAFM3MwcSJHY1Ah6engACAAYCPQGHAsgABAAJAABBJzUzFyE3MxUHAQ+MiHz+f3yIjAI9gwiLiwiDAAIAAAIyAYECvAAEAAkAAFM1NzMHIyczFxWFg3l8iXx5gwIyA4eKiocDAAEAAAIpAXUCvAAPAABTIiYmNTMUFjMyNjUzFAYGuzZVMHolHBwkejBTAiklQysYHh4YK0MlAAIALAIaARcC+QAPABcAAFMiJiY1NDY2MzIWFhUUBgYnMjU0IyIVFKIgNiAgNiAgNSAgNSAiIiMCGh4yHyAyHh4yIB8yHkwjJCQjAAABAFkCJQHNAsMAGAAAQSIuAiMiBgcjPgIzMh4CMzI2NzMGBgFWIScWFA8MEQZZBR0zIyMnGBQPDw0CWQc5AiUWHBYOGCk3HBYcFhYROEUAAAH/9AIxATgCowADAABDNSEVDAFEAjFycgAAAQAAAjwAxgLJAAMAAFMHIzfGPohiAsmNjQABABP/OADC/84AAwAAVzczBxMugUrIlpYAAAEApv8uAX0ABgAVAABFIiYnNxYWMzI2NTQmJzcXBxYWFRQGAQYWMBoUDx0MERghIB5MDSMjPNIODz8ICgwPFBQCSQYdDC0bKzYAAQAc/ywA7gAFABQAAFciJiY1NDY3FwYGFRQWMzI2NxcGBqQmPiQuH2YeKg8MDRMFJw8k1BkwJSA4EwUVMRkLDgYDUwkJAAEAEv8sAPoAMgAWAABXIiYmNTQ2NjcXDgIVFBYzMjY3FwYGqytGKCZCKRgcHQoWEw8ZCicRJ9QXLCEiODAYARotJxMTFQQEUgoIAAABAAoCMQEiAqMAAwAAUzUhFQoBGAIxcnIA//8ALAJRAbgC2wQGAT0UAP//AAACMgEIAr0EBwE//68AAP//AAICMgEHArwEBwFA/xEAAP////QCMQE4AqMEBgFIAAD//wAK/y4A4QAGBAcBS/9kAAAAAAABAAABVABVAAYAZgAHAAEAAAAAAAAAAAAAAAAAAwABAAAAAAAZADkARQBRAF0AaQB1AIEAjQCZALwA7wEjAS8BOwFGAVIBXgGDAY8BlwHEAdoB+AIEAhACHAIoAjQCQAJMAmAClwKjAq8CuwLHAt4C/QMJAxUDIQM0A0ADbAN4A4QDkAObA74DygPkA/AD/wQLBBcEIwQ5BFIEaAR0BIAEjASYBMIE9AUtBTkFRQVRBV0FlQXOBdoGHQZABmQGpgbRBt0G6Qb1BzkHRQdRB1wHaAd5B4UHqQfUB+AH7Af4CAQIEAgcCCgINAhICGQIcAiJCJ4Iqgi2CMII2AjkCPAI/Ak4CUMJTglZCWQJbwl6CYYJkQmcCgIKOApnCnIKfQqICpMKnwrXCuMLIgttC6ELrAu3C8ILzgvaC+UL8Qv9DCEMbAx3DIIMjgyaDL4M6Qz1DQANDA0YDSMNTw1bDWYNdA2DDa0Nxg3RDegN9A4ADgwOGA4jDjcObg6SDp0OqA60Dr8O8Q8jDy4POQ9FD1APXA9oD6EPrA+4D+4QJBBbEHIQfhCJEJQQ1RDgEOsQ9hEBETwRYBGLEa8RuhHFEdAR3BHnEfMR/xILEhcSKRJFElESaRKPEpoSpRKwEsQSzxLaEuYTHRNHE3kTkRPJFA8UKhRgFKcUuRUIFU8VaxWjFeoWCBYWFiYWNhZGFk4WVhZeFl4WXhZ0FoEWpxbEFtQW8RcPF0cXgBeJF6UXzxf0GAMYERgdGCkYNRhBGGAYfhi3GPAZARkSGRoZLRlBGVUZYhlrGXcZjxmfGa4ZuhnIGjoakBq5GzIbkxvnHAscNxxEHFgcchybHNAdGB1hHaMd0h39HhEeKR5VHmgeeR6LHqYeuB7mHvwfKR+DH6kfvx/MH9kf7R/6IBAgJSBAIGYgjiCbIKggtSDaIP0hIyEwITghQSFKIVIhWwAAAAEAAAACAINDPNd0Xw889QADA+gAAAAA3I01aAAAAADkHA87/03/JARMA7UAAQAGAAIAAAAAAAACxABkAsoACALKAAgCygAIAsoACALKAAgCygAIAsoACALKAAgCygAIAsoACAP6AAgCZABMAtUAIwLVACMC1QAjAtUAIwLVACMC1QAjArwATAK8AEwC6gA4AuoAOAJNAEwCTQBMAk0ATAJNAEwCTQBMAk0ATAJNAEwCTQBMAk0ATAIqAEwC5wAjAucAIwLnACMC5wAjAucAIwLuAEwC7gAFAu4ATAEhAEwDSQBMASEAPgEh/84BMP//ASEARgEh//cBIf/wASEAIQIoAAgCKAAIApoATAKaAEwCGQBMAhkAPAIZAEwCGQBMAhkAAgNZAEwDBQBMAwUATAMFAEwDBQBMAwUATAMFAEwDEwAjAxMAIwMTACMDEwAjAxMAIwMTACMDEwAjAxYAHwMTACMEWgAjAlsATAJnAFIDFQAjAoUATAKFAEwChQBMAoUATAJfACgCXwAoAl8AKAJfACgCXwAoAkgADgJIAA4CwABCAsAAQgLAAEICwABCAsAAQgLAAEICwABCAsAAQgLAAEICwABCAtIACAPZAAgD2QAIAqcACgKHAAcChwAHAocABwKHAAcCeAAmAngAJgJ4ACYCeAAmAhUAHgIQAB4CEAAeAhAAHgIQAB4CEAAeAhAAHgIQAB4CEAAeAhAAHgNrAB4CVAA5AiIAHgIiAB4CIgAeAiIAHgIiAB4CIgAeAlMAHgJTAB4CUwAeAjwAHgIqAB4CLQAeAi0AHgItAB4CLQAeAi0AHgItAB4CLQAeAi0AHgGJABgCWQAeAlkAHgJZAB4CWQAeAlkAHgI6ADoCOgAAAjr/twEGADcBBgBBAQYALwEG/78BBv/qAQb/6AEG//cBBgARAikANwEj/8IBF//CARf/wgIaADkCGgA5APYAOQD2ACcA9gA5APYAFQEeAAgDaAA5AjgAOQI4ADkCOAA5AjgAOQI4ADkCOAA5AkUAHgJFAB4CRQAeAkUAHgJFAB4CRQAeAkUAHgJCABECRQAeA+YAHgJZAD4CVAA5AlAAHgF7ADkBewA5AXv/6wF7AC8B0gAeAeEAHgHhAB4B4QAeAeEAHgJLADkBkgAOAaQADgI4ADACOAAwAjgAMAI4ADACOAAwAjgAMAI4ADACOAAwAjgAMAI4ADACLAAHA0MACgNDAAoCGAAKAkAABAJAAAQCQAAEAkAABAHdACAB3QAgAd0AIAHdACABUQAVAWoAFQKIACMBpgAvAkMAGAIsACcCeQAaAkUALAJEACUCLAAhAmQAKgJEAB4BGAAhAW8AEQFjABsBiwASAN7/TQNlACEDRgAhA5EAGwEYACEBbwARAWMAGwDuAAAA7gAAAPgALAEBAB0BLQBGATEAIwLFACwBOABMASwATAIBABcB1gAHAQQAMgHUAHIB6AA0AncACgGwAA8BsAAPAZgANgImAAAETAAAAbIAEQF+ADABfgAmAYoANgGKADYBWABMAVgAOAD6AB0BlwAIAZ8ACAGfAA0A2wAIANsADQJ4AC8CeAAzAZAALwGQADYBnAA8APUAPAPgACMChwAqAkkADwIMADoDGQAjAmcAHgNvAAkBegAmAQAATAEwAGQB6AAdAegAGwIdAB4CVgBEAioAKAK3AA4CUwAsAlQABwJ4AFUCeABtAngAbwJ4AHQCeACEAngAfwJ4AFUCeACCApsANgJFAEoCOAAwAy0AKQAAABgAAAAAAAAAUQAAAPAAAAACAAAAEgAAAAYAAAAAAAAAAAAAACwAAABZAAD/9AAAAAAAAAATAAAApgAAABwAAAASAAAACgHkACwBBwAAAQcAAgEs//QA6wAKAAEAAAO2/wYAAARa/03+CgRMA+gAAAAAAAAAAAAAAAAAAAFUAAQCKAK8AAUAAAKKAlgAAABLAooCWAAAAV4AMgEsAAAAAAAAAAAAAAAAgAAABwAAAAoAAAAAAAAAAE5PTkUAoAAgISIDtv8GAAAD0wDeAAAAkwAAAAAB9AK8AAAAIAADAAAAAgAAAAMAAAAUAAMAAQAAABQABAMcAAAALgAgAAQADgAvADkAfgCsARMBJwErATcBPgFIAU0BYQFlAX4gFCAaIB4gIiAmIDogrCEi//8AAAAgADAAOgCgAK4BFgEqAS4BOQFBAUoBUAFkAWogEyAYIBwgICAmIDkgrCEi//8AAACzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4PcAAAAAAADg2ODi4ILgAwABAC4AAABKANIA6gG0AdYB2AHqAfQCAgIIAioCLAAAAlICVgJaAAAAAAAAAAAAAAD4AP8BHQEGAS0BPAEgAR4BDQEOAQUBMQD7AQkA+gEHAPwA/QE2ATQBNQEBAR8AAQAMAA0AEwAXACAAIQAmACkAMgA0ADYAOwA8AEIATABOAE8AUwBYAFoAZABlAGcAaABsAREBCAESAToBDAFQAHAAewB8AIIAhgCPAJAAlQCYAKEApACmAKsArACyALwAvgC/AMMAyQDLANUA1gDYANkA3QEPAScBEAE5APkBAAErAS8BLAEwASgBIgFPASMA4QEZATgBJAFSASYBNwD2APcBUQE7ASEBAwFTAPUA4gEaAPMA8gD0AQIABgACAAQACgAFAAkACwAQAB0AGAAaABsALwArACwALQAWAEAARgBDAEQASgBFATIASQBfAFsAXQBeAGkATQDIAHUAcQBzAHkAdAB4AHoAfwCMAIcAiQCKAJ0AmgCbAJwAhQCwALYAswC0ALoAtQEzALkA0ADMAM4AzwDaAL0A3AAHAHYAAwByAAgAdwAOAH0AEQCAABIAgQAPAH4AFACDABUAhAAeAI0AHACLAB8AjgAZAIgAIwCSACIAkQAlAJQAJACTACgAlwAnAJYAMACeADEAnwAuAJkAKgCgADMAowA1AKUANwCnADkAqQA4AKgAOgCqAD0ArQA/AK8APgCuAEEAsQBIALgARwC3AEsAuwBQAMAAUgDCAFEAwQBUAMQAVwDHAFYAxgBVAMUAWQDKAGEA0gBcAM0AYwDUAGAA0QBiANMAZgDXAGoA2wBrAG0A3gBvAOAAbgDfARcBGAETARUBFgEUASkBKgEEAAAACwCKAAMAAQQJAAAAqAAAAAMAAQQJAAEADgCoAAMAAQQJAAIACAC2AAMAAQQJAAMALgC+AAMAAQQJAAQAGADsAAMAAQQJAAUAGgEEAAMAAQQJAAYAGAEeAAMAAQQJAQAADAE2AAMAAQQJARAACAC2AAMAAQQJARYADAFCAAMAAQQJARcACgFOAEMAbwBwAHkAcgBpAGcAaAB0ACAAMgAwADIAMgAgAFQAaABlACAARgBpAGcAdAByAGUAZQAgAFAAcgBvAGoAZQBjAHQAIABBAHUAdABoAG8AcgBzACAAKABoAHQAdABwAHMAOgAvAC8AZwBpAHQAaAB1AGIALgBjAG8AbQAvAGUAcgBpAGsAZABrAGUAbgBuAGUAZAB5AC8AZgBpAGcAdAByAGUAZQApAEYAaQBnAHQAcgBlAGUAQgBvAGwAZAAyAC4AMAAwADIAOwBOAE8ATgBFADsARgBpAGcAdAByAGUAZQAtAEIAbwBsAGQARgBpAGcAdAByAGUAZQAgAEIAbwBsAGQAVgBlAHIAcwBpAG8AbgAgADIALgAwADAAMgBGAGkAZwB0AHIAZQBlAC0AQgBvAGwAZABXAGUAaQBnAGgAdABJAHQAYQBsAGkAYwBSAG8AbQBhAG4AAAADAAAAAAAA/5wAMgAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAf//AA8AAQAAAAwAAAAAAAAAAgATAAEACgABAA0AHwABACEAJQABACkAOgABADwASwABAE8AYwABAGUAZgABAGgAegABAHwAhAABAIYAjgABAJAAoQABAKMAqgABAKwAuwABAL8AxwABAMkA1AABANYA1wABANkA4gABASsBKwABAU8BUQABAAAAAQAAAAoAJAAyAAJERkxUAA5sYXRuAA4ABAAAAAD//wABAAAAAWtlcm4ACAAAAAEAAAABAAQAAgAIAAMADAK+D5IAAQAgAAQAAAALADoAQAC+AMQBcgF4AiYCLAIsAjICOAABAAsACAAgAEIATABiAGQAjgCkAKUAsgEYAAEAoQBuAB8Aq//2AKz/9gCt//YArv/2AK//9gCw//YAsf/2ALz/9gC///YAwP/2AMH/9gDC//YAw//2AMT/9gDF//YAxv/2AMf/9gDL//YAzP/2AM3/9gDO//YAz//2AND/9gDR//YA0v/2ANP/9gDU//YA3f/2AN7/9gDf//YA4P/2AAEAJgAAACsAcP/2AHH/9gBy//YAc//2AHX/9gB2//YAd//2AHj/9gB5//YAev/2AHz/9gB9//YAfv/2AH//9gCA//YAgf/2AIL/9gCD//YAhP/2AIX/9gCG//YAh//2AIn/9gCK//YAi//2AIz/9gCN//YAjv/2AJD/9gCR//YAk//2AJT/9gCy//YAs//2ALT/9gC1//YAtv/2ALf/9gC4//YAuf/2ALr/9gC7//YAvv/2AAEAoQAAACsAcP/YAHH/2ABy/9gAc//YAHX/2AB2/9gAd//YAHj/2AB5/9gAev/YAHz/2AB9/9gAfv/YAH//2ACA/9gAgf/YAIL/2ACD/9gAhP/YAIX/2ACG/9gAh//YAIn/2ACK/9gAi//YAIz/2ACN/9gAjv/YAJD/2ACR/9gAk//YAJT/2ACy/9gAs//YALT/2AC1/9gAtv/YALf/2AC4/9gAuf/YALr/2AC7/9gAvv/YAAEAoQA8AAEAmAAAAAEAkAAAAB4AqwAAAKwAAACtAAAArgAAAK8AAACwAAAAsQAAALwAAAC/AAAAwAAAAMEAAADCAAAAxAAAAMUAAADGAAAAxwAAAMsAAADMAAAAzQAAAM4AAADPAAAA0AAAANEAAADSAAAA0wAAANQAAADdAAAA3gAAAN8AAADgAAAAAQCKAAQAAABAAQ4LZAHYAqYLZAKwA/YEIAQmBKQEygYUBpoH5AiuCfQLBgsGCwYLBgsGCwYLBgsGCq4LBgsGCwYLBgsGCwYLBgn6CqgLAAsACq4LAAsGCwYLBgsGCwYLBgsGCwYLBgsGCwYLBgsMCxILZAtqC2oLagtqC2oLagtqC3ALdgygDM4AAQBAAAEAHwAgACEAMQA0ADYAQgBMAE8AWABkAGUAZwBoAHcAegB7AHwAfQB+AH8AgACBAIMAhgCHAIkAigCLAIwAjQCPAJ8ApAClAKgArACyALMAtAC1ALYAtwC4ALkAugC7ALwAvQDDAMoA0wDVANYA1wDZANoA2wDcAN0BDQEUARgAMgAN/+YAIf/aAEL/5gBY/9AAZP+yAGX/vABo/9wAcP/1AHH/9QBy//UAc//1AHX/9QB2//UAd//1AHj/9QB5//UAev/1AHz/9QB9//UAfv/1AH//9QCA//UAgf/1AIL/9QCD//UAhP/1AIX/9QCG//UAh//1AIn/9QCK//UAi//1AIz/9QCN//UAjv/1AJD/9QCR//UAk//1AJT/9QCy//UAs//1ALT/9QC1//UAtv/1ALf/9QC4//UAuf/1ALr/9QC7//UAvv/1ADMAcP/4AHH/+ABy//gAc//4AHX/+AB2//gAd//4AHj/+AB5//gAev/4AHz/+AB9//gAfv/4AH//+ACA//gAgf/4AIL/+ACD//gAhP/4AIX/+ACG//gAh//4AIn/+ACK//gAi//4AIz/+ACN//gAjv/4AJD/+ACR//gAk//4AJT/+ACh//oAsv/4ALP/+AC0//gAtf/4ALb/+AC3//gAuP/4ALn/+AC6//gAu//4AL7/+ADV//oA1v/6ANf/+gDZ//oA2v/6ANv/+gDc//oAAgAB/+gAKf/4AFEAcP/iAHH/4gBy/+IAc//iAHX/4gB2/+IAd//iAHj/4gB5/+IAev/iAHz/4gB9/+IAfv/iAH//4gCA/+IAgf/iAIL/4gCD/+IAhP/iAIX/4gCG/+IAh//iAIn/4gCK/+IAi//iAIz/4gCN/+IAjv/iAJD/4gCR/+IAk//iAJT/4gCr//kArP/5AK3/+QCu//kAr//5ALD/+QCx//kAsv/iALP/4gC0/+IAtf/iALb/4gC3/+IAuP/iALn/4gC6/+IAu//iALz/+QC+/+IAv//5AMD/+QDB//kAwv/5AMP/+QDE//kAxf/5AMb/+QDH//kAy//5AMz/+QDN//kAzv/5AM//+QDQ//kA0f/5ANL/+QDT//kA1P/5ANX/4gDW/+IA1//iANn/4gDa/+IA2//iANz/4gDd//kA3v/5AN//+QDg//kACgBC//IAWP+oAGj/0ADV/+4A1v/uANf/7gDZ/+4A2v/uANv/7gDc/+4AAQBo/+YAHwCr//4ArP/+AK3//gCu//4Ar//+ALD//gCx//4AvP/+AL///gDA//4Awf/+AML//gDD//4AxP/+AMX//gDG//4Ax//+AMv//gDM//4Azf/+AM7//gDP//4A0P/+ANH//gDS//4A0//+ANT//gDd//4A3v/+AN///gDg//4ACQABAAYAWP/0ANX/7gDW/+4A1//uANn/7gDa/+4A2//uANz/7gBSAAH/wABw/74Acf++AHL/vgBz/74Adf++AHb/vgB3/74AeP++AHn/vgB6/74AfP++AH3/vgB+/74Af/++AID/vgCB/74Agv++AIP/vgCE/74Ahf++AIb/vgCH/74Aif++AIr/vgCL/74AjP++AI3/vgCO/74AkP++AJH/vgCT/74AlP++AKv/2gCs/9oArf/aAK7/2gCv/9oAsP/aALH/2gCy/74As/++ALT/vgC1/74Atv++ALf/vgC4/74Auf++ALr/vgC7/74AvP/aAL7/vgC//9oAwP/aAMH/2gDC/9oAw//aAMT/2gDF/9oAxv/aAMf/2gDL/9oAzP/aAM3/2gDO/9oAz//aAND/2gDR/9oA0v/aANP/2gDU/9oA1f/WANb/1gDX/9YA2f/WANr/1gDb/9YA3P/WAN3/5ADe/9oA3//aAOD/2gAhAAH/sgBC//QAq//uAKz/7gCt/+4Arv/uAK//7gCw/+4Asf/uALz/7gC//+4AwP/uAMH/7gDC/+4Aw//uAMT/7gDF/+4Axv/uAMf/7gDL/+4AzP/uAM3/7gDO/+4Az//uAND/7gDR/+4A0v/uANP/7gDU/+4A3f/uAN7/7gDf/+4A4P/uAFIAAf+8AHD/1gBx/9YAcv/WAHP/1gB1/9YAdv/WAHf/1gB4/9YAef/WAHr/1gB8/9YAff/WAH7/1gB//9YAgP/WAIH/1gCC/9YAg//WAIT/1gCF/9YAhv/WAIf/1gCJ/9YAiv/WAIv/1gCM/9YAjf/WAI7/1gCQ/9YAkf/WAJP/1gCU/9YAq//0AKz/9ACt//QArv/0AK//9ACw//QAsf/0ALL/1gCz/9YAtP/WALX/1gC2/9YAt//WALj/1gC5/9YAuv/WALv/1gC8//QAvv/WAL//9ADA//QAwf/0AML/9ADD//QAxP/0AMX/9ADG//QAx//0AMv/9ADM//QAzf/0AM7/9ADP//QA0P/0ANH/9ADS//QA0//0ANT/9ADV//0A1v/9ANf//QDZ//0A2v/9ANv//QDc//0A3f/0AN7/9ADf//QA4P/0ADIAcP/gAHH/4ABy/+AAc//gAHX/4AB2/+AAd//gAHj/4AB5/+AAev/gAHz/4AB9/+AAfv/gAH//4ACA/+AAgf/gAIL/4ACD/+AAhP/gAIX/4ACG/+AAh//gAIn/4ACK/+AAi//gAIz/4ACN/+AAjv/gAJD/4ACR/+AAk//gAJT/4ACy/+AAs//gALT/4AC1/+AAtv/gALf/4AC4/+AAuf/gALr/4AC7/+AAvv/gANX/4gDW/+IA1//iANn/4gDa/+IA2//iANz/4gBRAHD/qgBx/6oAcv+qAHP/qgB1/6oAdv+qAHf/qgB4/6oAef+qAHr/qgB8/6oAff+qAH7/qgB//6oAgP+qAIH/qgCC/6oAg/+qAIT/qgCF/6oAhv+qAIf/qgCJ/6oAiv+qAIv/qgCM/6oAjf+qAI7/qgCQ/6oAkf+qAJP/qgCU/6oAq//OAKz/zgCt/84Arv/OAK//zgCw/84Asf/OALL/qgCz/6oAtP+qALX/qgC2/6oAt/+qALj/qgC5/6oAuv+qALv/qgC8/84Avv+qAL//zgDA/84Awf/OAML/zgDD/84AxP/OAMX/zgDG/84Ax//OAMv/zgDM/84Azf/OAM7/zgDP/84A0P/OANH/zgDS/84A0//OANT/zgDV/9wA1v/cANf/3ADZ/9wA2v/cANv/3ADc/9wA3f/IAN7/zgDf/84A4P/OAAEAoQBAACsAcP/0AHH/9ABy//QAc//0AHX/9AB2//QAd//0AHj/9AB5//QAev/0AHz/9AB9//QAfv/0AH//9ACA//QAgf/0AIL/9ACD//QAhP/0AIX/9ACG//QAh//0AIn/9ACK//QAi//0AIz/9ACN//QAjv/0AJD/9ACR//QAk//0AJT/9ACy//QAs//0ALT/9AC1//QAtv/0ALf/9AC4//QAuf/0ALr/9AC7//QAvv/0AAEAoQArABQAdABkAIgAZACPAGQAlQBkAJYAZACYAGQAmgBkAJsAZACcAGQAnQBkAJ4AZACkAGQApQBkAKYAZACnAGQAqABkAKkAZACqAGQAyQBkAMoAZAABAQ7/+gABAQ7/9AABAMP//wAUAHQAUgCIAFIAjwBSAJUAUgCWAFIAmABSAJoAUgCbAFIAnABSAJ0AUgCeAFIApABSAKUAUgCmAFIApwBSAKgAUgCpAFIAqgBSAMkAUgDKAFIAAQChAC8AAQEYABIAAQCy//8ASgBw//QAcf/0AHL/9ABz//QAdf/0AHb/9AB3//QAeP/0AHn/9AB6//QAfP/0AH3/9AB+//QAf//0AID/9ACB//QAgv/0AIP/9ACE//QAhf/0AIb/9ACH//QAif/0AIr/9ACL//QAjP/0AI3/9ACO//QAkP/0AJH/9ACT//QAlP/0AKv/+gCs//oArf/6AK7/+gCv//oAsP/6ALH/+gCy//QAs//0ALT/9AC1//QAtv/0ALf/9AC4//QAuf/0ALr/9AC7//QAvP/6AL7/9AC///oAwP/6AMH/+gDC//oAw//6AMT/+gDF//oAxv/6AMf/+gDL//oAzP/6AM3/+gDO//oAz//6AND/+gDR//oA0v/6ANP/+gDU//oA3f/6AN7/+gDf//oA4P/6AAsAAQAQAAIAEAADABAABAAQAAUAEAAGABAABwAQAAgAEAAJABAACgAQAAsAEAABAMP/rAACAIgABAAAAPIBaAAKAAYAAAAAAAD/8gAAAAAAAAAAAAD/6gAA/+4AAAAA/+wAAAAAAAAAAP/wAAAAAAAAAAAAAP/wAAAAAAAAAAAAAAAAAAD/1gAAAAAAAAAAAAAAAABkAAAAAP/3AAAAAAAAAAAAAP/mAAAAAAAAAAAAAP/uAAAAAAAAAAAAAgARAAEABwAAAAkACgAHABMAFgAJAEIASgANAFgAZgAWAGgAawAlAHAAgQApAIMAgwA7AIYAhwA8AIkAjQA+AJUAlQBDAKQApQBEAKgAqABGAKsAsABHALIAvQBNAMkAygBZANUA3ABbAAIAEwABAAcABQAJAAoABQATABYAAgBCAEoAAgBYAFkAAwBaAGMAAgBkAGYAAwBoAGsAAwB6AIEAAQCDAIMABgCGAIcAAQCJAI0AAQCkAKUACACoAKgABgCyAL0AAQDJAMoABwDVANcABADYANgACQDZANwABAACABYAWABZAAIAZABmAAIAaABrAAIAcABzAAEAdQB6AAEAfACHAAEAiQCOAAEAkACRAAEAkwCUAAEAsgC7AAEAvgC+AAEA1QDXAAMA2ADYAAUA2QDcAAMA/wD/AAQBAQEBAAQBBQEFAAQBDgEOAAQBEAEQAAQBEgESAAQBFQEWAAQBHQEeAAQAAQAAAAoAJgAoAAJERkxUAA5sYXRuABgABAAAAAD//wAAAAAAAAAAAAAAAAABAAEACAACAAAAFAACAAAAJAACd2dodAEAAABpdGFsARYAAQAEABAAAQAAAAABEAK8AAAAAwABAAIBFwAAAAAAAQAA';
+/* ---------- AI mapa: logika ---------- */
+(function(){
+'use strict';
+const $ = (s, el) => (el || document).querySelector(s);
+const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nf = (n, d) => Number(n).toLocaleString('cs-CZ', { maximumFractionDigits: d || 0 });
+const kc = n => nf(n) + ' Kč';
+const SUB_RATE = 478.19, SUB_HOURS = 60, WEEKS = 52 / 12;
+const KEY = 'ls-ai-mapa-v1';
+
+const S = { obor:null, odd:'vse', q:'', plan:[], people:10, rate:435, pilot:false, lead:null };
+try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && Array.isArray(saved.plan)) S.plan = saved.plan.filter(id => UC.some(u => u.id === id)); } catch (e) {}
+const persist = () => { try { localStorage.setItem(KEY, JSON.stringify({ plan:S.plan })); } catch (e) {} };
+
+const byId = id => UC.find(u => u.id === id);
+const hrs = u => nf(u[0], 1) + ' až ' + nf(u[1], 1) + ' h týdně';
+const moznost = n => n === 1 ? 'možnost' : (n >= 2 && n <= 4 ? 'možnosti' : 'možností');
+const V_OBOR = { stavebnictvi:'ve stavebnictví', zdravotnictvi:'ve zdravotnictví', logistika:'v logistice', fin:'ve finančních službách',
+                 pravo:'v advokátních kancelářích', vyroba:'ve výrobě a průmyslu', auto:'v automobilovém průmyslu', jine:'pro váš obor' };
+const PRO_ODD = { obchod:'pro obchod', marketing:'pro marketing', hr:'pro HR a nábor', finance:'pro finance a účetnictví',
+                  pece:'pro zákaznickou péči', provoz:'pro provoz a odbornou práci', vedeni:'pro vedení firmy' };
+const ICON_CLOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+const ICON_WARN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.01"/></svg>';
+
+/* ---------- filtry ---------- */
+function renderChips(){
+  $('#f-obor').innerHTML = OBORY.map(([k, l]) => '<button class="chip" type="button" data-obor="' + k + '" aria-pressed="' + (S.obor === k) + '">' + esc(l) + '</button>').join('');
+  $('#f-odd').innerHTML = ODDELENI.map(([k, l]) => '<button class="chip" type="button" data-odd="' + k + '" aria-pressed="' + (S.odd === k) + '">' + esc(l) + '</button>').join('');
+}
+const plain = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+function visible(){
+  const q = plain(S.q.trim());
+  return UC.filter(u => (S.odd === 'vse' || u.d === S.odd)
+    && (!S.obor || (S.obor === 'jine' ? !u.i.length : (!u.i.length || u.i.includes(S.obor))))
+    && (!q || plain(u.t + ' ' + u.w + ' ' + ODD_LABEL[u.d]).includes(q)))
+    .sort((a, b) => (b.i.length ? 1 : 0) - (a.i.length ? 1 : 0));
+}
+
+/* ---------- karty ---------- */
+function card(u){
+  const inPlan = S.plan.includes(u.id);
+  return '<article class="uc' + (inPlan ? ' in' : '') + '" data-id="' + u.id + '">' +
+    '<div class="uc-top"><span class="dept">' + esc(ODD_LABEL[u.d]) + '</span>' + (u.i.length ? '<span class="ind">' + esc(OBOR_PRO[u.i[0]]) + '</span>' : '') + '</div>' +
+    '<h3>' + esc(u.t) + '</h3><p class="w">' + esc(u.w) + '</p>' +
+    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span><span class="lvl ' + u.l + '">' + LEVEL[u.l] + '</span></div>' +
+    '<div class="uc-actions"><button class="btn btn-ghost btn-sm" type="button" data-open="' + u.id + '">Zobrazit postup</button>' +
+    '<button class="btn btn-sm ' + (inPlan ? 'on' : 'btn-primary') + '" type="button" data-plan="' + u.id + '" aria-pressed="' + inPlan + '">' + (inPlan ? 'V plánu ✓' : '+ Do plánu') + '</button></div></article>';
+}
+function renderGrid(){
+  const list = visible();
+  const n = list.length;
+  let title;
+  if (!S.obor && S.odd === 'vse') title = n + ' ' + moznost(n) + ' pro všechny obory';
+  else title = n + ' ' + moznost(n) + (S.odd !== 'vse' ? ' ' + PRO_ODD[S.odd] : '') + (S.obor ? ' ' + V_OBOR[S.obor] : '');
+  if (S.q.trim()) title += ', hledáte „' + S.q.trim() + '“';
+  $('#res-title').textContent = title;
+  $('#res-sub').textContent = S.obor || S.odd !== 'vse' ? 'Přidejte si do plánu, co by vám pomohlo, a stáhněte si ho v PDF.' : 'Vyberte obor a oddělení, ať vidíte jen to, co se vás týká.';
+  $('#grid').innerHTML = n ? list.map(card).join('') : '<p class="empty">Tady nic není. Zkuste jiné oddělení nebo kratší hledané slovo.</p>';
+}
+
+/* ---------- plán a výpočty ---------- */
+function totals(){
+  const items = S.plan.map(byId).filter(Boolean);
+  const a = items.reduce((s, u) => s + u.u[0], 0), b = items.reduce((s, u) => s + u.u[1], 0);
+  const p = Math.max(1, Math.round(Number(S.people) || 1)), r = Math.max(0, Number(S.rate) || 0);
+  const h1 = a * WEEKS * p, h2 = b * WEEKS * p;
+  return { items, a, b, p, r, h1, h2, k1: h1 * r, k2: h2 * r, sub: p * SUB_HOURS * SUB_RATE };
+}
+const round1000 = n => Math.round(n / 1000) * 1000;
+const saveNote = items => 'Odhad platí pro lidi, kteří úkoly dělají pravidelně. ' + (new Set(items.map(u => u.d)).size > 1
+  ? 'Úkoly v plánu jsou z více oddělení, ale výpočet předpokládá, že každý z lidí dělá všechny. Skutečná úspora tak bude spíš nižší.'
+  : 'Skutečná úspora záleží na tom, jak často je děláte.');
+function renderPlan(){
+  const t = totals(), n = t.items.length;
+  $('#pill-n').textContent = n;
+  $('#plan-title').textContent = n ? 'Váš plán: ' + n + ' ' + moznost(n) + ', asi ' + nf(t.a, 1) + ' až ' + nf(t.b, 1) + ' hodin týdně na člověka' : 'Zatím nemáte v plánu nic';
+  $('#plan-empty').hidden = n > 0;
+  $('#plist').innerHTML = t.items.map(u => '<li><span class="pt">' + esc(u.t) + '</span><span class="ps">' + esc(ODD_LABEL[u.d]) + ', ušetří ' + hrs(u.u) + '</span>' +
+    '<button class="linkish" type="button" data-plan="' + u.id + '">Odebrat</button></li>').join('');
+  $('#save').hidden = n === 0;
+  $('#save-note').textContent = saveNote(t.items);
+  $('#save-h').textContent = 'Pro ' + t.p + ' ' + (t.p === 1 ? 'člověka' : 'lidí') + ' asi ' + nf(t.h1) + ' až ' + nf(t.h2) + ' hodin měsíčně';
+  $('#save-k').textContent = 'V nákladech na práci zhruba ' + kc(round1000(t.k1)) + ' až ' + kc(round1000(t.k2)) + ' měsíčně.';
+  $('#sub-sum').textContent = 'až ' + kc(Math.round(t.sub));
+  $('#sub-calc').textContent = t.p + ' ' + (t.p === 1 ? 'člověk' : (t.p <= 4 ? 'lidé' : 'lidí')) + ' × ' + SUB_HOURS + ' hodin × ' + nf(SUB_RATE, 2) + ' Kč na osobohodinu';
+  const tray = $('#tray');
+  $('#tray-t').innerHTML = '<b>V plánu ' + n + ' ' + moznost(n) + '</b><span>ušetří ' + nf(t.a, 1) + ' až ' + nf(t.b, 1) + ' h týdně<span class="tr-pp"> na člověka</span></span>';
+  tray.hidden = n === 0 || planVisible;
+  renderSales();
+}
+function togglePlan(id){
+  const i = S.plan.indexOf(id);
+  if (i >= 0) S.plan.splice(i, 1); else S.plan.push(id);
+  persist();
+  renderGrid(); renderPlan();
+  const sb = $('#sheet [data-plan="' + id + '"]');
+  if (sb){ const on = S.plan.includes(id); sb.className = 'btn ' + (on ? 'on' : 'btn-primary'); sb.textContent = on ? 'V plánu ✓' : '+ Přidat do plánu'; sb.setAttribute('aria-pressed', String(on)); }
+}
+let planVisible = false;
+
+/* ---------- detail možnosti ---------- */
+let lastFocus = null, openId = null;
+function openDetail(id, opener){
+  const u = byId(id); if (!u) return;
+  openId = id; lastFocus = opener || document.activeElement;
+  const on = S.plan.includes(id);
+  $('#sheet').innerHTML =
+    '<button class="x" type="button" data-close aria-label="Zavřít"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+    '<div class="uc-top"><span class="dept">' + esc(ODD_LABEL[u.d]) + '</span>' + (u.i.length ? '<span class="ind">' + esc(OBOR_PRO[u.i[0]]) + '</span>' : '') + '</div>' +
+    '<h2 id="d-title">' + esc(u.t) + '</h2><p class="w">' + esc(u.w) + '</p>' +
+    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span><span class="lvl ' + u.l + '">' + LEVEL[u.l] + '</span></div>' +
+    '<p class="tool">Nástroj: ' + esc(NASTROJ[u.n]) + '</p>' +
+    '<div class="sec"><h4>Jak na to</h4><ol class="steps">' + u.s.map(x => '<li><span>' + esc(x) + '</span></li>').join('') + '</ol></div>' +
+    '<div class="sec"><h4>Pokyn pro AI</h4><div class="prompt" id="d-prompt">' + esc(u.p) + '</div>' +
+    '<div class="prompt-actions"><button class="btn btn-dark btn-sm" type="button" data-copy>Kopírovat pokyn</button><span class="copied" id="d-copied" aria-live="polite"></span></div>' +
+    '<p class="soft" style="margin-top:8px">Text v hranatých závorkách nahraďte svými údaji.</p></div>' +
+    '<div class="sec note">' + ICON_WARN + '<span><b>Na co si dát pozor:</b> ' + esc(u.x) + '</span></div>' +
+    '<div class="sheet-actions"><button class="btn ' + (on ? 'on' : 'btn-primary') + '" type="button" data-plan="' + id + '" aria-pressed="' + on + '">' + (on ? 'V plánu ✓' : '+ Přidat do plánu') + '</button>' +
+    '<button class="btn btn-ghost" type="button" data-lesson="' + id + '">Vyzkoušet lekci pro tým</button></div>';
+  $('#ov').hidden = false;
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => $('#sheet [data-close]').focus(), 30);
+}
+function closeDetail(){
+  $('#ov').hidden = true; openId = null;
+  if ($('#gz').hidden) document.body.style.overflow = '';
+  if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll:true });
+}
+async function copyPrompt(){
+  const u = byId(openId); if (!u) return;
+  const msg = $('#d-copied');
+  try { await navigator.clipboard.writeText(u.p); msg.textContent = 'Zkopírováno'; }
+  catch (e) {
+    const r = document.createRange(); r.selectNodeContents($('#d-prompt'));
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    let ok = false; try { ok = document.execCommand('copy'); } catch (e2) {}
+    msg.textContent = ok ? 'Zkopírováno' : 'Text je označený, zkopírujte ho zkratkou Ctrl+C';
+  }
+}
+
+/* ---------- ukázková lekce ve stylu Grizletu ---------- */
+let gz = { id:null, step:0, answered:false };
+function openLesson(id){
+  gz = { id, step:0, answered:false };
+  $('#gz').hidden = false;
+  document.body.style.overflow = 'hidden';
+  renderLesson();
+  setTimeout(() => { const b = $('#phone .gz-btn'); if (b) b.focus(); }, 30);
+}
+function closeLesson(){
+  $('#gz').hidden = true;
+  if ($('#ov').hidden) document.body.style.overflow = '';
+  const b = $('#sheet [data-lesson]'); if (b && !$('#ov').hidden) b.focus();
+}
+function renderLesson(){
+  const u = byId(gz.id), k = KVIZ[u.q];
+  const prog = '<div class="gz-prog" aria-hidden="true">' + [0, 1, 2, 3].map(i => '<i class="' + (i <= gz.step ? 'on' : '') + '"></i>').join('') + '</div>';
+  const cat = '<p class="gz-cat">' + esc(ODD_LABEL[u.d]) + '  ' + (gz.step + 1) + '/4</p>';
+  let body = '', btn = '';
+  if (gz.step === 0){
+    body = '<h3>' + esc(u.t) + '</h3><p>' + esc(u.w) + '</p><p style="margin-top:12px"><b>Ušetří ' + hrs(u.u) + '.</b></p>';
+    btn = '<button class="gz-btn" type="button" data-gz="next">Pokračovat</button>';
+  } else if (gz.step === 1){
+    body = '<h3>Jak na to</h3><ol>' + u.s.map(x => '<li>' + esc(x) + '</li>').join('') + '</ol><p style="margin-top:12px">Hotový pokyn pro AI najdete u lekce jako přílohu.</p>';
+    btn = '<button class="gz-btn" type="button" data-gz="next">Pokračovat</button>';
+  } else if (gz.step === 2){
+    body = '<h3>' + esc(k.q) + '</h3><div class="gz-opts">' + k.o.map((o, i) => '<button class="gz-opt" type="button" data-opt="' + i + '">' + esc(o) + '</button>').join('') + '</div><div id="gz-fb"></div>';
+    btn = '<button class="gz-btn" type="button" data-gz="next" disabled>Pokračovat</button>';
+  } else {
+    body = '<div class="gz-done"><p class="big">Hotovo!</p><p>Takhle vypadá lekce v Grizletu. Z vašeho materiálu ji připraví AI a lidé ji dostanou do mobilu odkazem, e-mailem nebo přes Teams, bez instalace.</p><p>Vy pak vidíte, kdo lekci dokončil a s jakým skóre.</p></div>';
+    btn = '<button class="gz-btn" type="button" data-gz="pilot">Chci pilot Grizletu</button>';
+  }
+  $('#phone').innerHTML = prog + cat + '<div class="gz-body">' + body + '</div>' + btn;
+}
+function answer(i){
+  if (gz.answered) return;
+  gz.answered = true;
+  const k = KVIZ[byId(gz.id).q];
+  $$('#phone .gz-opt').forEach((b, j) => { b.disabled = true; if (j === k.ok) b.classList.add('ok'); else if (j === i) b.classList.add('no'); });
+  const good = i === k.ok;
+  $('#gz-fb').innerHTML = '<div class="gz-fb' + (good ? '' : ' bad') + '"><b>' + (good ? 'Správně.' : 'Tohle ne.') + '</b> ' + esc(k.fb) + '</div>';
+  const b = $('#phone .gz-btn'); b.disabled = false; b.focus();
+}
+
+/* ---------- vstupní nabídka a formulář ---------- */
+function wantPilot(){
+  S.pilot = true;
+  $('#l-pilot').checked = true;
+  if (!$('#gz').hidden) closeLesson();
+  if (!$('#ov').hidden) closeDetail();
+  $('#form-box').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'start' });
+  setTimeout(() => $('#l-name').focus({ preventScroll:true }), 450);
+  renderSales();
+}
+const FREE = ['gmail.com', 'seznam.cz', 'email.cz', 'centrum.cz', 'post.cz', 'volny.cz', 'atlas.cz', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com', 'tiscali.cz', 'azet.sk'];
+async function submitLead(e){
+  e.preventDefault();
+  const name = $('#l-name').value.trim(), email = $('#l-email').value.trim(), firm = $('#l-firm').value.trim(), size = $('#l-size').value;
+  const err = $('#l-err');
+  let msg = '';
+  if (!S.plan.length) msg = 'Přidejte do plánu aspoň jednu možnost.';
+  else if (!name) msg = 'Napište prosím své jméno.';
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) msg = 'E-mail nevypadá správně, zkontrolujte ho prosím.';
+  else if (!firm) msg = 'Napište prosím název firmy.';
+  else if (!$('#l-consent').checked) msg = 'Bez souhlasu se zpracováním údajů vám plán nemůžeme připravit.';
+  if (msg){ err.textContent = msg; err.hidden = false; return; }
+  err.hidden = true;
+  S.pilot = $('#l-pilot').checked;
+  S.lead = { name, email, firm, size, free: FREE.includes(email.split('@')[1].toLowerCase()) };
+  const btn = $('#l-submit'); btn.disabled = true; btn.textContent = 'Připravuji PDF…';
+  let res = 'error';
+  try { res = await savePdf(); } catch (e2) { res = 'error'; }
+  btn.disabled = false; btn.textContent = 'Stáhnout plán v PDF';
+  const ok = $('#lead-ok');
+  ok.hidden = false;
+  if (res === 'declined') ok.innerHTML = 'Stažení jste zrušili. Plán zůstává připravený, stačí kliknout znovu.';
+  else if (res === 'busy') ok.innerHTML = 'Okno se stažením už je otevřené. Potvrďte ho, nebo to za chvíli zkuste znovu.';
+  else if (res === 'blocked') ok.innerHTML = 'V\u00a0tomto zobrazení se PDF stáhnout nedá. Otevřete stránku v\u00a0Claudu v\u00a0prohlížeči nebo v\u00a0aplikaci a zkuste to znovu.';
+  else if (res === 'error') ok.innerHTML = 'PDF se nepodařilo vytvořit. Zkuste to prosím znovu.';
+  else ok.innerHTML = '<b>Plán je stažený.</b> ' + (S.pilot ? 'Zájem o pilot Grizletu jsme si poznamenali.' : '') + ' Chcete ho probrat? <a href="https://business.lifescale.cz/cz" target="_blank" rel="noopener">Rezervujte si nezávaznou konzultaci</a>.' +
+    (S.lead.free ? '<span class="soft" style="display:block; margin-top:6px">Tip: s firemním e-mailem vám umíme poslat i nabídku přímo pro vaši firmu.</span>' : '');
+  renderSales();
+}
+
+/* ---------- PDF ---------- */
+async function savePdf(){
+  if (!window.jspdf) throw new Error('jspdf');
+  const blob = buildPdf();
+  const fname = 'AI-plan-' + (plain(S.lead.firm).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'firma') + '.pdf';
+  // v prohlížeči Clauda jde stažení jen přes schopnost downloads, odkaz s atributem download tam nefunguje
+  if (window.claude && typeof window.claude.use === 'function'){
+    let dl = null;
+    try { dl = await window.claude.use('downloads'); } catch (e) { dl = null; }
+    if (!dl) return 'blocked';
+    try { await dl.save({ filename:fname, data:blob }); return 'saved'; }
+    catch (e) {
+      const c = e && e.code;
+      if (c === 'declined') return 'declined';
+      if (c === 'rate_limited') return 'busy';
+      if (c === 'bad_request' || c === 'transform_error' || c === 'too_large') return 'error';
+      return 'blocked';
+    }
+  }
+  // běžný web, tedy ostrá verze: klasické stažení
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = fname; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  return 'fallback';
+}
+function buildPdf(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4' });
+  doc.addFileToVFS('Figtree-R.ttf', FONT_R); doc.addFont('Figtree-R.ttf', 'Figtree', 'normal');
+  doc.addFileToVFS('Figtree-B.ttf', FONT_B); doc.addFont('Figtree-B.ttf', 'Figtree', 'bold');
+  const M = 18, PW = 210, PH = 297, W = PW - 2 * M, BOTTOM = PH - 18;
+  const INK = [32, 16, 11], MUTED = [92, 88, 85], BLUE = [0, 121, 181], NAVY = [11, 52, 96], AMBER = [122, 67, 0];
+  let y = 0;
+  const lh = size => size * 0.3528 * 1.38;
+  const newPage = () => { doc.addPage(); y = M; };
+  const ensure = h => { if (y + h > BOTTOM) newPage(); };
+  function para(str, size, style, color, opts){
+    opts = opts || {};
+    const x = M + (opts.indent || 0), w = W - (opts.indent || 0);
+    doc.setFont('Figtree', style); doc.setFontSize(size); doc.setTextColor.apply(doc, color);
+    const lines = doc.splitTextToSize(String(str), w);
+    const h = lines.length * lh(size);
+    if (opts.keep) ensure(h);
+    lines.forEach(line => { ensure(lh(size)); doc.text(line, x, y, { baseline:'top' }); y += lh(size); });
+    y += opts.gap === undefined ? 1.5 : opts.gap;
+  }
+  function box(str, size, fill, color){
+    doc.setFont('Figtree', 'normal'); doc.setFontSize(size);
+    const lines = doc.splitTextToSize(String(str), W - 10);
+    const step = lh(size);
+    let i = 0;
+    while (i < lines.length){
+      const room = Math.max(1, Math.floor((BOTTOM - y - 8) / step));
+      if (room < 2 && y > M + 10){ newPage(); continue; }
+      const chunk = lines.slice(i, i + room);
+      const h = chunk.length * step + 8;
+      doc.setFillColor.apply(doc, fill); doc.roundedRect(M, y, W, h, 2.5, 2.5, 'F');
+      doc.setTextColor.apply(doc, color);
+      chunk.forEach((line, j) => doc.text(line, M + 5, y + 4 + j * step, { baseline:'top' }));
+      y += h + 3; i += chunk.length;
+      if (i < lines.length) newPage();
+    }
+  }
+  const t = totals();
+  const today = new Date().toLocaleDateString('cs-CZ', { day:'numeric', month:'long', year:'numeric' });
+  // hlavička
+  doc.setFillColor.apply(doc, NAVY); doc.rect(0, 0, PW, 44, 'F');
+  doc.setFillColor(0, 180, 241); doc.rect(0, 44, PW, 1.6, 'F');
+  doc.setTextColor(127, 214, 247); doc.setFont('Figtree', 'bold'); doc.setFontSize(9.5);
+  doc.text('AI MAPA PRO FIRMY  |  LIFESCALE BUSINESS', M, 13, { baseline:'top' });
+  doc.setTextColor(255, 255, 255);
+  const title = 'AI plán pro firmu ' + S.lead.firm;
+  let ts = 22; doc.setFontSize(ts);
+  let tl = doc.splitTextToSize(title, W);
+  if (tl.length > 1){ ts = 17; doc.setFontSize(ts); tl = doc.splitTextToSize(title, W).slice(0, 2); }
+  let ty = 19;
+  tl.forEach(line => { doc.text(line, M, ty, { baseline:'top' }); ty += lh(ts) * 0.92; });
+  doc.setFont('Figtree', 'normal'); doc.setFontSize(10.5); doc.setTextColor(207, 227, 245);
+  doc.text('Připraveno ' + today + '. Kontaktní osoba: ' + S.lead.name, M, ty + 1.5, { baseline:'top' });
+  y = 56;
+  // shrnutí
+  para('Shrnutí', 14, 'bold', INK, { gap:2 });
+  para(t.items.length + ' ' + moznost(t.items.length) + ', asi ' + nf(t.a, 1) + ' až ' + nf(t.b, 1) + ' hodin týdně na člověka. Pro ' + t.p + ' ' + (t.p === 1 ? 'člověka' : 'lidí') + ' to je asi ' + nf(t.h1) + ' až ' + nf(t.h2) + ' hodin měsíčně, v nákladech na práci zhruba ' + kc(round1000(t.k1)) + ' až ' + kc(round1000(t.k2)) + ' měsíčně při ' + kc(t.r) + ' za hodinu.', 11, 'normal', INK, { gap:2 });
+  if (S.obor) para('Obor: ' + OBOR_LABEL[S.obor] + '.', 10.5, 'normal', MUTED, { gap:2 });
+  para(saveNote(t.items), 9.5, 'normal', MUTED, { gap:6 });
+  // možnosti
+  t.items.forEach((u, idx) => {
+    ensure(40);
+    doc.setDrawColor(230, 235, 239); doc.setLineWidth(0.3); doc.line(M, y, PW - M, y); y += 4;
+    para((idx + 1) + '. ' + u.t, 14, 'bold', INK, { gap:1 });
+    para(ODD_LABEL[u.d] + (u.i.length ? ', ' + OBOR_LABEL[u.i[0]] : '') + '. Ušetří ' + hrs(u.u) + '. Obtížnost: ' + LEVEL[u.l].toLowerCase() + '.', 9.5, 'normal', BLUE, { gap:2 });
+    para(u.w, 11, 'normal', INK, { gap:2.5 });
+    para('Jak na to', 11, 'bold', INK, { gap:1 });
+    u.s.forEach((s, i) => para((i + 1) + '. ' + s, 10.5, 'normal', INK, { indent:3, gap:0.6 }));
+    y += 2;
+    para('Pokyn pro AI (text v hranatých závorkách nahraďte svými údaji)', 11, 'bold', INK, { gap:1.5 });
+    box(u.p, 10, [242, 250, 254], INK);
+    para('Na co si dát pozor: ' + u.x, 10, 'normal', AMBER, { gap:7 });
+  });
+  // jak to tým naučit
+  ensure(70);
+  doc.setDrawColor(230, 235, 239); doc.line(M, y, PW - M, y); y += 5;
+  para('Jak to tým naučit', 16, 'bold', INK, { gap:2 });
+  para('Školení AI Akcelerátor', 12, 'bold', INK, { gap:1 });
+  para('Praktický kurz pro vaše oddělení na úkolech z tohoto plánu. Na kurz lze čerpat podporu z výzvy Vzdělávání pro firmy: až ' + nf(SUB_RATE, 2) + ' Kč na osobohodinu, tedy pro ' + t.p + ' ' + (t.p === 1 ? 'člověka' : 'lidí') + ' a ' + SUB_HOURS + ' hodin až ' + kc(Math.round(t.sub)) + '. Podpora se uzná účastníkovi, který absolvuje aspoň 50 hodin, u OSVČ a dodavatelů je poloviční a proplácí se zpětně. S žádostí vám pomůžeme.', 10.5, 'normal', INK, { gap:4 });
+  para('Pilot Grizletu' + (S.pilot ? ' (máte zájem)' : ''), 12, 'bold', INK, { gap:1 });
+  para('Jeden váš materiál, třeba onboarding nebo pravidla pro AI, převedeme na krátké lekce do mobilu a rozešleme je týmu. Uvidíte, kdo lekci dokončil a s jakým skóre. Lekce se otevře odkazem, bez instalace a bez hesla.', 10.5, 'normal', INK, { gap:4 });
+  para('AI Act od února 2025 ukládá firmám, které AI používají, zajistit lidem, kteří s ní pracují, dostatečnou gramotnost v AI.', 9.5, 'normal', MUTED, { gap:6 });
+  ensure(26);
+  doc.setFillColor(227, 246, 254); doc.roundedRect(M, y, W, 22, 3, 3, 'F');
+  doc.setTextColor.apply(doc, INK); doc.setFont('Figtree', 'bold'); doc.setFontSize(11.5);
+  doc.text('Chcete plán probrat?', M + 6, y + 5, { baseline:'top' });
+  doc.setFont('Figtree', 'normal'); doc.setFontSize(10);
+  doc.text('Ondřej Kamarýt, poradce růstu firem, ondrej.kamaryt@lifescale.cz, +420 606 786 231', M + 6, y + 11.5, { baseline:'top' });
+  doc.setTextColor.apply(doc, BLUE); doc.text('business.lifescale.cz', M + 6, y + 16.5, { baseline:'top' });
+  // patička na každé straně
+  const pages = doc.getNumberOfPages();
+  for (let i = 1; i <= pages; i++){
+    doc.setPage(i);
+    doc.setFont('Figtree', 'normal'); doc.setFontSize(8.5); doc.setTextColor(140, 140, 140);
+    doc.text('LifeScale Business, AI mapa pro firmy', M, PH - 10);
+    doc.text(i + ' / ' + pages, PW - M, PH - 10, { align:'right' });
+  }
+  return doc.output('blob');
+}
+
+/* ---------- pohled obchodníka ---------- */
+function renderSales(){
+  const t = totals();
+  const L = S.lead;
+  const first = t.items[0];
+  const opener = first ? 'Dobrý den, v AI mapě jste si sestavili plán s ' + t.items.length + ' ' + (t.items.length === 1 ? 'možností' : 'možnostmi') + ', třeba „' + first.t + '“. Kdo by se to u vás měl naučit jako první?' : 'Zatím bez plánu.';
+  const rows = [
+    ['Zdroj', 'AI mapa pro firmy'],
+    ['Kontakt', L ? esc(L.name + ', ' + L.email + ', ' + L.firm + (L.size ? ', ' + L.size + ' zaměstnanců' : '')) + (L.free ? ' <i>(soukromý e-mail)</i>' : '') : 'zatím nevyplněno'],
+    ['Obor', S.obor ? esc(OBOR_LABEL[S.obor]) : 'nevybral'],
+    ['Oddělení v plánu', t.items.length ? esc([...new Set(t.items.map(u => ODD_LABEL[u.d]))].join(', ')) : 'nic'],
+    ['Plán', t.items.length ? esc(t.items.map(u => u.t).join('; ')) : 'prázdný'],
+    ['Odhad úspory', t.items.length ? nf(t.h1) + ' až ' + nf(t.h2) + ' h měsíčně pro ' + t.p + ' lidí' : 'nic'],
+    ['Pilot Grizletu', S.pilot ? '<b>má zájem, nabídnout pilot</b>' : 'ne'],
+    ['Podpora Vzdělávání pro firmy', 'až ' + kc(Math.round(t.sub)) + ' pro ' + t.p + ' lidí a 60 hodin'],
+    ['První věta do telefonu', esc(opener)]
+  ];
+  $('#sales').innerHTML = rows.map(r => '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>').join('');
+}
+
+/* ---------- ukázka v úvodu ---------- */
+function renderHeroVis(){
+  const u = byId('o1'), k = u && KVIZ[u.q], el = $('#hero-vis');
+  if (!u || !k || !el) return;
+  el.innerHTML = '<div class="hv-card"><div class="uc-top"><span class="dept">' + esc(ODD_LABEL[u.d]) + '</span></div>' +
+    '<h3>' + esc(u.t) + '</h3>' +
+    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span><span class="lvl ' + u.l + '">' + LEVEL[u.l] + '</span></div>' +
+    '<p class="hv-label">Pokyn pro AI</p><div class="hv-prompt"><span>' + esc(u.p.replace(/\n/g, ' ')) + '</span></div>' +
+    '<div class="hv-row"><span class="hv-chip on">V plánu ✓</span></div></div>' +
+    '<div class="hv-phone"><div class="gz-prog"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>' +
+    '<p class="gz-cat">' + esc(ODD_LABEL[u.d]) + '  3/4</p><p class="hv-q">' + esc(k.q) + '</p>' +
+    '<div class="hv-opt">' + esc(k.o[0]) + '</div><div class="hv-opt hv-ok">' + esc(k.o[k.ok]) + '</div>' +
+    '<div class="hv-btn">Pokračovat</div></div>' +
+    '<p class="hv-cap"><i>g</i>Lekce pro tým do mobilu</p>';
+}
+
+/* ---------- události ---------- */
+document.addEventListener('click', e => {
+  const ob = e.target.closest('[data-obor]');
+  if (ob){ S.obor = S.obor === ob.dataset.obor ? null : ob.dataset.obor; renderChips(); renderGrid(); renderSales(); return; }
+  const od = e.target.closest('[data-odd]');
+  if (od){ S.odd = od.dataset.odd; renderChips(); renderGrid(); return; }
+  const op = e.target.closest('[data-open]');
+  if (op){ openDetail(op.dataset.open, op); return; }
+  const pl = e.target.closest('[data-plan]');
+  if (pl){ togglePlan(pl.dataset.plan); return; }
+  if (e.target.closest('[data-close]')){ closeDetail(); return; }
+  if (e.target.closest('[data-copy]')){ copyPrompt(); return; }
+  const ls = e.target.closest('[data-lesson]');
+  if (ls){ openLesson(ls.dataset.lesson); return; }
+  const opt = e.target.closest('[data-opt]');
+  if (opt){ answer(Number(opt.dataset.opt)); return; }
+  const g = e.target.closest('[data-gz]');
+  if (g){ if (g.dataset.gz === 'pilot') wantPilot(); else { gz.step++; gz.answered = false; renderLesson(); const b = $('#phone .gz-btn'); if (b && !b.disabled) b.focus(); } return; }
+  if (e.target.id === 'ov') closeDetail();
+  if (e.target.id === 'gz') closeLesson();
+});
+$('#gz-close').addEventListener('click', closeLesson);
+$('#pilot-cta').addEventListener('click', wantPilot);
+$('#l-pilot').addEventListener('change', e => { S.pilot = e.target.checked; renderSales(); });
+$('#lead').addEventListener('submit', submitLead);
+let qt = 0;
+$('#f-q').addEventListener('input', e => { clearTimeout(qt); qt = setTimeout(() => { S.q = e.target.value; renderGrid(); }, 150); });
+$('#c-n').addEventListener('input', e => { S.people = e.target.value; renderPlan(); });
+$('#c-h').addEventListener('input', e => { S.rate = e.target.value; renderPlan(); });
+document.addEventListener('keydown', e => {
+  const layer = !$('#gz').hidden ? $('#gz') : (!$('#ov').hidden ? $('#ov') : null);
+  if (!layer) return;
+  if (e.key === 'Escape'){ if (layer.id === 'gz') closeLesson(); else closeDetail(); return; }
+  if (e.key === 'Tab'){
+    const f = $$('button:not([disabled]), a[href], input, select, [tabindex="0"]', layer);
+    if (!f.length) return;
+    const i = f.indexOf(document.activeElement);
+    e.preventDefault();
+    f[(i + (e.shiftKey ? f.length - 1 : 1) + f.length) % f.length].focus();
+  }
+});
+if ('IntersectionObserver' in window){
+  new IntersectionObserver(([en]) => { planVisible = en.isIntersecting; $('#tray').hidden = !S.plan.length || planVisible; }, { threshold:0.08 }).observe($('#plan'));
+}
+$('#hero-n').textContent = UC.length + ' konkrétních možností';
+renderHeroVis();
+renderChips(); renderGrid(); renderPlan();
+})();
+</script>
+</body>
+</html>
