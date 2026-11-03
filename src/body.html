@@ -1,0 +1,107 @@
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#top" aria-label="LifeScale Business, začátek stránky">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="#00B4F1" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 27c4-4 8-12 8-18 0-3-1.5-4.5-3.2-4.5C9.6 4.5 8.5 7 9 11c.7 6 2.6 11 4.6 13.6 1.6 2 4.4 2.8 7.4 1.6 2.2-.9 4-2.5 5-4.2"/></svg>
+      <span>LifeScale <span class="sub">Business</span></span>
+    </a>
+    <span class="proto">Prototyp</span>
+    <a class="plan-pill" href="#plan">Můj plán <b id="pill-n">0</b></a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap hero-in">
+    <div class="hero-txt">
+    <span class="kicker">AI mapa pro firmy</span>
+    <h1>Najděte práci, kterou vám <span class="mark">AI zkrátí</span> na minuty</h1>
+    <p class="lede"><b id="hero-n">42 konkrétních možností</b> pro 7 oborů a 7 oddělení. U každé najdete hotový pokyn pro AI, odhad ušetřeného času a krátkou lekci, kterou pošlete týmu do mobilu.</p>
+    <div class="hero-facts"><span>Zdarma a bez registrace</span><span>Pokyny ke zkopírování</span><span>Plán a ukázka kurzu v PDF</span></div>
+    </div>
+    <div class="hero-vis" id="hero-vis" aria-hidden="true"></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="filters" id="vyber">
+    <div class="frow"><span class="flabel" id="lab-obor">Váš obor</span><div class="chips" id="f-obor" role="group" aria-labelledby="lab-obor"></div></div>
+    <div class="frow"><span class="flabel" id="lab-odd">Oddělení</span><div class="chips" id="f-odd" role="group" aria-labelledby="lab-odd"></div></div>
+    <div class="frow"><label class="flabel" for="f-q">Hledat</label>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="f-q" type="search" placeholder="Třeba faktury nebo nábor" autocomplete="off"></div>
+    </div>
+  </div>
+  <div class="res-head"><h2 id="res-title">Všechny možnosti</h2><p id="res-sub">Vyberte obor a oddělení, ať vidíte jen to, co se vás týká.</p></div>
+  <div class="grid" id="grid" aria-live="polite"></div>
+</div>
+
+<section class="plan" id="plan">
+  <div class="wrap">
+    <span class="kicker">Váš AI plán</span>
+    <h2 id="plan-title">Zatím nemáte nic vybraného</h2>
+    <div class="plan-empty" id="plan-empty">
+      <p>Přidejte si možnosti tlačítkem „+ Do plánu“. Tady pak uvidíte, kolik času vám ušetří, a stáhnete si je v PDF i s ukázkou kurzu AI Akcelerátor.</p>
+      <a class="btn btn-ghost" href="#vyber">Vybrat možnosti</a>
+    </div>
+    <div class="plan-grid" id="plan-body" hidden>
+      <div class="box">
+        <ul class="plist" id="plist"></ul>
+        <div class="people">
+          <label for="c-n">Kolik lidí to bude dělat</label>
+          <div class="stepper">
+            <button type="button" data-step="-1" aria-label="O jednoho méně"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>
+            <input id="c-n" type="number" min="1" max="5000" value="10" inputmode="numeric">
+            <button type="button" data-step="1" aria-label="O jednoho víc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg></button>
+          </div>
+        </div>
+        <div class="save" id="save"><b id="save-h"></b><span id="save-k"></span></div>
+        <p class="soft" id="save-note"></p>
+        <div class="subsidy">
+          <p id="sub-sum"></p>
+          <details class="sub-more">
+            <summary>Jak dotace funguje</summary>
+            <ul class="ticks">
+              <li>Dotace z výzvy Vzdělávání pro firmy se uzná účastníkovi, který absolvuje aspoň 50 hodin. AI Akcelerátor má 12 hodin, proto ho doplníme o další témata, třeba digitální produktivitu nebo kybernetickou bezpečnost, na 60 hodin.</li>
+              <li>Výzva hradí 478,19 Kč za každou hodinu školení na účastníka.</li>
+              <li>U OSVČ a dodavatelů je podpora poloviční.</li>
+              <li>Proplácí se zpětně. S žádostí vám pomůžeme a dotační servis je v ceně kurzu.</li>
+            </ul>
+            <p class="soft">AI Act od února 2025 ukládá firmám, které AI používají, zajistit lidem, kteří s ní pracují, dostatečnou gramotnost v AI. Školení s prezenční listinou to pomůže doložit.</p>
+            <a href="https://business.lifescale.cz/cz/pages/sluzby/dotace-z-eu-na-vzdelavani" target="_blank" rel="noopener">Víc o dotacích na vzdělávání</a>
+          </details>
+        </div>
+      </div>
+      <div class="box form-box" id="form-box">
+        <h3>Zajímá vás, jak takový kurz vypadá?</h3>
+        <p class="hint">Stáhněte si ukázku našeho nejžádanějšího kurzu AI Akcelerátor: 12 hodin praktického tréninku ve třech blocích. Každé firmě ho upravujeme na míru, podle práce jejích lidí a nástrojů, které používá.</p>
+        <ul class="ticks gets"><li>Program kurzu a co si lidé odnesou</li><li>Příklady, jak jsme kurz upravili jiným firmám</li><li>Dotace a postupy k možnostem z vašeho plánu</li></ul>
+        <form class="lead" id="lead" novalidate>
+          <div class="field"><label for="l-email">Firemní e-mail</label><input id="l-email" type="email" autocomplete="email" placeholder="jana.novakova@firma.cz" required></div>
+          <div class="row2">
+            <div class="field"><label for="l-name">Jméno a příjmení <span class="opt">nepovinné</span></label><input id="l-name" type="text" autocomplete="name" placeholder="Jana Nováková"></div>
+            <div class="field"><label for="l-phone">Telefon <span class="opt">nepovinné</span></label><input id="l-phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+420 777 123 456"></div>
+          </div>
+          <div class="field"><label for="l-firm">Firma <span class="opt">nepovinné</span></label><input id="l-firm" type="text" autocomplete="organization" placeholder="Firma s.r.o."></div>
+          <p class="pilot-chip" id="pilot-chip" hidden><span>Připravíme vám i první lekci v Grizletu zdarma.</span><button class="linkish" type="button" id="pilot-x">Odebrat</button></p>
+          <label class="check strong"><input type="checkbox" id="l-custom"><span>Chci vidět, jak by mohl vypadat kurz na míru pro naši firmu<small>Připravíme ho podle možností z vašeho plánu.</small></span></label>
+          <input type="hidden" id="l-plan" name="plan" value="">
+          <label class="check"><input type="checkbox" id="l-consent"><span>Souhlasím se <a href="https://business.lifescale.cz/cz" target="_blank" rel="noopener">zpracováním osobních údajů</a>, aby se mi LifeScale mohl ozvat.</span></label>
+          <p class="err" id="l-err" hidden></p>
+          <button class="btn btn-primary" type="submit" id="l-submit">Stáhnout ukázku kurzu</button>
+        </form>
+        <div class="done" id="lead-ok" hidden></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <details class="sales"><summary><span><span class="int">Jen pro tým LifeScale, návštěvník tuto část neuvidí</span>Pohled obchodníka: co dorazí do Pipedrivu</span></summary><dl id="sales"></dl></details>
+  <p class="foot">Prototyp lead magnetu LifeScale Business, říjen 2026. Odhady úspory času jsou orientační a vycházejí z toho, jak dlouho úkoly obvykle trvají bez AI a s ní.</p>
+</div>
+</main>
+
+<div class="tray" id="tray" hidden><p id="tray-t"></p><a class="btn btn-primary" href="#plan">Zobrazit plán</a></div>
+<div class="overlay" id="ov" hidden role="dialog" aria-modal="true" aria-labelledby="d-title"><div class="sheet" id="sheet"></div></div>
+<div class="overlay" id="gz" hidden role="dialog" aria-modal="true" aria-label="Ukázka lekce v Grizletu">
+  <div class="gz-wrap"><div class="gz-brand"><i aria-hidden="true">g</i>Ukázka lekce v Grizletu, jak ji uvidí vaši lidé</div><div class="phone" id="phone"></div><button class="gz-close" type="button" id="gz-close">Zavřít lekci</button></div>
+</div>
