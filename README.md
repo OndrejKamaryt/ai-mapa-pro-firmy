@@ -1,18 +1,18 @@
 # AI mapa pro firmy
 
-Prototyp lead magnetu pro LifeScale Business. Firma si zdarma najde, kde jí AI ušetří práci, a sestaví si z toho vlastní plán. Za kontakt si stáhne ukázku kurzu AI Akcelerátor, našeho bestselleru, a může si říct o návrh kurzu na míru. Výběr z plánu odchází s formulářem ve skrytém poli, takže obchodník ví, z čeho návrh připravit. Jako menší první krok stránka nabízí první lekci v Grizletu zdarma.
+Prototyp lead magnetu pro LifeScale Business. Cílí hlavně na výrobní firmy s 50 až 250 zaměstnanci, které si neumí představit, k čemu by u nich AI byla. Firma si zdarma najde, kde jí AI ušetří práci, a vyzkouší si hotové postupy. Stránka ji pak vede ke kurzu AI Akcelerátor, našemu bestselleru: za kontakt si stáhne jeho ukázku a může si říct o návrh kurzu na míru. Obor, oddělení a prohlédnuté možnosti odcházejí s formulářem ve skrytém poli, takže obchodník ví, z čeho návrh připravit.
 
 ![Úvod stránky na notebooku](docs/desktop.png)
 
-![Detail možnosti, ukázková lekce a plán na telefonu](docs/mobil.png)
+![Možnosti seřazené podle obtížnosti a sekce kurzu na telefonu](docs/mobil.png)
 
 ## Jak to funguje
 
-1. Návštěvník si vybere obor a oddělení a projde 42 konkrétních možností využití AI. U každé najde postup, pokyn pro AI ke zkopírování a upozornění, na co si dát pozor. Krátká animace ukazuje, jak by se postup tým naučil v Grizletu, a návštěvník si může projít ukázkovou lekci.
-2. Vybrané možnosti si přidá do plánu. Zadá jen počet lidí a stránka ukáže, kolik hodin a korun měsíčně tým zhruba ušetří. Ukáže také, kolik může firma získat na školení AI Akcelerátor z výzvy Vzdělávání pro firmy.
-3. Za firemní e-mail si stáhne v PDF ukázku kurzu AI Akcelerátor ve standardní podobě (12 hodin, tři moduly). Součástí je, co si lidé odnesou, jak kurz upravujeme na míru, příklady úprav u jiných firem a dotace. Jméno, telefon a firma jsou nepovinné. V příloze jsou postupy a pokyny pro AI k možnostem z jeho plánu.
-4. Zaškrtnutím nebo po stažení tlačítkem si může říct o návrh kurzu na míru. Jako menší krok stránka nabízí první lekci v Grizletu zdarma, o tu si může říct i na konci ukázkové lekce.
-5. Výběr z plánu odchází s formulářem ve skrytém poli `plan` jako JSON: obor, počet lidí, vybrané možnosti s oddělením, odhad úspory, dotace a zájem o návrh na míru a o první lekci zdarma.
+1. Návštěvník si vybere obor, oddělení a případně obtížnost a projde 42 konkrétních možností využití AI, seřazených od nejsnazších. Obtížnost ukazuje ikona se třemi sloupečky: snadné mají vyplněný jeden, střední dva.
+2. U každé možnosti najde postup, pokyn pro AI ke zkopírování, odhad ušetřeného času a upozornění, na co si dát pozor. Z detailu vede tlačítko rovnou ke kurzu.
+3. Sekce o kurzu AI Akcelerátor ukazuje tři moduly, přepočet „160 ušetřených hodin měsíčně je jeden člověk navíc“ a dotaci z výzvy Vzdělávání pro firmy na účastníka.
+4. Za firemní e-mail si stáhne v PDF ukázku kurzu ve standardní podobě (12 hodin, tři moduly). Součástí je, co si lidé odnesou, jak kurz upravujeme na míru, příklady úprav u jiných firem a dotace. Jméno, telefon a firma jsou nepovinné.
+5. Zaškrtnutím nebo po stažení tlačítkem si může říct o návrh kurzu na míru. S formulářem odchází skryté pole `zajem` jako JSON: obor, oddělení, prohlédnuté možnosti a zájem o návrh na míru.
 6. Dole na stránce je skrytý „Pohled obchodníka“. Ukazuje, co by dorazilo do Pipedrivu, i obsah skrytého pole. Do ostré verze nepatří.
 
 ## Spuštění
@@ -28,8 +28,8 @@ Stejná stránka běží i jako artefakt v Claudu. Tam se PDF stahuje přes scho
 | `index.html` | sestavená stránka, tu otevírejte a nasazujte |
 | `src/head.html` | titulek, odkazy na písma a všechny styly |
 | `src/body.html` | obsah stránky |
-| `src/data.js` | obory, oddělení, kvízové otázky, všech 42 možností a osnova kurzu `KURZ` |
-| `src/app.js` | filtry, plán, výpočty, ukázková lekce, formulář a PDF |
+| `src/data.js` | obory, oddělení, všech 42 možností a osnova kurzu `KURZ` |
+| `src/app.js` | filtry a řazení, detail možnosti, sekce kurzu, formulář a PDF |
 | `src/font.js` | písmo Figtree pro PDF, podmnožina s českými znaky v base64 |
 | `build.sh` | složí `src/` do `index.html` a do `dist/artifact.html` pro Claude |
 | `tests/` | automatický průchod stránkou na telefonu a notebooku |
@@ -47,7 +47,6 @@ Možnosti jsou v `src/data.js` v poli `UC`. Každá má tato pole:
 | `u` | úspora v hodinách týdně na člověka ve tvaru `[od, do]` |
 | `l` | obtížnost: `s` snadné, `m` střední |
 | `n` | nástroj: `chat`, `dok`, `excel` nebo `prepis` |
-| `q` | otázka do ukázkové lekce, klíč z objektu `KVIZ` |
 | `t`, `w` | název a popis |
 | `s` | kroky postupu |
 | `p` | pokyn pro AI, text v hranatých závorkách si návštěvník nahradí svými údaji |
@@ -64,10 +63,8 @@ python3 tools/nbsp.py src/body.html src/data.js src/app.js
 
 ## Výpočty
 
-- Úspora za měsíc: střed rozmezí hodin týdně u vybraných možností × 52/12 × počet lidí, zaokrouhlený na dvě platné číslice. Celé rozmezí je v PDF.
-- Náklady na práci: ušetřené hodiny × 435 Kč. Sazba vychází z průměrné mzdy 51 966 Kč za 2. čtvrtletí 2026 podle ČSÚ, s odvody zaměstnavatele (× 1,338) a při 160 hodinách měsíčně.
-- Podpora na školení: počet lidí × 60 hodin × 478,19 Kč na osobohodinu. Podpora se uzná účastníkovi, který absolvuje aspoň 50 hodin. Standardní AI Akcelerátor má 12 hodin, pro dotaci se proto doplní o další témata na 60 hodin a stránka to tak i říká.
-- Když jsou v plánu úkoly z více oddělení, stránka upozorní, že výpočet předpokládá, že každý z lidí dělá všechny.
+- Dotace na účastníka: 60 hodin × 478,19 Kč na osobohodinu, tedy 28 691 Kč. Podpora se uzná účastníkovi, který absolvuje aspoň 50 hodin. Standardní AI Akcelerátor má 12 hodin, pro dotaci se proto doplní o další témata na 60 hodin a stránka to tak i říká.
+- Jeden člověk navíc odpovídá 160 hodinám práce měsíčně.
 
 ## Testy
 
@@ -80,14 +77,13 @@ playwright install chromium
 python3 tests/test_flow.py
 ```
 
-Test proklikne filtry, detail, kopírování pokynu, ukázkovou lekci, plán, výpočty, formulář i stažení PDF. Snímky obrazovky a stažené PDF uloží do `tests/out/`.
+Test proklikne filtry, řazení podle obtížnosti, detail, kopírování pokynu, přechod ke kurzu, formulář i stažení PDF. Snímky obrazovky a stažené PDF uloží do `tests/out/`.
 
 ## Před ostrým spuštěním
 
-- Napojit formulář na Pipedrive B2B přes vlastní endpoint na serveru, včetně skrytého pole `plan`. API token Pipedrivu nesmí být v kódu stránky.
+- Napojit formulář na Pipedrive B2B přes vlastní endpoint na serveru, včetně skrytého pole `zajem`. API token Pipedrivu nesmí být v kódu stránky.
 - Potvrdit, že anonymizované příklady úprav kurzu u klientů smíme ukazovat.
 - Rozhodnout, jestli do PDF patří cena kurzu (prezentace uvádí 600 Kč za osobohodinu).
-- Domluvit, kdo připraví první lekci v Grizletu zdarma a do kdy se firmě ozve.
 - Ověřit s dotačním servisem čísla k výzvě Vzdělávání pro firmy.
 - Odkaz u souhlasu vést na skutečné zásady zpracování osobních údajů.
 - Nahradit písmo Figtree písmem Satoshi z webu.

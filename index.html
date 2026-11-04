@@ -7,12 +7,12 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
 /* AI mapa pro firmy, prototyp lead magnetu LifeScale Business.
    Vzhled podle business.lifescale.cz: světlé pozadí s modrým nádechem, modrá #00B4F1, tmavý text #20100B,
    tučné nadpisy s mírně staženým prokladem, modré štítky kapitálkami a pilulková tlačítka. Web používá písmo Satoshi,
-   to v prototypu nahrazuje podobné Figtree. Ukázková lekce je ve stylu Grizletu (Nunito, #032B43, #2971AE). */
+   to v prototypu nahrazuje podobné Figtree. */
 :root{
   --blue:#00B4F1; --blue-deep:#009FD8; --blue-ink:#0079B5; --blue-soft:#E3F6FE; --blue-wash:#F2FAFE;
   --ink:#20100B; --muted:#5C5855; --line:#E6EBEF; --bg:#FFFFFF; --card:#FFFFFF;
@@ -44,10 +44,10 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .brand-mark{width:30px; height:30px; flex:none}
 .brand .sub{color:var(--blue-ink); font-weight:500}
 .proto{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--blue-ink); background:var(--blue-soft); border-radius:999px; padding:4px 9px}
-.plan-pill{margin-left:auto; display:inline-flex; align-items:center; gap:8px; min-height:42px; padding:8px 18px; border-radius:999px; border:0; background:var(--blue); color:#fff; font:700 15px var(--font); cursor:pointer; text-decoration:none; transition:background .15s}
-.plan-pill:hover{background:var(--blue-deep)}
-.plan-pill b{display:inline-grid; place-items:center; min-width:24px; height:24px; padding:0 6px; border-radius:999px; background:#fff; color:var(--blue-ink); font-size:13px}
-@media (max-width:560px){ .brand{font-size:17px} .brand .sub{display:none} .plan-pill{padding:8px 14px} }
+.top-cta{margin-left:auto; display:inline-flex; align-items:center; min-height:42px; padding:8px 18px; border-radius:999px; background:var(--blue); color:#fff; font:700 15px var(--font); text-decoration:none; transition:background .15s}
+.top-cta:hover{background:var(--blue-deep)}
+@media (max-width:560px){ .brand{font-size:17px} .brand .sub{display:none} .top-cta{padding:8px 14px} }
+@media (max-width:359px){ .proto{display:none} }
 
 /* tlačítka */
 .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:46px; padding:11px 24px; border-radius:999px; border:1.5px solid transparent; font:700 15px/1.2 var(--font); cursor:pointer; text-decoration:none; text-align:center; transition:background .15s, border-color .15s, color .15s}
@@ -79,28 +79,19 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .hero-vis{display:none}
 @media (min-width:1200px){
   .hero{padding:44px 0 30px}
-  .hero-in{display:grid; grid-template-columns:minmax(0,1fr) 440px; gap:40px; align-items:center}
-  .hero-vis{display:block; position:relative; height:392px; z-index:1}
+  .hero-in{display:grid; grid-template-columns:minmax(0,1fr) 400px; gap:48px; align-items:center}
+  .hero-vis{display:block; position:relative; z-index:1}
 }
-.hv-card{position:absolute; left:0; top:0; width:292px; background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:18px; box-shadow:var(--shadow); display:grid; gap:9px}
-.hv-card h3{font-size:18px; line-height:1.3; font-weight:800; letter-spacing:-.01em}
+.hv-card{background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:20px; box-shadow:var(--shadow-up); display:grid; gap:10px}
+.hv-card h3{font-size:19px; line-height:1.3; font-weight:800; letter-spacing:-.01em}
 .hv-card .meta{margin:0; padding:0; font-size:13px}
 .hv-label{font-size:12px; font-weight:800; margin-top:2px}
 .hv-prompt{background:var(--blue-wash); border:1px solid #CDEBF8; border-radius:12px; padding:10px 12px; font-size:13px; line-height:1.5}
-.hv-prompt span{display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden}
-.hv-row{display:flex; gap:8px}
-.hv-chip{display:inline-flex; align-items:center; min-height:30px; padding:5px 12px; border-radius:999px; font-size:13px; font-weight:700}
-.hv-chip.on{background:var(--green-soft); color:var(--green); border:1px solid #BFE3CD}
-.hv-phone{position:absolute; right:0; top:64px; width:178px; height:296px; background:#fff; border:7px solid #032B43; border-radius:30px; padding:16px 12px 12px; box-shadow:var(--shadow-up); font-family:'Nunito Sans', var(--font); color:#032B43; display:flex; flex-direction:column; gap:7px}
-.hv-phone .gz-prog{gap:4px}
-.hv-phone .gz-prog i{height:4px}
-.hv-phone .gz-cat{margin:2px 0 0; font-size:10px}
-.hv-q{font:800 13px/1.3 Nunito, var(--font)}
-.hv-opt{border:1.5px solid #DCE6EE; border-radius:10px; padding:6px 8px; font-size:11.5px; line-height:1.35; font-weight:600}
-.hv-opt.hv-ok{border-color:#3A9D5D; background:#EAF6EE}
-.hv-btn{margin-top:auto; min-height:30px; border-radius:999px; background:#2971AE; color:#fff; font:800 12.5px 'Nunito Sans', var(--font); display:grid; place-items:center}
-.hv-cap{position:absolute; right:0; top:372px; width:178px; display:flex; justify-content:center; align-items:center; gap:8px; white-space:nowrap; font-size:13px; font-weight:700; color:var(--muted)}
-.hv-cap i{width:20px; height:20px; border-radius:6px; background:#032B43; color:#fff; display:inline-grid; place-items:center; font:900 12px Nunito, var(--font); font-style:normal}
+.hv-prompt span{display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden}
+.hv-row{display:flex; align-items:center; gap:12px}
+.hv-chip{display:inline-flex; align-items:center; min-height:34px; padding:6px 14px; border-radius:999px; font-size:13px; font-weight:700; background:var(--ink); color:#fff}
+.hv-ok{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--green)}
+.hv-ok svg{width:18px; height:18px; padding:4px; border-radius:50%; background:var(--green); stroke:#fff; stroke-width:3; fill:none; stroke-linecap:round; stroke-linejoin:round}
 
 /* filtry */
 .filters{position:relative; z-index:2; background:#fff; border-radius:var(--r); box-shadow:var(--shadow); padding:18px 20px; display:grid; gap:14px; margin-top:6px}
@@ -110,17 +101,12 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .chip{min-height:40px; padding:8px 15px; border-radius:999px; border:1.5px solid var(--line); background:#fff; font:600 14px var(--font); color:var(--ink); cursor:pointer; white-space:nowrap; transition:border-color .15s, background .15s}
 .chip:hover{border-color:var(--blue)}
 .chip[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:#fff}
-.search{display:flex; align-items:center; gap:10px; border:1.5px solid var(--line); border-radius:999px; padding:0 16px; min-height:44px; max-width:420px; background:#fff}
-.search:focus-within{border-color:var(--blue)}
-.search svg{width:18px; height:18px; flex:none; stroke:var(--muted)}
-.search input{border:0; outline:0; font:16px var(--font); color:var(--ink); width:100%; background:transparent; min-height:42px}
 @media (max-width:720px){
   .filters{padding:14px 0 14px 14px; border-radius:var(--r-sm)}
   .frow{grid-template-columns:minmax(0,1fr); gap:6px}
   .flabel{padding:0}
   .chips{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding-right:14px; -webkit-overflow-scrolling:touch}
   .chips::-webkit-scrollbar{display:none}
-  .search{margin-right:14px; max-width:none}
 }
 
 /* výsledky */
@@ -141,8 +127,13 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .meta{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:14px; font-weight:600; margin-top:auto; padding-top:4px}
 .meta span{display:inline-flex; align-items:center; gap:6px}
 .meta svg{width:16px; height:16px; stroke:var(--blue-ink); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
-.lvl::before{content:""; width:8px; height:8px; border-radius:50%; background:var(--green)}
-.lvl.m::before{background:#E39B1B}
+.lvl{display:inline-flex; align-items:center; gap:6px}
+.meta .lvl svg, .lvl svg{width:18px; height:16px; flex:none; stroke:none; fill:none}
+.lvl rect{fill:#D3DDE4}
+.lvl rect.on{fill:var(--blue-ink)}
+.chip .lvl{margin-right:7px; vertical-align:-3px}
+.chip[aria-pressed="true"] .lvl rect{fill:rgba(255,255,255,.3)}
+.chip[aria-pressed="true"] .lvl rect.on{fill:#fff}
 .uc-actions{display:flex; flex-wrap:wrap; gap:8px; padding-top:4px}
 .empty{grid-column:1 / -1; text-align:center; padding:40px 16px; color:var(--muted)}
 
@@ -166,109 +157,36 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .note{display:flex; gap:10px; align-items:flex-start; background:var(--amber-soft); color:var(--amber-ink); border-radius:12px; padding:12px 14px; font-size:15px}
 .note svg{width:20px; height:20px; flex:none; margin-top:1px; stroke:var(--amber-ink); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
 .tool{font-size:14px; color:var(--muted); margin-top:8px}
-.gzbox{background:#EEF4F9; border-radius:14px; padding:16px; display:grid; gap:12px; justify-items:start}
-.gzbox-top{display:grid; grid-template-columns:132px minmax(0,1fr); gap:16px; align-items:center; width:100%}
-.gzbox h4{margin:0 0 10px; color:#032B43; font-size:17px}
-.gzbox-free{font-size:15px; color:#032B43}
-.ga{position:relative; width:132px; height:232px; border:6px solid #032B43; border-radius:24px; background:#fff; overflow:hidden; font-family:'Nunito Sans', var(--font); color:#032B43; box-shadow:0 10px 24px rgba(3,43,67,.18)}
-.ga-scr{position:absolute; inset:0; padding:14px 10px 10px; display:flex; flex-direction:column; gap:7px; opacity:0; transform:translateY(8px); transition:opacity .35s ease, transform .35s ease}
-.ga[data-scene="1"] .ga-s1, .ga[data-scene="2"] .ga-s2, .ga[data-scene="3"] .ga-s3{opacity:1; transform:none}
-.ga-s1{background:linear-gradient(180deg, #0E4C70, #032B43); color:#fff}
-.ga-time{font:800 22px/1 Nunito, var(--font); text-align:center; margin-top:10px}
-.ga-msg{display:grid; gap:5px; background:rgba(255,255,255,.96); color:#032B43; border-radius:10px; padding:7px 8px; font-size:10px; line-height:1.3; margin-top:14px}
-.ga-from{display:flex; align-items:center; gap:6px}
-.ga-ic{width:18px; height:18px; flex:none; border-radius:5px; background:#032B43; color:#fff; display:grid; place-items:center; font:900 11px Nunito, var(--font)}
-.ga-msg b{font-size:10px}
-.ga-msg .t{display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden}
-.ga-open{margin-top:auto; text-align:center; background:#2971AE; color:#fff; border-radius:999px; padding:7px 0; font:800 11px 'Nunito Sans', var(--font)}
-.ga[data-scene="1"] .ga-open{animation:gaTap 3.2s ease infinite}
-@keyframes gaTap{0%, 55%{transform:none; filter:none} 62%{transform:scale(.93); filter:brightness(.85)} 72%, 100%{transform:none; filter:none}}
-.ga-prog{display:grid; grid-template-columns:repeat(4, 1fr); gap:3px}
-.ga-prog i{height:3px; border-radius:3px; background:#D6E3EE}
-.ga-prog i:nth-child(-n+3){background:#2971AE}
-.ga-cat{font:800 8.5px 'Nunito Sans', var(--font); letter-spacing:.06em; text-transform:uppercase; color:#6B7C89}
-.ga-q{font:800 11px/1.3 Nunito, var(--font); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
-.ga-opt{border:1.5px solid #DCE6EE; border-radius:8px; padding:5px 6px; font-size:9.5px; line-height:1.3; font-weight:600}
-.ga-opt span{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
-.ga[data-scene="2"] .ga-right{animation:gaPick .35s ease 1.2s forwards}
-@keyframes gaPick{to{border-color:#3A9D5D; background:#EAF6EE}}
-.ga-fb{font-size:9.5px; font-weight:800; color:#2E8B50; opacity:0}
-.ga[data-scene="2"] .ga-fb{animation:gaShow .3s ease 1.6s forwards}
-@keyframes gaShow{to{opacity:1}}
-.ga-h{font:800 11px Nunito, var(--font)}
-.ga-big{font:900 24px/1 Nunito, var(--font); margin-top:4px}
-.ga-sub{font-size:9.5px; color:#6B7C89}
-.ga-bar{height:6px; border-radius:6px; background:#D6E3EE; overflow:hidden}
-.ga-bar i{display:block; height:100%; width:0; background:#3A9D5D; border-radius:6px; transition:width .9s ease .3s}
-.ga[data-scene="3"] .ga-bar i{width:80%}
-.ga-people{list-style:none; margin:4px 0 0; padding:0; display:grid; gap:4px; font-size:9.5px}
-.ga-people li{display:flex; justify-content:space-between; border-bottom:1px solid #EEF2F5; padding-bottom:3px}
-.ga-people b{color:#2E8B50}
-.ga-steps{margin:0; padding:0; list-style:none; counter-reset:g; display:grid; gap:9px}
-.ga-steps li{counter-increment:g; display:grid; grid-template-columns:24px minmax(0,1fr); gap:8px; align-items:start; font-size:14px; line-height:1.35; color:#1D3D52; opacity:.55; transition:opacity .3s}
-.ga-steps li::before{content:counter(g); width:24px; height:24px; border-radius:50%; background:#fff; color:#032B43; display:grid; place-items:center; font:800 12px var(--font)}
-.ga-steps li.on{opacity:1; font-weight:700}
-.ga-steps li.on::before{background:#2971AE; color:#fff}
-.ga-static .ga-right{border-color:#3A9D5D; background:#EAF6EE}
-.ga-static .ga-fb{opacity:1}
-@media (max-width:420px){ .gzbox-top{gap:12px} .ga-steps li{font-size:13px} }
 .row2{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px}
 @media (max-width:480px){ .row2{grid-template-columns:minmax(0,1fr)} }
 .opt{font-weight:500; color:var(--muted); font-size:13px; margin-left:4px}
-.sheet-actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:24px; padding-top:18px; border-top:1px solid var(--line)}
+.sheet-actions{display:grid; gap:12px; justify-items:start; margin-top:24px; padding-top:18px; border-top:1px solid var(--line)}
+.sheet-actions p{font-size:15px; color:var(--muted)}
 @media (max-width:640px){
   .overlay{place-items:end center; padding:0}
   .sheet{border-radius:20px 20px 0 0; max-height:92dvh; padding:24px max(18px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px))}
-  .sheet-actions .btn{flex:1 1 100%}
+  .sheet-actions{justify-items:stretch}
 }
 
-/* plán */
-.tray{position:fixed; left:calc(12px + env(safe-area-inset-left, 0px)); right:calc(12px + env(safe-area-inset-right, 0px)); margin:0 auto; width:fit-content; bottom:calc(14px + env(safe-area-inset-bottom, 0px)); z-index:25; display:flex; align-items:center; gap:14px; background:var(--ink); color:#fff; border-radius:999px; padding:8px 8px 8px 20px; box-shadow:var(--shadow-up); max-width:calc(100% - 24px)}
-.tray p{display:grid; min-width:0; line-height:1.25}
-.tray p b, .tray p span{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.tray p b{font-size:14px; font-weight:700}
-.tray p span{font-size:12.5px; font-weight:500; color:#D9D4D2}
-@media (max-width:440px){ .tray .tr-pp{display:none} .tray{gap:10px; padding-left:18px} .tray .btn{padding:8px 16px} }
-@media (max-width:359px){ .proto{display:none} .tray p b{font-size:13px} .tray p span{font-size:12px} .tray .btn{padding:8px 13px; font-size:14px} }
-.tray .btn{min-height:40px; padding:8px 18px; flex:none}
-.plan{padding:60px 0 56px; scroll-margin-top:64px; background:var(--blue-wash); border-top:1px solid #DDEFF8}
-.plan h2{font-size:clamp(26px,3.4vw,40px); line-height:1.15; font-weight:800; letter-spacing:-.03em; margin-top:10px}
-.plan-empty{display:grid; gap:16px; justify-items:start; margin-top:12px; max-width:62ch}
-.plan-empty p{color:var(--muted); font-size:17px}
-.plan-grid{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:24px; align-items:start; margin-top:22px}
-@media (max-width:900px){ .plan-grid{grid-template-columns:minmax(0,1fr)} }
+/* kurz */
+.kurz{margin-top:44px; padding:60px 0 56px; scroll-margin-top:64px; background:var(--blue-wash); border-top:1px solid #DDEFF8}
+.kurz h2{font-size:clamp(26px,3.4vw,40px); line-height:1.15; font-weight:800; letter-spacing:-.03em; margin-top:10px; max-width:22ch}
+.kurz-lede{color:var(--muted); font-size:17px; max-width:62ch; margin-top:10px}
+.kurz-grid{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:24px; align-items:start; margin-top:24px}
+@media (max-width:900px){ .kurz-grid{grid-template-columns:minmax(0,1fr)} }
 .box{background:#fff; border:1px solid var(--line); border-radius:var(--r); padding:22px}
-.plist{list-style:none; margin:0; padding:0; display:grid; gap:8px}
-.plist li{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:2px 10px; align-items:center; padding:10px 8px 10px 14px; border-radius:12px; background:var(--blue-wash)}
-.plist .pt{font-weight:700; line-height:1.3}
-.plist .ps{font-size:13px; color:var(--muted); grid-column:1}
-.plist .rm{grid-row:1 / span 2; grid-column:2; width:40px; height:40px; border-radius:50%; border:0; background:transparent; color:var(--muted); cursor:pointer; display:grid; place-items:center}
-.plist .rm:hover{background:#fff; color:var(--ink)}
-.plist .rm svg{width:16px; height:16px; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; fill:none}
-.people{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 16px; margin-top:18px}
-.people label{font-weight:700}
-.stepper{display:inline-flex; align-items:center; border:1.5px solid #D4DEE4; border-radius:999px; background:#fff}
-.stepper:focus-within{border-color:var(--blue)}
-.stepper button{width:44px; height:44px; border:0; border-radius:50%; background:transparent; color:var(--ink); cursor:pointer; display:grid; place-items:center}
-.stepper button:hover{background:var(--blue-wash)}
-.stepper svg{width:18px; height:18px; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; fill:none}
-.stepper input{width:64px; min-height:44px; border:0; background:transparent; text-align:center; font:700 18px var(--font); color:var(--ink); -moz-appearance:textfield; appearance:textfield}
-.stepper input:focus{outline:0}
-.stepper input::-webkit-outer-spin-button, .stepper input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0}
-.save{margin-top:14px; padding:18px; border-radius:14px; background:var(--navy); color:#fff}
-.save b{display:block; font-size:clamp(22px,2.6vw,28px); line-height:1.2; letter-spacing:-.01em}
-.save span{display:block; font-size:15px; color:#CFE3F5; margin-top:6px}
-#save-note{margin-top:8px}
-.subsidy{margin-top:16px; padding:14px 16px; border-radius:14px; background:var(--green-soft)}
-.subsidy > p{font-size:15px}
+.box > h3{font-size:22px; font-weight:800; letter-spacing:-.02em}
+.mods{list-style:none; counter-reset:m; margin:14px 0 0; padding:0; display:grid; gap:14px}
+.mods li{counter-increment:m; display:grid; grid-template-columns:32px minmax(0,1fr); gap:2px 12px}
+.mods li::before{content:counter(m); grid-row:1 / span 2; width:32px; height:32px; border-radius:50%; background:var(--blue-soft); color:var(--blue-ink); display:grid; place-items:center; font-weight:800}
+.mods b{line-height:1.3; padding-top:5px}
+.mods span{font-size:14px; color:var(--muted)}
+.virt{margin-top:18px; padding:18px; border-radius:14px; background:var(--navy); color:#fff}
+.virt b{display:block; font-size:clamp(19px,2.2vw,23px); line-height:1.25; letter-spacing:-.01em}
+.virt span{display:block; font-size:15px; color:#CFE3F5; margin-top:6px}
+.subsidy{margin-top:14px; padding:14px 16px; border-radius:14px; background:var(--green-soft); font-size:15px}
 .subsidy b{color:var(--green); white-space:nowrap}
-.sub-more{margin-top:8px}
-.sub-more summary{cursor:pointer; font-weight:700; font-size:14px; color:var(--blue-ink); text-decoration:underline; text-underline-offset:3px; list-style:none; display:inline-block}
-.sub-more summary::-webkit-details-marker{display:none}
-.sub-more[open] summary{margin-bottom:10px}
-.sub-more .ticks{font-size:14px}
-.sub-more .soft{margin-top:10px}
-.sub-more a{display:inline-block; margin-top:8px; font-weight:700; font-size:14px}
+.subsidy a{font-weight:700}
 .ticks{list-style:none; margin:0; padding:0; display:grid; gap:6px; font-size:15px}
 .ticks li{display:flex; gap:8px; align-items:flex-start}
 .ticks li::before{content:""; width:18px; height:18px; flex:none; margin-top:3px; border-radius:50%; background:var(--blue-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230079B5' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/11px no-repeat}
@@ -288,8 +206,6 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .form-box .hint{color:var(--muted); font-size:15px; margin:6px 0 12px}
 .ticks.gets{margin:0 0 18px; font-size:14px; font-weight:600}
 form.lead{display:grid; gap:12px}
-.pilot-chip{display:flex; align-items:center; justify-content:space-between; gap:10px; background:var(--blue-wash); border-radius:12px; padding:6px 12px; font-size:14px; font-weight:600}
-.pilot-chip .linkish{font-size:14px}
 .err{color:#B3261E; font-size:14px; font-weight:600}
 .done{display:grid; gap:14px}
 .done-t{display:flex; align-items:center; gap:10px; font-size:22px; font-weight:800; letter-spacing:-.02em}
@@ -299,7 +215,6 @@ form.lead{display:grid; gap:12px}
 .noted svg{width:22px; height:22px; padding:5px}
 .next{border:1px solid #CDEBF8; border-radius:14px; padding:16px; display:grid; gap:8px; justify-items:start; background:var(--blue-wash)}
 .next h4{font-size:18px; font-weight:800}
-.next.alt{background:#fff; border-color:var(--line)}
 .next p{color:var(--muted); font-size:15px}
 .badge{display:inline-block; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#fff; background:var(--blue-ink); border-radius:999px; padding:5px 11px}
 .noted, .next .noted{display:flex; align-items:center; gap:8px; font-weight:700; color:var(--green)}
@@ -318,37 +233,8 @@ form.lead{display:grid; gap:12px}
 .sales dt{color:var(--muted); font-weight:600}
 .sales dd{margin:0}
 @media (max-width:560px){ .sales dl{grid-template-columns:minmax(0,1fr)} .sales dd{margin-bottom:8px} }
-.foot{padding:28px 0 90px; font-size:13px; color:var(--muted)}
+.foot{padding:28px 0 48px; font-size:13px; color:var(--muted)}
 
-/* ukázková lekce ve stylu Grizletu */
-#gz{background:rgba(3,20,33,.84)}
-.gz-wrap{display:grid; gap:12px; justify-items:center}
-.gz-brand{display:flex; align-items:center; gap:8px; color:#fff; font:800 15px 'Nunito Sans', var(--font)}
-.gz-brand i{width:22px; height:22px; border-radius:7px; background:#fff; display:inline-grid; place-items:center; font-style:normal; color:#032B43; font:900 14px Nunito, var(--font)}
-.phone{width:min(380px, calc(100vw - 32px)); height:min(720px, calc(100dvh - 120px)); background:#fff; border:10px solid #032B43; border-radius:42px; display:flex; flex-direction:column; padding:22px 18px 18px; color:#032B43; font-family:'Nunito Sans', var(--font); box-shadow:var(--shadow-up); position:relative}
-.gz-prog{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px}
-.gz-prog i{height:5px; border-radius:4px; background:#D6E3EE}
-.gz-prog i.on{background:#2971AE}
-.gz-cat{margin-top:14px; font:800 12px 'Nunito Sans', var(--font); letter-spacing:.06em; text-transform:uppercase; color:#6B7C89}
-.gz-body{flex:1; overflow-y:auto; margin-top:6px; min-height:0}
-.gz-body h3{font:900 22px/1.25 Nunito, var(--font); color:#032B43; margin:0 0 12px}
-.gz-body p{font-size:16px; line-height:1.55; color:#1D3D52}
-.gz-body ol{margin:0; padding-left:20px; display:grid; gap:8px; font-size:16px; color:#1D3D52}
-.gz-opts{display:grid; gap:10px; margin-top:4px}
-.gz-opt{text-align:left; padding:14px 16px; border-radius:14px; border:2px solid #DCE6EE; background:#fff; font:600 15px/1.4 'Nunito Sans', var(--font); color:#032B43; cursor:pointer; display:flex; justify-content:space-between; gap:10px; align-items:center}
-.gz-opt:hover:not(:disabled){border-color:#9CC0DE}
-.gz-opt.ok{border-color:#3A9D5D; background:#EAF6EE}
-.gz-opt.ok::after{content:"✓"; color:#2E8B50; font-weight:900}
-.gz-opt.no{border-color:#E0A3A3; background:#FBEEEE}
-.gz-opt:disabled{cursor:default}
-.gz-fb{margin-top:12px; background:#EEF4F9; border-radius:12px; padding:12px 14px; font-size:15px; color:#1D3D52}
-.gz-fb b{color:#2E8B50}
-.gz-fb.bad b{color:#B3261E}
-.gz-btn{margin-top:14px; min-height:52px; border-radius:999px; border:0; background:#2971AE; color:#fff; font:800 17px 'Nunito Sans', var(--font); cursor:pointer}
-.gz-btn:disabled{opacity:.4; cursor:not-allowed}
-.gz-done{display:grid; gap:12px}
-.gz-done .big{font:900 26px/1.2 Nunito, var(--font)}
-.gz-close{color:#fff; background:none; border:0; font:700 15px var(--font); text-decoration:underline; cursor:pointer; padding:6px}
 </style>
 </head>
 <body>
@@ -359,7 +245,7 @@ form.lead{display:grid; gap:12px}
       <span>LifeScale <span class="sub">Business</span></span>
     </a>
     <span class="proto">Prototyp</span>
-    <a class="plan-pill" href="#plan">Můj plán <b id="pill-n">0</b></a>
+    <a class="top-cta" href="#kurz">Ukázka kurzu</a>
   </div>
 </header>
 
@@ -369,8 +255,8 @@ form.lead{display:grid; gap:12px}
     <div class="hero-txt">
     <span class="kicker">AI mapa pro firmy</span>
     <h1>Najděte oblasti, kde vám <span class="mark">AI zkrátí</span> práci na minuty</h1>
-    <p class="lede"><b id="hero-n">42 konkrétních možností</b> pro 7 oborů a 7 oddělení. U každé najdete hotový pokyn pro AI, odhad ušetřeného času a krátkou lekci, kterou pošlete týmu do mobilu.</p>
-    <div class="hero-facts"><span>Zdarma a bez registrace</span><span>Pokyny ke zkopírování</span><span>Plán a ukázka kurzu v PDF</span></div>
+    <p class="lede"><b id="hero-n">42 konkrétních možností</b> pro 7 oborů a 7 oddělení. U každé najdete postup, hotový pokyn pro AI a odhad, kolik času ušetří.</p>
+    <div class="hero-facts"><span>Zdarma a bez registrace</span><span>Pokyny ke zkopírování</span><span>Ukázka kurzu v PDF</span></div>
     </div>
     <div class="hero-vis" id="hero-vis" aria-hidden="true"></div>
   </div>
@@ -380,54 +266,28 @@ form.lead{display:grid; gap:12px}
   <div class="filters" id="vyber">
     <div class="frow"><span class="flabel" id="lab-obor">Váš obor</span><div class="chips" id="f-obor" role="group" aria-labelledby="lab-obor"></div></div>
     <div class="frow"><span class="flabel" id="lab-odd">Oddělení</span><div class="chips" id="f-odd" role="group" aria-labelledby="lab-odd"></div></div>
-    <div class="frow"><label class="flabel" for="f-q">Hledat</label>
-      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="f-q" type="search" placeholder="Třeba faktury nebo nábor" autocomplete="off"></div>
-    </div>
+    <div class="frow"><span class="flabel" id="lab-lvl">Obtížnost</span><div class="chips" id="f-lvl" role="group" aria-labelledby="lab-lvl"></div></div>
   </div>
   <div class="res-head"><h2 id="res-title">Všechny možnosti</h2><p id="res-sub">Vyberte obor a oddělení, ať vidíte jen to, co se vás týká.</p></div>
   <div class="grid" id="grid" aria-live="polite"></div>
 </div>
 
-<section class="plan" id="plan">
+<section class="kurz" id="kurz">
   <div class="wrap">
-    <span class="kicker">Váš AI plán</span>
-    <h2 id="plan-title">Zatím nemáte nic vybraného</h2>
-    <div class="plan-empty" id="plan-empty">
-      <p>Přidejte si možnosti tlačítkem „+ Do plánu“. Tady pak uvidíte, kolik času vám ušetří, a stáhnete si je v PDF i s ukázkou kurzu AI Akcelerátor.</p>
-      <a class="btn btn-ghost" href="#vyber">Vybrat možnosti</a>
-    </div>
-    <div class="plan-grid" id="plan-body" hidden>
+    <span class="kicker">Kurz AI Akcelerátor</span>
+    <h2>Naučte tým používat AI ve vlastní práci</h2>
+    <p class="kurz-lede">Náš nejžádanější kurz: 12 hodin praktického tréninku ve třech blocích. Každé firmě ho upravujeme na míru, podle práce jejích lidí a nástrojů, které používá.</p>
+    <div class="kurz-grid">
       <div class="box">
-        <ul class="plist" id="plist"></ul>
-        <div class="people">
-          <label for="c-n">Kolik lidí to bude dělat</label>
-          <div class="stepper">
-            <button type="button" data-step="-1" aria-label="O jednoho méně"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>
-            <input id="c-n" type="number" min="1" max="5000" value="10" inputmode="numeric">
-            <button type="button" data-step="1" aria-label="O jednoho víc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg></button>
-          </div>
-        </div>
-        <div class="save" id="save"><b id="save-h"></b><span id="save-k"></span></div>
-        <p class="soft" id="save-note"></p>
-        <div class="subsidy">
-          <p id="sub-sum"></p>
-          <details class="sub-more">
-            <summary>Jak dotace funguje</summary>
-            <ul class="ticks">
-              <li>Dotace z výzvy Vzdělávání pro firmy se uzná účastníkovi, který absolvuje aspoň 50 hodin. AI Akcelerátor má 12 hodin, proto ho doplníme o další témata, třeba digitální produktivitu nebo kybernetickou bezpečnost, na 60 hodin.</li>
-              <li>Výzva hradí 478,19 Kč za každou hodinu školení na účastníka.</li>
-              <li>U OSVČ a dodavatelů je podpora poloviční.</li>
-              <li>Proplácí se zpětně. S žádostí vám pomůžeme a dotační servis je v ceně kurzu.</li>
-            </ul>
-            <p class="soft">AI Act od února 2025 ukládá firmám, které AI používají, zajistit lidem, kteří s ní pracují, dostatečnou gramotnost v AI. Školení s prezenční listinou to pomůže doložit.</p>
-            <a href="https://business.lifescale.cz/cz/pages/sluzby/dotace-z-eu-na-vzdelavani" target="_blank" rel="noopener">Víc o dotacích na vzdělávání</a>
-          </details>
-        </div>
+        <h3>Co se lidé naučí</h3>
+        <ol class="mods" id="mods"></ol>
+        <div class="virt"><b>Každých 160 hodin, které tým díky AI ušetří za měsíc, je jako jeden člověk navíc.</b><span>Nemusíte ho hledat ani zaučovat.</span></div>
+        <p class="subsidy">Na kurz můžete získat dotaci z výzvy Vzdělávání pro firmy, až <b id="sub-one"></b> na účastníka. Pro dotaci kurz doplníme na 60 hodin a se žádostí vám pomůžeme. <a href="https://business.lifescale.cz/cz/pages/sluzby/dotace-z-eu-na-vzdelavani" target="_blank" rel="noopener">Víc o dotacích</a></p>
       </div>
       <div class="box form-box" id="form-box">
-        <h3>Zajímá vás, jak takový kurz vypadá?</h3>
-        <p class="hint">Stáhněte si ukázku našeho nejžádanějšího kurzu AI Akcelerátor: 12 hodin praktického tréninku ve třech blocích. Každé firmě ho upravujeme na míru, podle práce jejích lidí a nástrojů, které používá.</p>
-        <ul class="ticks gets"><li>Program kurzu a co si lidé odnesou</li><li>Příklady, jak jsme kurz upravili jiným firmám</li><li>Dotace a postupy k možnostem z vašeho plánu</li></ul>
+        <h3>Stáhněte si ukázku kurzu</h3>
+        <p class="hint">Uvidíte, jak AI Akcelerátor vypadá ve standardní podobě a co u vás můžeme upravit.</p>
+        <ul class="ticks gets"><li>Program kurzu a co si lidé odnesou</li><li>Příklady, jak jsme kurz upravili jiným firmám</li><li>Jak na kurz získat dotaci</li></ul>
         <form class="lead" id="lead" novalidate>
           <div class="field"><label for="l-email">Firemní e-mail</label><input id="l-email" type="email" autocomplete="email" placeholder="jana.novakova@firma.cz" required></div>
           <div class="row2">
@@ -435,9 +295,8 @@ form.lead{display:grid; gap:12px}
             <div class="field"><label for="l-phone">Telefon <span class="opt">nepovinné</span></label><input id="l-phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+420 777 123 456"></div>
           </div>
           <div class="field"><label for="l-firm">Firma <span class="opt">nepovinné</span></label><input id="l-firm" type="text" autocomplete="organization" placeholder="Firma s.r.o."></div>
-          <p class="pilot-chip" id="pilot-chip" hidden><span>Připravíme vám i první lekci v Grizletu zdarma.</span><button class="linkish" type="button" id="pilot-x">Odebrat</button></p>
-          <label class="check strong"><input type="checkbox" id="l-custom"><span>Chci vidět, jak by mohl vypadat kurz na míru pro naši firmu<small>Připravíme ho podle možností z vašeho plánu.</small></span></label>
-          <input type="hidden" id="l-plan" name="plan" value="">
+          <label class="check strong"><input type="checkbox" id="l-custom"><span>Chci vidět, jak by mohl vypadat kurz na míru pro naši firmu<small>Připravíme ho podle vašeho oboru a práce vašich lidí.</small></span></label>
+          <input type="hidden" id="l-zajem" name="zajem" value="">
           <label class="check"><input type="checkbox" id="l-consent"><span>Souhlasím se <a href="https://business.lifescale.cz/cz" target="_blank" rel="noopener">zpracováním osobních údajů</a>, aby se mi LifeScale mohl ozvat.</span></label>
           <p class="err" id="l-err" hidden></p>
           <button class="btn btn-primary" type="submit" id="l-submit">Stáhnout ukázku kurzu</button>
@@ -450,15 +309,11 @@ form.lead{display:grid; gap:12px}
 
 <div class="wrap">
   <details class="sales"><summary><span><span class="int">Jen pro tým LifeScale, návštěvník tuto část neuvidí</span>Pohled obchodníka: co dorazí do Pipedrivu</span></summary><dl id="sales"></dl></details>
-  <p class="foot">Prototyp lead magnetu LifeScale Business, říjen 2026. Odhady úspory času jsou orientační a vycházejí z toho, jak dlouho úkoly obvykle trvají bez AI a s ní.</p>
+  <p class="foot">Prototyp lead magnetu LifeScale Business, listopad 2026. Odhady úspory času jsou orientační a vycházejí z toho, jak dlouho úkoly obvykle trvají bez AI a s ní.</p>
 </div>
 </main>
 
-<div class="tray" id="tray" hidden><p id="tray-t"></p><a class="btn btn-primary" href="#plan">Zobrazit plán</a></div>
 <div class="overlay" id="ov" hidden role="dialog" aria-modal="true" aria-labelledby="d-title"><div class="sheet" id="sheet"></div></div>
-<div class="overlay" id="gz" hidden role="dialog" aria-modal="true" aria-label="Ukázka lekce v Grizletu">
-  <div class="gz-wrap"><div class="gz-brand"><i aria-hidden="true">g</i>Ukázka lekce v Grizletu, jak ji uvidí vaši lidé</div><div class="phone" id="phone"></div><button class="gz-close" type="button" id="gz-close">Zavřít lekci</button></div>
-</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 /* ---------- data: obory, oddělení, kvízy a AI use cases ---------- */
@@ -483,269 +338,241 @@ const NASTROJ = {
   prepis: 'Přepis schůzky v Teams nebo Google Meet a AI chat'
 };
 
-/* kvízy pro ukázkovou lekci, podle toho, na co si u úkolu dát pozor */
-const KVIZ = {
-  data: { q:'Kolega chce do veřejného AI chatu vložit tabulku s rodnými čísly zákazníků. Co mu poradíte?',
-    o:['Nevadí to, AI data nikomu neukáže.', 'Osobní údaje před vložením odstranit, nebo použít firemní nástroj, který to dovoluje.', 'Stačí tabulku vložit po částech.'], ok:1,
-    fb:'Osobní údaje do veřejných AI nástrojů nepatří. Použijte firemní verzi s ochranou dat, nebo data předem anonymizujte.' },
-  fakta: { q:'AI vám připravila podklad s čísly a fakty. Co uděláte před odesláním?',
-    o:['Pošlu ho, AI se nemýlí.', 'Fakta a čísla ověřím ve zdroji.', 'Požádám AI, ať potvrdí, že je to pravda.'], ok:1,
-    fb:'AI umí znít jistě, i když se plete. Fakta a čísla vždy ověřte ve zdroji.' },
-  prompt: { q:'Který pokyn dá AI lepší výsledek?',
-    o:['Napiš plán.', 'Napiš plán zaškolení obchodníka na 4 týdny, s cíli na každý týden, jako tabulku.', 'Napiš něco o zaškolení, ať je to dobré.'], ok:1,
-    fb:'Čím víc AI víte o roli, cíli a formátu, tím lepší výsledek dostanete.' },
-  ton: { q:'AI napsala odpověď zákazníkovi. Co je potřeba udělat?',
-    o:['Rovnou ji odeslat, ušetří to čas.', 'Přečíst ji, upravit tón a fakta a poslat pod svým jménem.', 'Poslat ji a připsat, že ji psala AI.'], ok:1,
-    fb:'Za odpověď odpovídáte vy. AI připraví návrh, člověk ho zkontroluje a odešle.' },
-  cisla: { q:'AI v tabulce spočítala součty a procenta. Jak to ověříte?',
-    o:['Nijak, počítač počítá dobře.', 'Přepočítám je v Excelu, aspoň na pár řádcích.', 'Zeptám se AI, jestli si je jistá.'], ok:1,
-    fb:'Jazykové modely s čísly občas chybují. Přepočet v Excelu zabere minutu.' },
-  lide: { q:'AI ohodnotila práci kolegů. Jak s výsledkem naložíte?',
-    o:['Podle něj rozdělím odměny.', 'Použiju ho jako podklad k rozhovoru a rozhodnu sám.', 'Pošlu ho celému týmu.'], ok:1,
-    fb:'O lidech rozhoduje člověk. Výstup AI je podklad, ne verdikt.' },
-  bezpecnost: { q:'AI připravila pracovní postup ke stroji. Kdo ho musí schválit?',
-    o:['Nikdo, AI zná normy.', 'Odpovědný technik nebo bezpečnostní technik.', 'Stačí, když si ho přečte operátor.'], ok:1,
-    fb:'Postupy s dopadem na bezpečnost schvaluje odpovědná osoba. AI vaše stroje nezná.' },
-  pravo: { q:'AI v textu ocitovala paragraf zákona. Co uděláte?',
-    o:['Nechám ho tam.', 'Ověřím ho v aktuálním znění zákona.', 'Smažu ho, AI zákony nezná.'], ok:1,
-    fb:'AI může citovat zastaralé nebo neexistující ustanovení. Vždy ho ověřte v aktuálním znění.' }
-};
-
-/* use cases: d = oddělení, i = obory (prázdné = všechny), u = úspora v hodinách týdně [od, do], l = obtížnost, n = nástroj, q = kvíz */
+/* use cases: d = oddělení, i = obory (prázdné = všechny), u = úspora v hodinách týdně [od, do], l = obtížnost, n = nástroj */
 const UC = [
   /* OBCHOD */
-  { id:'o1', d:'obchod', i:[], u:[2,3], l:'s', n:'chat', q:'fakta', t:'Nabídka z poptávky za pár minut',
+  { id:'o1', d:'obchod', i:[], u:[2,3], l:'s', n:'chat', t:'Nabídka z poptávky za pár minut',
     w:'Z e-mailu s poptávkou připraví přehled, co klient chce, otázky, které je potřeba doplnit, a návrh průvodního e-mailu k nabídce.',
     s:['Vložte text poptávky bez osobních údajů.', 'Přidejte popis vašich služeb nebo ceník.', 'Návrh zkontrolujte a doplňte ceny podle ceníku.'],
     p:'Jsi zkušený obchodník ve firmě [obor firmy]. Níže je poptávka od klienta a popis našich služeb.\n1) Shrň v pěti bodech, co klient potřebuje.\n2) Vypiš otázky, které musíme doplnit, než pošleme cenu.\n3) Napiš návrh průvodního e-mailu k nabídce, nejvýš 150 slov, věcně a bez frází.\n\nPoptávka: [vložte text]\nNaše služby a ceník: [vložte]',
     x:'Ceny a termíny vždy zkontrolujte proti ceníku. AI si umí čísla domyslet.' },
-  { id:'o2', d:'obchod', i:[], u:[1,2], l:'s', n:'chat', q:'fakta', t:'Příprava na schůzku s novým klientem',
+  { id:'o2', d:'obchod', i:[], u:[1,2], l:'s', n:'chat', t:'Příprava na schůzku s novým klientem',
     w:'Z vašich poznámek a informací z webu klienta připraví jednostránkový podklad: čím se firma zabývá, možné problémy, otázky a námitky.',
     s:['Zkopírujte do AI text z webu klienta a své poznámky.', 'Nechte si připravit podklad a otázky.', 'Fakta ověřte na webu a v obchodním rejstříku.'],
     p:'Připravuji se na první schůzku s firmou [název] z oboru [obor]. Tady jsou moje poznámky a informace z jejich webu: [vložte].\nPřiprav mi podklad na jednu stranu: čím se firma zabývá, tři problémy, se kterými jim můžeme pomoct, pět otevřených otázek na schůzku a dvě námitky, které můžou zaznít, i s návrhem odpovědi.',
     x:'AI nemusí mít o firmě aktuální informace. Fakta si ověřte u zdroje.' },
-  { id:'o3', d:'obchod', i:[], u:[1,2], l:'s', n:'prepis', q:'data', t:'Zápis do CRM a další kroky po schůzce',
+  { id:'o3', d:'obchod', i:[], u:[1,2], l:'s', n:'prepis', t:'Zápis do CRM a další kroky po schůzce',
     w:'Z přepisu nebo poznámek ze schůzky připraví shrnutí do CRM, seznam dalších kroků a e-mail klientovi.',
     s:['Zapněte přepis schůzky, nebo si dělejte stručné poznámky.', 'Vložte přepis do AI s pokynem níže.', 'Shrnutí vložte do CRM a e-mail pošlete pod svým jménem.'],
     p:'Tady je přepis (nebo moje poznámky) z obchodní schůzky: [vložte].\nNapiš:\n1) shrnutí do CRM v pěti odrážkách: potřeby, rozpočet, kdo rozhoduje, termíny, rizika,\n2) další kroky s termínem a odpovědnou osobou,\n3) follow-up e-mail klientovi do 120 slov, který shrne domluvené a navrhne další krok.',
     x:'Schůzku nahrávejte jen se souhlasem klienta. Jména a čísla můžete nahradit zástupnými.' },
-  { id:'o4', d:'obchod', i:[], u:[1,2], l:'s', n:'chat', q:'prompt', t:'Trénink námitek s AI',
+  { id:'o4', d:'obchod', i:[], u:[1,2], l:'s', n:'chat', t:'Trénink námitek s AI',
     w:'AI hraje skeptického nákupčího a vy si zkoušíte odpovědi na námitky. Po každé odpovědi dostanete krátkou zpětnou vazbu.',
     s:['Popište AI, co prodáváte a komu.', 'Nechte ji vznášet námitky a odpovídejte jako na schůzce.', 'Nejlepší odpovědi si uložte do sdílených argumentů týmu.'],
     p:'Zahraj si roli nákupčího ve firmě [obor], který řeší nabídku na [produkt nebo službu]. Buď skeptický a vznášej typické námitky: cena, načasování, už máme dodavatele.\nPo každé mé odpovědi mi krátce řekni, co bylo dobře a co zlepšit. Začni první námitkou.',
     x:'Je to trénink. Skutečné slevy a podmínky domlouvejte podle pravidel firmy.' },
 
   /* MARKETING */
-  { id:'m1', d:'marketing', i:[], u:[2,3], l:'s', n:'chat', q:'ton', t:'Z jednoho článku deset příspěvků',
+  { id:'m1', d:'marketing', i:[], u:[2,3], l:'s', n:'chat', t:'Z jednoho článku deset příspěvků',
     w:'Z článku, webináře nebo prezentace připraví příspěvky na LinkedIn, tipy do newsletteru a varianty titulků.',
     s:['Vložte článek nebo přepis webináře.', 'Nechte si připravit příspěvky podle pokynu níže.', 'Vyberte nejlepší a upravte je do svého stylu.'],
     p:'Jsi marketér firmy z oboru [obor]. Z tohoto textu připrav:\n- 3 příspěvky na LinkedIn, každý do 120 slov, krátké odstavce, bez emoji a bez hashtagů,\n- 2 krátké tipy do newsletteru,\n- 5 variant titulku.\nPiš věcně, česky a bez reklamních frází.\n\nText: [vložte]',
     x:'Text si před zveřejněním přečtěte nahlas. Když zní jako reklama, nechte AI ubrat superlativy.' },
-  { id:'m2', d:'marketing', i:[], u:[1,2], l:'s', n:'chat', q:'ton', t:'Newsletter za hodinu místo za den',
+  { id:'m2', d:'marketing', i:[], u:[1,2], l:'s', n:'chat', t:'Newsletter za hodinu místo za den',
     w:'Z témat a poznámek připraví strukturu newsletteru: předmět, úvod, krátké bloky a výzvu k akci.',
     s:['Sepište témata měsíce a k nim pár poznámek.', 'Nechte AI připravit návrh.', 'Doplňte odkazy a data akcí sami.'],
     p:'Připrav návrh firemního newsletteru pro [cílová skupina]. Témata tohoto měsíce: [3 až 5 témat s poznámkami].\nStruktura: předmět e-mailu ve 3 variantách, úvod do 40 slov, krátký blok ke každému tématu s jedním odkazem, závěr s jednou výzvou k akci.\nTón: přátelský, věcný, bez superlativů.',
     x:'Odkazy, data a ceny doplňte ručně. AI je může vymyslet.' },
-  { id:'m3', d:'marketing', i:[], u:[2,4], l:'m', n:'dok', q:'data', t:'Rozbor recenzí a dotazníků',
+  { id:'m3', d:'marketing', i:[], u:[2,4], l:'m', n:'dok', t:'Rozbor recenzí a dotazníků',
     w:'Roztřídí odpovědi zákazníků do témat, spočítá zmínky, vybere typické citace a navrhne, co zlepšit nejdřív.',
     s:['Vyexportujte odpovědi z dotazníku nebo recenze.', 'Odstraňte jména a kontakty.', 'Nahrajte je do AI a nechte si připravit rozbor.'],
     p:'Níže je [počet] odpovědí zákazníků z dotazníku nebo recenzí: [vložte].\nRoztřiď je nejvýš do 6 témat. U každého uveď počet zmínek, dvě typické citace a jestli převažuje spokojenost, nebo nespokojenost.\nNa konci navrhni tři konkrétní kroky s největším dopadem.',
     x:'Počty si namátkou ověřte. AI se při počítání zmínek může splést.' },
-  { id:'m4', d:'marketing', i:[], u:[1,3], l:'s', n:'chat', q:'fakta', t:'Popisy produktů a služeb na web',
+  { id:'m4', d:'marketing', i:[], u:[1,3], l:'s', n:'chat', t:'Popisy produktů a služeb na web',
     w:'Z technických parametrů připraví jednotné popisy na web: titulek, perex, přínosy pro zákazníka a parametry.',
     s:['Vložte parametry produktu nebo služby.', 'Nechte si připravit popis podle šablony.', 'Porovnejte text s podklady.'],
     p:'Z těchto technických parametrů napiš popis produktu na web: titulek do 8 slov, perex do 30 slov, 4 odrážky s přínosy pro zákazníka a krátký odstavec s parametry. Nepřidávej vlastnosti, které nejsou v podkladech.\n\nParametry: [vložte]',
     x:'AI ráda doplní vlastnosti, které produkt nemá. Text porovnejte s podklady.' },
 
   /* HR */
-  { id:'h1', d:'hr', i:[], u:[1,2], l:'s', n:'chat', q:'lide', t:'Inzerát, na který se ozvou ti správní',
+  { id:'h1', d:'hr', i:[], u:[1,2], l:'s', n:'chat', t:'Inzerát, na který se ozvou ti správní',
     w:'Z popisu pozice připraví srozumitelný inzerát s jasnou náplní práce, požadavky a nabídkou.',
     s:['Sepište náplň práce, požadavky a co nabízíte.', 'Nechte AI napsat inzerát.', 'Zkontrolujte, že neobsahuje diskriminační požadavky.'],
     p:'Napiš inzerát na pozici [název pozice] ve firmě [obor, město].\nPodklady: náplň práce [vložte], požadavky [vložte], co nabízíme [vložte].\nStruktura: úvod do 40 slov, co budete dělat (5 odrážek), co potřebujeme (nejvýš 5 odrážek, rozliš nutné a výhodou), co nabízíme, jak se přihlásit.\nPiš genderově vyváženě a bez klišé typu dynamický kolektiv.',
     x:'Inzerát nesmí obsahovat diskriminační požadavky, třeba na věk nebo pohlaví.' },
-  { id:'h2', d:'hr', i:[], u:[2,3], l:'s', n:'chat', q:'prompt', t:'Plán zaškolení na první měsíc',
+  { id:'h2', d:'hr', i:[], u:[2,3], l:'s', n:'chat', t:'Plán zaškolení na první měsíc',
     w:'Připraví plán onboardingu po týdnech: cíle, s kým se potkat, co si přečíst a jak poznat, že to nováček zvládl.',
     s:['Napište, co má nováček na konci měsíce umět.', 'Nechte si připravit plán po týdnech.', 'Projděte ho s vedoucím týmu.'],
     p:'Připrav plán zaškolení na první 4 týdny pro pozici [pozice] v týmu [tým].\nCo musí člověk na konci měsíce umět: [vložte].\nPro každý týden uveď cíle, s kým se má potkat, co si má přečíst nebo vyzkoušet a jak poznáme, že to zvládl. Na konci navrhni 5 kontrolních otázek.',
     x:'AI nezná vaše interní procesy, doplní je jen obecně. Plán upravte podle reality týmu.' },
-  { id:'h3', d:'hr', i:[], u:[1,2], l:'s', n:'chat', q:'lide', t:'Otázky k pohovoru a hodnoticí karta',
+  { id:'h3', d:'hr', i:[], u:[1,2], l:'s', n:'chat', t:'Otázky k pohovoru a hodnoticí karta',
     w:'Připraví otázky k pohovoru podle dovedností, které hledáte, a jednoduchou kartu pro férové porovnání uchazečů.',
     s:['Vypište 4 až 6 dovedností, na kterých záleží.', 'Nechte si připravit otázky a kartu.', 'Rozhodnutí o uchazeči nechte na lidech.'],
     p:'Pro pozici [pozice] připrav 8 otázek k pohovoru zaměřených na tyto dovednosti: [vložte].\nKe každé otázce napiš, co poznáme z dobré a ze slabé odpovědi. Přidej jednoduchou hodnoticí kartu se stupnicí 1 až 4.',
     x:'O uchazeči rozhoduje člověk. AI, která sama vybírá nebo hodnotí uchazeče, patří podle AI Actu mezi vysoce rizikové systémy.' },
-  { id:'h4', d:'hr', i:[], u:[1,3], l:'m', n:'dok', q:'data', t:'Odpovědi na časté dotazy ze směrnic',
+  { id:'h4', d:'hr', i:[], u:[1,3], l:'m', n:'dok', t:'Odpovědi na časté dotazy ze směrnic',
     w:'Z firemních směrnic připraví srozumitelné odpovědi na časté dotazy zaměstnanců, třeba k dovolené, home office nebo benefitům.',
     s:['Nahrajte směrnici do firemního AI nástroje.', 'Nechte si připravit otázky a odpovědi s odkazem na článek.', 'Odpovědi zveřejněte na intranetu.'],
     p:'Tady je naše směrnice: [vložte text].\nPřiprav z ní 10 nejčastějších otázek zaměstnanců a ke každé srozumitelnou odpověď do 60 slov. U každé odpovědi uveď článek směrnice, ze kterého vychází. Když směrnice něco neřeší, napiš to a nic si nedomýšlej.',
     x:'Interní dokumenty vkládejte jen do schváleného nástroje, ideálně ve firemní verzi s vypnutým učením na datech.' },
 
   /* FINANCE */
-  { id:'f1', d:'finance', i:[], u:[1,3], l:'m', n:'excel', q:'cisla', t:'Komentář k odchylkám od rozpočtu',
+  { id:'f1', d:'finance', i:[], u:[1,3], l:'m', n:'excel', t:'Komentář k odchylkám od rozpočtu',
     w:'Najde největší odchylky skutečnosti od plánu a připraví srozumitelný komentář pro vedení.',
     s:['Nahrajte tabulku plán proti skutečnosti.', 'Nechte si najít největší odchylky a navrhnout vysvětlení.', 'Čísla přepočítejte a vysvětlení ověřte u středisek.'],
     p:'V příloze je tabulka plán proti skutečnosti za [měsíc] po nákladových střediscích.\nNajdi 5 největších odchylek v korunách i v procentech, navrhni možné vysvětlení a připrav komentář pro vedení do 150 slov. Výpočty ukaž v tabulce, ať je můžu zkontrolovat.',
     x:'Každé číslo si přepočítejte v Excelu. Jazykové modely umí špatně sčítat.' },
-  { id:'f2', d:'finance', i:[], u:[0.5,1], l:'s', n:'chat', q:'ton', t:'Upomínky, které nezkazí vztah',
+  { id:'f2', d:'finance', i:[], u:[0.5,1], l:'s', n:'chat', t:'Upomínky, které nezkazí vztah',
     w:'Připraví tři stupně upomínky k neuhrazené faktuře, od přátelské po poslední před vymáháním.',
     s:['Vložte číslo faktury, částku a splatnost.', 'Nechte si připravit tři verze.', 'Uložte si je jako šablony.'],
     p:'Napiš tři verze upomínky k faktuře [číslo] na [částka] se splatností [datum]: první přátelskou po 7 dnech, druhou důraznější po 21 dnech a třetí před předáním k vymáhání. Každou do 90 slov, zdvořile a bez výhrůžek.',
     x:'Částky, data a čísla účtů doplňte ručně a zkontrolujte.' },
-  { id:'f3', d:'finance', i:[], u:[1,2], l:'s', n:'chat', q:'cisla', t:'Vzorce v Excelu bez hledání na internetu',
+  { id:'f3', d:'finance', i:[], u:[1,2], l:'s', n:'chat', t:'Vzorce v Excelu bez hledání na internetu',
     w:'Napíše vzorec pro český Excel, vysvětlí ho krok za krokem a poradí, jak ověřit, že počítá správně.',
     s:['Popište, co máte v jakém sloupci a co potřebujete spočítat.', 'Nechte si napsat vzorec a vysvětlení.', 'Vyzkoušejte ho nejdřív na kopii souboru.'],
     p:'V Excelu mám ve sloupci A datum, ve sloupci B středisko a ve sloupci C částku. Potřebuji vzorec, který sečte částky za [středisko] v [měsíc].\nNapiš vzorec pro český Excel s oddělovačem středník, vysvětli ho krok za krokem a ukaž, jak ověřím, že počítá správně.',
     x:'Vzorec otestujte na pár řádcích, kde výsledek znáte.' },
-  { id:'f4', d:'finance', i:[], u:[1,3], l:'m', n:'dok', q:'fakta', t:'Kontrola faktury proti objednávce',
+  { id:'f4', d:'finance', i:[], u:[1,3], l:'m', n:'dok', t:'Kontrola faktury proti objednávce',
     w:'Porovná fakturu s objednávkou nebo smlouvou a vypíše rozdíly v položkách, cenách, DPH a splatnosti.',
     s:['Nahrajte fakturu a objednávku.', 'Nechte si vypsat rozdíly do tabulky.', 'Platbu schvalujte až po kontrole člověkem.'],
     p:'Porovnej tuto fakturu [vložte] s objednávkou [vložte]. Vypiš všechny rozdíly v položkách, množství, cenách, DPH a splatnosti do tabulky. Když něco nejde porovnat, napiš to.',
     x:'AI je dobrá na první kontrolu, ne na schválení. Platbu vždy schvaluje člověk.' },
 
   /* ZÁKAZNICKÁ PÉČE */
-  { id:'z1', d:'pece', i:[], u:[2,4], l:'s', n:'chat', q:'ton', t:'Odpověď na stížnost, která uklidní',
+  { id:'z1', d:'pece', i:[], u:[2,4], l:'s', n:'chat', t:'Odpověď na stížnost, která uklidní',
     w:'Připraví odpověď na stížnost, která uzná problém, vysvětlí další postup a nabídne konkrétní krok.',
     s:['Vložte stížnost bez osobních údajů a pravidla reklamací.', 'Nechte si připravit odpověď.', 'Upravte ji a pošlete pod svým jménem.'],
     p:'Jsi pracovník zákaznické péče firmy z oboru [obor]. Zákazník napsal tuto stížnost: [vložte bez osobních údajů].\nNaše pravidla pro reklamace: [vložte].\nNapiš odpověď do 120 slov: uznej problém, vysvětli, co uděláme a do kdy, a nabídni jeden konkrétní další krok. Bez frází typu „vážíme si vaší zpětné vazby“.',
     x:'Neslibujte nic, co pravidla nedovolují. Odpověď posílá člověk.' },
-  { id:'z2', d:'pece', i:[], u:[2,3], l:'m', n:'dok', q:'data', t:'Šablony na nejčastější dotazy',
+  { id:'z2', d:'pece', i:[], u:[2,3], l:'m', n:'dok', t:'Šablony na nejčastější dotazy',
     w:'Z dotazů za poslední měsíc najde nejčastější témata a ke každému připraví šablonu odpovědi.',
     s:['Vyexportujte dotazy za měsíc bez jmen a kontaktů.', 'Nechte AI najít témata a napsat šablony.', 'Šablony uložte do helpdesku.'],
     p:'Tady je 30 dotazů zákazníků za poslední měsíc: [vložte bez jmen a kontaktů].\nSeskup je do témat. U 5 nejčastějších napiš šablonu odpovědi do 80 slov a místa, která je potřeba doplnit ručně, označ hranatými závorkami.',
     x:'Z dotazů odstraňte jména, e-maily a čísla objednávek, pokud nepoužíváte firemní AI s ochranou dat.' },
-  { id:'z3', d:'pece', i:[], u:[1,2], l:'s', n:'chat', q:'fakta', t:'Zákazník píše anglicky, německy nebo ukrajinsky',
+  { id:'z3', d:'pece', i:[], u:[1,2], l:'s', n:'chat', t:'Zákazník píše anglicky, německy nebo ukrajinsky',
     w:'Přeloží zprávu zákazníka, shrne, co chce, a vaši odpověď přeloží zpátky do jeho jazyka.',
     s:['Vložte zprávu zákazníka.', 'Odpověď napište česky.', 'Nechte ji přeložit a zkontrolujte čísla a termíny.'],
     p:'Přelož tuto zprávu od zákazníka do češtiny a napiš mi, co přesně chce: [vložte].\nPak moji odpověď [napište česky] přelož do jazyka zákazníka, zdvořile a srozumitelně.',
     x:'U cen, termínů a právních formulací nechte překlad zkontrolovat člověkem, který jazyk ovládá.' },
-  { id:'z4', d:'pece', i:[], u:[1,2], l:'m', n:'dok', q:'lide', t:'Zpětná vazba k odpovědím týmu',
+  { id:'z4', d:'pece', i:[], u:[1,2], l:'m', n:'dok', t:'Zpětná vazba k odpovědím týmu',
     w:'Ohodnotí vzorek odpovědí týmu podle srozumitelnosti, empatie a toho, jestli řeší problém, a ke každé dá radu.',
     s:['Vyberte 10 odpovědí bez osobních údajů.', 'Nechte si je ohodnotit.', 'Výsledky použijte jako podklad ke koučinku.'],
     p:'Tady je 10 odpovědí našeho týmu zákazníkům: [vložte bez osobních údajů].\nOhodnoť každou na stupnici 1 až 5 podle srozumitelnosti, empatie a toho, jestli řeší problém. Ke každé napiš jednu konkrétní radu, jak ji zlepšit.',
     x:'Hodnocení od AI je podklad ke koučinku, ne hodnocení výkonu člověka.' },
 
   /* PROVOZ A ODBORNÁ PRÁCE */
-  { id:'p1', d:'provoz', i:[], u:[1,3], l:'s', n:'chat', q:'bezpecnost', t:'Pracovní postup z poznámek',
+  { id:'p1', d:'provoz', i:[], u:[1,3], l:'s', n:'chat', t:'Pracovní postup z poznámek',
     w:'Z poznámek zkušeného kolegy připraví přehledný postup: účel, pomůcky, kroky v pořadí, časté chyby a kontrolu.',
     s:['Sepište nebo nadiktujte, jak činnost děláte.', 'Nechte AI připravit postup.', 'Postup nechte schválit odpovědnou osobou.'],
     p:'Z těchto poznámek napiš pracovní postup pro [činnost]: [vložte].\nStruktura: účel, potřebné nářadí a ochranné pomůcky, očíslované kroky v pořadí, nejčastější chyby a kontrola na konci. Piš krátkými větami, aby to šlo číst i v telefonu na provozu.',
     x:'Postup musí schválit odpovědný technik nebo bezpečnostní technik.' },
-  { id:'p2', d:'provoz', i:[], u:[1,2], l:'s', n:'chat', q:'fakta', t:'Hledání příčiny opakovaného problému',
+  { id:'p2', d:'provoz', i:[], u:[1,2], l:'s', n:'chat', t:'Hledání příčiny opakovaného problému',
     w:'Projde s vámi problém metodou 5x proč, ptá se po jedné otázce a na konci shrne pravděpodobnou příčinu a opatření.',
     s:['Popište problém, kdy a jak často nastává.', 'Odpovídejte na otázky AI.', 'Závěr ověřte měřením nebo pozorováním.'],
     p:'Opakuje se nám problém: [popis, kde, kdy a jak často]. Proveď se mnou analýzu příčin metodou 5x proč. Ptej se mě po jedné otázce a nic si nedomýšlej. Na konci shrň pravděpodobnou příčinu a navrhni opatření.',
     x:'AI je partner na přemýšlení, ne odborník na váš provoz. Závěry ověřte.' },
-  { id:'p3', d:'provoz', i:[], u:[1,2], l:'s', n:'chat', q:'data', t:'Předávka směny bez zmatků',
+  { id:'p3', d:'provoz', i:[], u:[1,2], l:'s', n:'chat', t:'Předávka směny bez zmatků',
     w:'Z poznámek ze směny připraví stručnou předávací zprávu: co se stalo, co je rozpracované a na co si dát pozor.',
     s:['Vložte poznámky ze směny.', 'Nechte si připravit předávku do 10 odrážek.', 'Bezpečnostní události hlaste i podle interních pravidel.'],
     p:'Tady jsou poznámky ze směny: [vložte].\nPřiprav předávací zprávu pro další směnu: co se stalo, co zůstalo rozpracované, na co si dát pozor a co je potřeba nahlásit údržbě. Nejvýš 10 odrážek.',
     x:'Bezpečnostní události patří do evidence podle interních pravidel, ne jen do souhrnu.' },
-  { id:'p4', d:'provoz', i:[], u:[1,2], l:'s', n:'dok', q:'bezpecnost', t:'Školení BOZP do mobilu',
+  { id:'p4', d:'provoz', i:[], u:[1,2], l:'s', n:'dok', t:'Školení BOZP do mobilu',
     w:'Ze směrnice BOZP připraví krátkou lekci: čtyři karty s hlavními pravidly a tři kvízové otázky.',
     s:['Nahrajte směrnici BOZP.', 'Nechte AI připravit karty a kvíz.', 'Obsah nechte schválit odpovědnou osobou a pošlete ho lidem do mobilu.'],
     p:'Z této směrnice BOZP připrav krátkou lekci na 3 minuty: 4 karty s hlavními pravidly, každá do 40 slov, a 3 kvízové otázky s možnostmi a vysvětlením správné odpovědi. Piš srozumitelně pro lidi na provozu.\n\nSměrnice: [vložte]',
     x:'Obsah školení BOZP musí odpovídat vaší dokumentaci a schválit ho má odpovědná osoba.' },
 
   /* VEDENÍ FIRMY */
-  { id:'v1', d:'vedeni', i:[], u:[1,2], l:'s', n:'excel', q:'cisla', t:'Týdenní přehled pro vedení na jednu stranu',
+  { id:'v1', d:'vedeni', i:[], u:[1,2], l:'s', n:'excel', t:'Týdenní přehled pro vedení na jednu stranu',
     w:'Z tabulky s čísly připraví přehled: tři hlavní zprávy, co se zlepšilo, co zhoršilo a jaká rozhodnutí jsou potřeba.',
     s:['Nahrajte tabulku s týdenními čísly.', 'Nechte si připravit přehled.', 'Čísla v textu porovnejte s tabulkou.'],
     p:'Tady jsou čísla za tento týden a minulý měsíc: [vložte tabulku].\nNapiš přehled pro vedení na jednu stranu: tři hlavní zprávy, co se zlepšilo, co se zhoršilo a proč, a dvě rozhodnutí, která je potřeba udělat. Čísla uváděj přesně podle tabulky.',
     x:'AI čísla občas zaokrouhlí nebo prohodí. Zkontrolujte je proti tabulce.' },
-  { id:'v2', d:'vedeni', i:[], u:[1,1.5], l:'s', n:'chat', q:'prompt', t:'Porada s jasným výsledkem',
+  { id:'v2', d:'vedeni', i:[], u:[1,1.5], l:'s', n:'chat', t:'Porada s jasným výsledkem',
     w:'Připraví program porady s časy, odpovědnými lidmi a výstupy a šablonu zápisu s úkoly.',
     s:['Napište téma, účastníky a rozhodnutí, které potřebujete.', 'Nechte si připravit program.', 'Pošlete ho účastníkům předem i s podklady.'],
     p:'Připrav program porady na 45 minut na téma [téma]. Účastníci: [role]. Cíl porady: [rozhodnutí, které potřebujeme].\nKe každému bodu uveď čas, kdo ho vede a jaký má být výstup. Na konci navrhni šablonu zápisu s úkoly.',
     x:'Program je návrh. Podklady a čísla doplňte sami.' },
-  { id:'v3', d:'vedeni', i:[], u:[1,2], l:'s', n:'chat', q:'fakta', t:'Oponentura strategického rozhodnutí',
+  { id:'v3', d:'vedeni', i:[], u:[1,2], l:'s', n:'chat', t:'Oponentura strategického rozhodnutí',
     w:'AI hraje kritického člena představenstva: najde argumenty proti, přehlédnutá rizika a otázky, na které chcete znát odpověď.',
     s:['Popište rozhodnutí a klíčová čísla.', 'Nechte AI hledat slabá místa.', 'Otázky proberte s týmem.'],
     p:'Zvažujeme [rozhodnutí, třeba otevřít pobočku v Brně]. Naše situace: [klíčová čísla a omezení].\nZahraj roli kritického člena představenstva: vypiš 5 nejsilnějších argumentů proti, rizika, která nevidíme, a otázky, na které musíme mít odpověď, než rozhodneme.',
     x:'AI nezná váš trh tak dobře jako vy. Je to nástroj na lepší otázky, ne na rozhodnutí.' },
-  { id:'v4', d:'vedeni', i:[], u:[0.5,1], l:'m', n:'chat', q:'data', t:'Pravidla pro používání AI ve firmě',
+  { id:'v4', d:'vedeni', i:[], u:[0.5,1], l:'m', n:'chat', t:'Pravidla pro používání AI ve firmě',
     w:'Připraví návrh interních pravidel: jaké nástroje používat, co do nich nevkládat, kdy výstup kontroluje člověk a koho se ptát.',
     s:['Popište firmu a nástroje, které používáte.', 'Nechte si připravit návrh pravidel.', 'Návrh nechte zkontrolovat právníkem.'],
     p:'Připrav návrh interních pravidel pro používání AI nástrojů v naší firmě ([obor], [počet] zaměstnanců). Pokryj: které nástroje smíme používat, jaká data do nich nesmíme vkládat, kdy musí výstup zkontrolovat člověk, jak označovat obsah vytvořený s AI a koho se ptát. Nejvýš dvě strany, srozumitelně pro všechny zaměstnance.',
     x:'AI Act od února 2025 ukládá firmám zajistit lidem, kteří s AI pracují, dostatečnou gramotnost v AI. Pravidla jsou dobrý první krok.' },
 
   /* STAVEBNICTVÍ */
-  { id:'s1', d:'obchod', i:['stavebnictvi'], u:[2,4], l:'m', n:'dok', q:'cisla', t:'Kontrola výkazu výměr proti nabídce',
+  { id:'s1', d:'obchod', i:['stavebnictvi'], u:[2,4], l:'m', n:'dok', t:'Kontrola výkazu výměr proti nabídce',
     w:'Porovná výkaz výměr z poptávky s vaší cenovou nabídkou a najde chybějící položky a jiná množství nebo jednotky.',
     s:['Nahrajte výkaz výměr a vaši nabídku.', 'Nechte si vypsat rozdíly do tabulky.', 'Množství ověřte v projektové dokumentaci.'],
     p:'Porovnej výkaz výměr z poptávky [vložte] s naší cenovou nabídkou [vložte]. Najdi položky, které v nabídce chybí nebo mají jiné množství či jednotku, a vypiš je do tabulky. Na konci shrň, kde hrozí, že budeme kvůli chybě dražší nebo levnější.',
     x:'Výsledek je pomůcka pro rozpočtáře, ne náhrada kontroly.' },
-  { id:'s2', d:'provoz', i:['stavebnictvi'], u:[1,3], l:'s', n:'prepis', q:'fakta', t:'Zápis z kontrolního dne',
+  { id:'s2', d:'provoz', i:['stavebnictvi'], u:[1,3], l:'s', n:'prepis', t:'Zápis z kontrolního dne',
     w:'Z poznámek a hlasového přepisu z kontrolního dne připraví zápis se stavem prací, vadami, termíny a odpovědnými firmami.',
     s:['Na stavbě si nadiktujte poznámky do telefonu.', 'Vložte přepis do AI.', 'Zápis před rozesláním projděte.'],
     p:'Tady jsou moje poznámky a hlasový přepis z kontrolního dne na stavbě [název]: [vložte].\nPřiprav zápis: účastníci, stav prací podle objektů, zjištěné vady s termínem odstranění a odpovědnou firmou, požadavky na investora a termín dalšího kontrolního dne.',
     x:'Termíny a odpovědné firmy musí sedět s tím, co na kontrolním dni zaznělo.' },
 
   /* ZDRAVOTNICTVÍ */
-  { id:'zd1', d:'pece', i:['zdravotnictvi'], u:[1,2], l:'s', n:'chat', q:'data', t:'Srozumitelné pokyny pro pacienta',
+  { id:'zd1', d:'pece', i:['zdravotnictvi'], u:[1,2], l:'s', n:'chat', t:'Srozumitelné pokyny pro pacienta',
     w:'Přepíše odborné pokyny po vyšetření nebo zákroku do srozumitelné češtiny pro laika, nic medicínsky nemění.',
     s:['Vložte obecné pokyny bez údajů o pacientovi.', 'Nechte je přepsat srozumitelně.', 'Výsledek musí zkontrolovat zdravotník.'],
     p:'Přepiš tyto pokyny po zákroku do srozumitelné češtiny pro laika: krátké věty, nejdůležitější informace nahoře, co dělat a co nedělat a kdy volat lékaře. Nic nepřidávej ani neměň medicínsky.\n\nPokyny: [vložte, bez jména a dalších údajů pacienta]',
     x:'Údaje o zdravotním stavu konkrétních pacientů do běžných AI nástrojů nikdy nevkládejte.' },
-  { id:'zd2', d:'vedeni', i:['zdravotnictvi'], u:[1,3], l:'m', n:'excel', q:'lide', t:'Rozpis služeb a zástupů',
+  { id:'zd2', d:'vedeni', i:['zdravotnictvi'], u:[1,3], l:'m', n:'excel', t:'Rozpis služeb a zástupů',
     w:'Navrhne rozpis služeb podle vašich pravidel a upozorní, kde je nejde splnit.',
     s:['Sepište pravidla: počty na směnu, noční, požadavky na volno.', 'Nechte si navrhnout rozpis v tabulce.', 'Zkontrolujte ho proti zákoníku práce.'],
     p:'Potřebuji rozpis služeb na [měsíc] pro [počet] sester na oddělení [oddělení]. Pravidla: [počet lidí na směnu, nejvyšší počet nočních, požadavky na volno].\nNavrhni rozpis v tabulce a vypiš, kde pravidla nejde splnit.',
     x:'Rozpis zkontrolujte proti zákoníku práce a domluveným výjimkám. AI se v pravidlech může splést.' },
 
   /* LOGISTIKA */
-  { id:'l1', d:'pece', i:['logistika'], u:[2,4], l:'m', n:'chat', q:'fakta', t:'Odpověď na dotaz, kde je zásilka',
+  { id:'l1', d:'pece', i:['logistika'], u:[2,4], l:'m', n:'chat', t:'Odpověď na dotaz, kde je zásilka',
     w:'Ze stavu v systému připraví odpověď zákazníkovi: kde zásilka je, kdy dorazí a co dělat, když nebude doma.',
     s:['Vložte stav zásilky ze systému.', 'Nechte si připravit odpověď.', 'Termín doručení vždy berte ze systému.'],
     p:'Zákazník se ptá na zásilku [číslo]. Stav z našeho systému: [vložte].\nNapiš odpověď do 70 slov: kde zásilka je, kdy dorazí a co může zákazník udělat, když nebude doma. Když stav není jasný, napiš, že to prověříme, a uveď do kdy.',
     x:'Termín doručení si AI nesmí odhadnout sama. Musí vycházet ze stavu v systému.' },
-  { id:'l2', d:'vedeni', i:['logistika'], u:[1,3], l:'m', n:'excel', q:'cisla', t:'Rozbor škod a reklamací za měsíc',
+  { id:'l2', d:'vedeni', i:['logistika'], u:[1,3], l:'m', n:'excel', t:'Rozbor škod a reklamací za měsíc',
     w:'Najde v reklamacích a škodách opakující se vzorce podle tras, typů a dnů a navrhne opatření s největším dopadem.',
     s:['Vyexportujte reklamace a škody za měsíc.', 'Jména řidičů nahraďte kódy.', 'Nechte si připravit rozbor a součty ověřte v Excelu.'],
     p:'V tabulce jsou reklamace a škody za [měsíc]: datum, trasa, kód řidiče, typ škody a částka: [vložte].\nNajdi opakující se vzorce podle tras, typů a dnů, spočítej součty podle typu a navrhni tři opatření s největším dopadem. Výpočty ukaž v tabulce.',
     x:'Součty si ověřte v Excelu. Závěry o konkrétních lidech nedělejte jen podle AI.' },
 
   /* FINANČNÍ SLUŽBY */
-  { id:'fs1', d:'obchod', i:['fin'], u:[1,2], l:'m', n:'dok', q:'data', t:'Přehled firmy z výroční zprávy',
+  { id:'fs1', d:'obchod', i:['fin'], u:[1,2], l:'m', n:'dok', t:'Přehled firmy z výroční zprávy',
     w:'Z výroční zprávy klienta připraví přehled hlavních ukazatelů, změn a rizik a otázky na schůzku.',
     s:['Nahrajte výroční zprávu do schváleného nástroje.', 'Nechte si připravit přehled s odkazy na strany.', 'Čísla ověřte ve zprávě.'],
     p:'Z této výroční zprávy připrav přehled pro schůzku s klientem: tržby, zisk, zadlužení a cash flow za dva roky, hlavní změny a rizika a 5 otázek, které klientovi položit. U každého čísla uveď stranu, kde je ve zprávě.\n\nZpráva: [nahrajte PDF]',
     x:'Neveřejné údaje klientů vkládejte jen do schváleného firemního nástroje.' },
-  { id:'fs2', d:'marketing', i:['fin'], u:[1,2], l:'s', n:'chat', q:'pravo', t:'Srozumitelné vysvětlení produktu',
+  { id:'fs2', d:'marketing', i:['fin'], u:[1,2], l:'s', n:'chat', t:'Srozumitelné vysvětlení produktu',
     w:'Vysvětlí finanční produkt člověku bez finančního vzdělání: co to je, pro koho se hodí, poplatky a rizika.',
     s:['Vložte popis produktu a podmínky.', 'Nechte si připravit srozumitelný text.', 'Text nechte projít compliance.'],
     p:'Vysvětli tento finanční produkt pro člověka bez finančního vzdělání: co to je, pro koho se hodí a pro koho ne, jaké má poplatky a rizika. Nejvýš 200 slov, bez slibů výnosu.\n\nProdukt a podmínky: [vložte]',
     x:'Texty o finančních produktech musí odpovídat pravidlům ČNB a projít compliance.' },
 
   /* ADVOKÁTNÍ KANCELÁŘE */
-  { id:'a1', d:'provoz', i:['pravo'], u:[2,4], l:'m', n:'dok', q:'pravo', t:'První verze smlouvy z vaší šablony',
+  { id:'a1', d:'provoz', i:['pravo'], u:[2,4], l:'m', n:'dok', t:'První verze smlouvy z vaší šablony',
     w:'Podle vaší šablony a podmínek obchodu připraví první verzi smlouvy, změny označí a nejasná místa vypíše jako otázky.',
     s:['Vložte šablonu a podmínky obchodu.', 'Nechte si připravit první verzi.', 'Smlouvu vždy kontroluje advokát.'],
     p:'Jsi koncipient v advokátní kanceláři. Na základě naší šablony [vložte] a těchto podmínek obchodu [vložte] připrav první verzi smlouvy. Změny proti šabloně označ a nejasná místa vypiš na konec jako otázky pro advokáta. Bez upozornění nepřidávej ustanovení, která v šabloně nejsou.',
     x:'Údaje klientů vkládejte jen do nástrojů se smluvně zajištěnou mlčenlivostí.' },
-  { id:'a2', d:'provoz', i:['pravo'], u:[2,4], l:'m', n:'dok', q:'pravo', t:'Časová osa a shrnutí spisu',
+  { id:'a2', d:'provoz', i:['pravo'], u:[2,4], l:'m', n:'dok', t:'Časová osa a shrnutí spisu',
     w:'Z dokumentů ke kauze sestaví časovou osu s odkazy na dokumenty, shrne stanoviska stran a najde rozpory.',
     s:['Nahrajte dokumenty ke kauze do schváleného nástroje.', 'Nechte si sestavit časovou osu.', 'Data a citace ověřte v originálech.'],
     p:'Z těchto dokumentů ke kauze sestav časovou osu událostí s datem, popisem a odkazem na dokument. Pak shrň stanoviska stran v pěti bodech a vypiš rozpory mezi dokumenty.\n\nDokumenty: [nahrajte]',
     x:'Odkazy na paragrafy a judikaturu kontrolujte v aktuálním znění.' },
 
   /* VÝROBA A PRŮMYSL */
-  { id:'vy1', d:'provoz', i:['vyroba'], u:[1,2], l:'s', n:'dok', q:'bezpecnost', t:'Návod ke stroji v jazyce operátora',
+  { id:'vy1', d:'provoz', i:['vyroba'], u:[1,2], l:'s', n:'dok', t:'Návod ke stroji v jazyce operátora',
     w:'Přepíše návod ke stroji do krátkého postupu pro operátora a přeloží ho, třeba do ukrajinštiny nebo vietnamštiny.',
     s:['Nahrajte návod výrobce.', 'Nechte si připravit postup a překlad.', 'Překlad dejte zkontrolovat kolegovi, který jazyk ovládá.'],
     p:'Tento návod ke stroji přepiš do krátkého postupu pro operátora: 8 až 12 kroků, jednoduché věty a bezpečnostní upozornění zvlášť a výrazně. Pak ho přelož do [ukrajinštiny nebo vietnamštiny].\n\nNávod: [vložte]',
     x:'Bezpečnostní části musí sedět s originálem výrobce.' },
-  { id:'vy2', d:'provoz', i:['vyroba'], u:[1,2], l:'m', n:'excel', q:'fakta', t:'Plán preventivní údržby',
+  { id:'vy2', d:'provoz', i:['vyroba'], u:[1,2], l:'m', n:'excel', t:'Plán preventivní údržby',
     w:'Z intervalů v návodech a historie poruch navrhne plán údržby na čtvrtletí a upozorní, kde interval nestačí.',
     s:['Vložte intervaly z návodů a seznam poruch.', 'Nechte si navrhnout plán.', 'Plán porovnejte s revizními povinnostmi.'],
     p:'Tady jsou intervaly údržby z návodu výrobce [vložte] a seznam poruch za poslední rok [vložte].\nNavrhni plán preventivní údržby na čtvrtletí: co, jak často, kdo a kolik času to zabere. Upozorni na stroje, kde poruchy naznačují, že interval nestačí.',
     x:'Plán musí respektovat pokyny výrobce a vaše revizní povinnosti.' },
 
   /* AUTOMOTIVE */
-  { id:'au1', d:'provoz', i:['auto'], u:[2,4], l:'m', n:'chat', q:'fakta', t:'Návrh 8D reportu k reklamaci',
+  { id:'au1', d:'provoz', i:['auto'], u:[2,4], l:'m', n:'chat', t:'Návrh 8D reportu k reklamaci',
     w:'Připraví pracovní verzi 8D reportu a u každého kroku napíše, co chybí a koho se zeptat.',
     s:['Popište vadu, díl, počet kusů a zákazníka bez jmen.', 'Nechte si připravit kroky D1 až D8.', 'Report doplní a schválí tým kvality.'],
     p:'Připrav návrh 8D reportu k reklamaci: [popis vady, díl, počet kusů, zákazník bez jmen].\nVyplň kroky D1 až D8 podle dostupných informací a u každého kroku napiš, co chybí a koho se zeptat. Nic si nedomýšlej.',
     x:'Závěry musí doložit měření a odpovědný inženýr.' },
-  { id:'au2', d:'vedeni', i:['auto'], u:[1,3], l:'m', n:'dok', q:'fakta', t:'Příprava na audit podle IATF',
+  { id:'au2', d:'vedeni', i:['auto'], u:[1,3], l:'m', n:'dok', t:'Příprava na audit podle IATF',
     w:'Projde váš postup a vypíše otázky, které auditor pravděpodobně položí, i důkazy, které máte mít připravené.',
     s:['Nahrajte postup procesu.', 'Nechte si připravit otázky a důkazy.', 'Požadavky ověřte v aktuálním znění normy.'],
     p:'Připravujeme se na audit podle IATF 16949 pro proces [proces]. Tady je náš postup: [vložte].\nVypiš otázky, které auditor pravděpodobně položí, a u každé, jaký důkaz bychom měli mít připravený. Označ místa, kde náš postup vypadá slabě.',
@@ -806,24 +633,17 @@ const $ = (s, el) => (el || document).querySelector(s);
 const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nf = (n, d) => Number(n).toLocaleString('cs-CZ', { maximumFractionDigits: d || 0 });
-const kc = n => nf(n) + ' Kč';
-const SUB_RATE = 478.19, SUB_HOURS = 60, WEEKS = 52 / 12, RATE = 435;
-const KEY = 'ls-ai-mapa-v1';
+const kc = n => nf(n) + ' Kč';
+const SUB_RATE = 478.19, SUB_HOURS = 60, SUB_ONE = Math.round(SUB_RATE * SUB_HOURS);
 
-const S = { obor:null, odd:'vse', q:'', plan:[], people:10, pilot:false, custom:false, lead:null, done:false, fname:'' };
-try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && Array.isArray(saved.plan)) S.plan = saved.plan.filter(id => UC.some(u => u.id === id)); } catch (e) {}
-const persist = () => { try { localStorage.setItem(KEY, JSON.stringify({ plan:S.plan })); } catch (e) {} };
+const S = { obor:null, odd:'vse', lvl:'vse', seen:[], custom:false, lead:null, done:false, fname:'' };
 
 const byId = id => UC.find(u => u.id === id);
-const hrs = u => nf(u[0], 1) + ' až ' + nf(u[1], 1) + ' h týdně';
+const hrs = u => nf(u[0], 1) + ' až ' + nf(u[1], 1) + ' h týdně';
 const moznost = n => n === 1 ? 'možnost' : (n >= 2 && n <= 4 ? 'možnosti' : 'možností');
-const lidi = p => p === 1 ? 'člověka' : (p >= 2 && p <= 4 ? 'lidi' : 'lidí');            // pro + 4. pád
-const hodAcc = n => n === 1 ? 'hodinu' : (n >= 2 && n <= 4 ? 'hodiny' : 'hodin');      // ušetří 1 hodinu, 3 hodiny, 5 hodin
-const hodNom = n => n % 1 ? 'hodiny' : (n === 1 ? 'hodina' : (n >= 2 && n <= 4 ? 'hodiny' : 'hodin'));
-const sig2 = n => { if (!(n > 0)) return 0; const d = Math.pow(10, Math.max(0, Math.floor(Math.log10(n)) - 1)); return Math.round(n / d) * d; };
-const roundH = h => h < 10 ? Math.max(1, Math.round(h)) : sig2(h);
+const LVL_ADJ = { s:['snadná', 'snadné', 'snadných'], m:['střední', 'střední', 'středních'] };
+const lvlAdj = (n, l) => LVL_ADJ[l][n === 1 ? 0 : (n >= 2 && n <= 4 ? 1 : 2)];
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const ICON_X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 const ICON_OK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 const V_OBOR = { stavebnictvi:'ve stavebnictví', zdravotnictvi:'ve zdravotnictví', logistika:'v logistice', fin:'ve finančních službách',
                  pravo:'v advokátních kancelářích', vyroba:'ve výrobě a průmyslu', auto:'v automobilovém průmyslu', jine:'pro váš obor' };
@@ -832,115 +652,85 @@ const PRO_ODD = { obchod:'pro obchod', marketing:'pro marketing', hr:'pro HR a 
 const ICON_CLOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 const ICON_WARN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9.5 17h-19z"/><path d="M12 10v4M12 17.5v.01"/></svg>';
 
+/* obtížnost jako tři sloupečky: snadné má vyplněný jeden, střední dva */
+const BARS = { s:1, m:2 };
+const bars = l => '<svg viewBox="0 0 18 16" aria-hidden="true">' + [[1, 10, 5], [7, 6, 9], [13, 2, 13]].map(([x, y, h], i) =>
+  '<rect x="' + x + '" y="' + y + '" width="4" height="' + h + '" rx="1"' + (i < BARS[l] ? ' class="on"' : '') + '/>').join('') + '</svg>';
+const lvlTag = (l, text) => {
+  const a = 'Obtížnost: ' + LEVEL[l].toLowerCase();
+  return text ? '<span class="lvl">' + bars(l) + a + '</span>' : '<span class="lvl" role="img" aria-label="' + a + '" title="' + a + '">' + bars(l) + '</span>';
+};
+
 /* ---------- filtry ---------- */
 function renderChips(){
   $('#f-obor').innerHTML = OBORY.map(([k, l]) => '<button class="chip" type="button" data-obor="' + k + '" aria-pressed="' + (S.obor === k) + '">' + esc(l) + '</button>').join('');
   $('#f-odd').innerHTML = ODDELENI.map(([k, l]) => '<button class="chip" type="button" data-odd="' + k + '" aria-pressed="' + (S.odd === k) + '">' + esc(l) + '</button>').join('');
+  $('#f-lvl').innerHTML = [['vse', 'Všechny']].concat(Object.entries(LEVEL)).map(([k, l]) =>
+    '<button class="chip" type="button" data-lvl="' + k + '" aria-pressed="' + (S.lvl === k) + '">' + (BARS[k] ? '<span class="lvl">' + bars(k) + '</span>' : '') + esc(l) + '</button>').join('');
 }
-const plain = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+// od nejsnazších, v rámci obtížnosti napřed možnosti přímo pro obor
+const rank = u => (u.l === 's' ? 0 : 2) + (u.i.length ? 0 : 1);
 function visible(){
-  const q = plain(S.q.trim());
   return UC.filter(u => (S.odd === 'vse' || u.d === S.odd)
-    && (!S.obor || (S.obor === 'jine' ? !u.i.length : (!u.i.length || u.i.includes(S.obor))))
-    && (!q || plain(u.t + ' ' + u.w + ' ' + ODD_LABEL[u.d]).includes(q)))
-    .sort((a, b) => (b.i.length ? 1 : 0) - (a.i.length ? 1 : 0));
+    && (S.lvl === 'vse' || u.l === S.lvl)
+    && (!S.obor || (S.obor === 'jine' ? !u.i.length : (!u.i.length || u.i.includes(S.obor)))))
+    .sort((a, b) => rank(a) - rank(b));
 }
 
 /* ---------- karty ---------- */
 function card(u){
-  const inPlan = S.plan.includes(u.id);
-  return '<article class="uc' + (inPlan ? ' in' : '') + '" data-id="' + u.id + '">' +
+  return '<article class="uc" data-id="' + u.id + '">' +
     '<div class="uc-top"><span class="dept">' + esc(ODD_LABEL[u.d]) + '</span>' + (u.i.length ? '<span class="ind">' + esc(OBOR_PRO[u.i[0]]) + '</span>' : '') + '</div>' +
     '<h3>' + esc(u.t) + '</h3><p class="w">' + esc(u.w) + '</p>' +
-    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span><span class="lvl ' + u.l + '">' + LEVEL[u.l] + '</span></div>' +
-    '<div class="uc-actions"><button class="btn btn-ghost btn-sm" type="button" data-open="' + u.id + '">Zobrazit postup</button>' +
-    '<button class="btn btn-sm ' + (inPlan ? 'on' : 'btn-primary') + '" type="button" data-plan="' + u.id + '" aria-pressed="' + inPlan + '">' + (inPlan ? 'V plánu ✓' : '+ Do plánu') + '</button></div></article>';
+    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span>' + lvlTag(u.l) + '</div>' +
+    '<div class="uc-actions"><button class="btn btn-ghost btn-sm" type="button" data-open="' + u.id + '">Zobrazit postup</button></div></article>';
 }
 function renderGrid(){
   const list = visible();
   const n = list.length;
+  const what = n + ' ' + (S.lvl !== 'vse' ? lvlAdj(n, S.lvl) + ' ' : '') + moznost(n);
   let title;
-  if (!S.obor && S.odd === 'vse') title = n + ' ' + moznost(n) + ' pro všechny obory';
-  else title = n + ' ' + moznost(n) + (S.odd !== 'vse' ? ' ' + PRO_ODD[S.odd] : '') + (S.obor ? ' ' + V_OBOR[S.obor] : '');
-  if (S.q.trim()) title += ', hledáte „' + S.q.trim() + '“';
+  if (!S.obor && S.odd === 'vse') title = what + ' pro všechny obory';
+  else title = what + (S.odd !== 'vse' ? ' ' + PRO_ODD[S.odd] : '') + (S.obor ? ' ' + V_OBOR[S.obor] : '');
   $('#res-title').textContent = title;
-  $('#res-sub').textContent = S.obor || S.odd !== 'vse' ? 'Přidejte si do plánu, co by vám pomohlo, a stáhněte si ho v PDF.' : 'Vyberte obor a oddělení, ať vidíte jen to, co se vás týká.';
-  $('#grid').innerHTML = n ? list.map(card).join('') : '<p class="empty">Tady nic není. Zkuste jiné oddělení nebo kratší hledané slovo.</p>';
+  $('#res-sub').textContent = S.obor || S.odd !== 'vse' ? 'Seřazené od nejsnazších. U každé najdete postup a pokyn pro AI.' : 'Vyberte obor a oddělení, ať vidíte jen to, co se vás týká.';
+  $('#grid').innerHTML = n ? list.map(card).join('') : '<p class="empty">Tady nic není. Zkuste jiné oddělení nebo obtížnost.</p>';
 }
 
-/* ---------- plán a výpočty ---------- */
-function totals(){
-  const items = S.plan.map(byId).filter(Boolean);
-  const a = items.reduce((s, u) => s + u.u[0], 0), b = items.reduce((s, u) => s + u.u[1], 0), m = (a + b) / 2;
-  const p = Math.min(5000, Math.max(1, Math.round(Number(S.people) || 1)));
-  const h = m * WEEKS * p;
-  return { items, a, b, m, p, h, h1: a * WEEKS * p, h2: b * WEEKS * p, k: h * RATE, sub: p * SUB_HOURS * SUB_RATE,
-           mixed: new Set(items.map(u => u.d)).size > 1 };
+/* ---------- co odchází s formulářem ---------- */
+function payload(){
+  return { zdroj: 'AI mapa pro firmy', obor: S.obor ? OBOR_LABEL[S.obor] : null, oddeleni: S.odd !== 'vse' ? ODD_LABEL[S.odd] : null,
+           prohlednute: S.seen.map(byId).filter(Boolean).map(u => ({ id: u.id, nazev: u.t, oddeleni: ODD_LABEL[u.d] })),
+           navrh_na_miru: S.custom };
 }
-const saveNote = t => 'Odhad počítá s průměrnou mzdou podle ČSÚ a s tím, že lidé úkoly dělají pravidelně.' +
-  (t.mixed ? ' Úkoly jsou z\u00a0více oddělení, takže skutečná úspora bude spíš nižší.' : '');
-function planPayload(){
-  const t = totals();
-  return { zdroj: 'AI mapa pro firmy', obor: S.obor ? OBOR_LABEL[S.obor] : null, lide: t.p,
-           moznosti: t.items.map(u => ({ id: u.id, nazev: u.t, oddeleni: ODD_LABEL[u.d] })),
-           uspora_h_mesicne: roundH(t.h), dotace_kc: Math.round(t.sub), navrh_na_miru: S.custom, prvni_lekce_zdarma: S.pilot };
-}
-function renderPlan(){
-  const t = totals(), n = t.items.length, H = roundH(t.h);
-  $('#pill-n').textContent = n;
-  $('#plan-title').textContent = n ? 'Vybrali jste ' + n + ' ' + moznost(n) : 'Zatím nemáte nic vybraného';
-  $('#plan-empty').hidden = n > 0;
-  $('#plan-body').hidden = n === 0;
-  $('#plist').innerHTML = t.items.map(u => '<li><span class="pt">' + esc(u.t) + '</span><span class="ps">Ušetří ' + hrs(u.u) + '</span>' +
-    '<button class="rm" type="button" data-plan="' + u.id + '" aria-label="Odebrat z plánu: ' + esc(u.t) + '">' + ICON_X + '</button></li>').join('');
-  $('#save-h').textContent = (t.p === 1 ? 'Ušetříte zhruba ' : 'Tým ušetří zhruba ') + nf(H) + ' ' + hodAcc(H) + ' měsíčně';
-  $('#save-k').textContent = 'To je kolem ' + kc(sig2(t.k)) + ' měsíčně v\u00a0nákladech na práci.';
-  $('#save-note').textContent = saveNote(t);
-  $('#sub-sum').innerHTML = 'Když kurz rozšíříme na 60 hodin, můžete na školení pro ' + t.p + ' ' + lidi(t.p) + ' získat dotaci až <b>' + kc(Math.round(t.sub)) + '</b>.';
-  $('#pilot-chip').hidden = !S.pilot;
-  $('#l-plan').value = JSON.stringify(planPayload());
-  $('#tray-t').innerHTML = '<b>V\u00a0plánu ' + n + ' ' + moznost(n) + '</b><span>ušetří zhruba ' + nf(t.m, 1) + ' h týdně<span class="tr-pp"> na člověka</span></span>';
-  $('#tray').hidden = n === 0 || planVisible;
-  renderSales();
-}
-function togglePlan(id){
-  const i = S.plan.indexOf(id);
-  if (i >= 0) S.plan.splice(i, 1); else S.plan.push(id);
-  persist();
-  renderGrid(); renderPlan();
-  const sb = $('#sheet [data-plan="' + id + '"]');
-  if (sb){ const on = S.plan.includes(id); sb.className = 'btn ' + (on ? 'on' : 'btn-primary'); sb.textContent = on ? 'V plánu ✓' : '+ Přidat do plánu'; sb.setAttribute('aria-pressed', String(on)); }
-}
-let planVisible = false;
+function syncLead(){ $('#l-zajem').value = JSON.stringify(payload()); renderSales(); }
 
 /* ---------- detail možnosti ---------- */
 let lastFocus = null, openId = null;
 function openDetail(id, opener){
   const u = byId(id); if (!u) return;
   openId = id; lastFocus = opener || document.activeElement;
-  const on = S.plan.includes(id);
+  if (!S.seen.includes(id)){ S.seen.push(id); syncLead(); }
   $('#sheet').innerHTML =
     '<button class="x" type="button" data-close aria-label="Zavřít"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
     '<div class="uc-top"><span class="dept">' + esc(ODD_LABEL[u.d]) + '</span>' + (u.i.length ? '<span class="ind">' + esc(OBOR_PRO[u.i[0]]) + '</span>' : '') + '</div>' +
     '<h2 id="d-title">' + esc(u.t) + '</h2><p class="w">' + esc(u.w) + '</p>' +
-    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span><span class="lvl ' + u.l + '">' + LEVEL[u.l] + '</span></div>' +
+    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span>' + lvlTag(u.l, true) + '</div>' +
     '<p class="tool">Nástroj: ' + esc(NASTROJ[u.n]) + '</p>' +
     '<div class="sec"><h4>Jak na to</h4><ol class="steps">' + u.s.map(x => '<li><span>' + esc(x) + '</span></li>').join('') + '</ol></div>' +
     '<div class="sec"><h4>Pokyn pro AI</h4><div class="prompt" id="d-prompt">' + esc(u.p) + '</div>' +
     '<div class="prompt-actions"><button class="btn btn-dark btn-sm" type="button" data-copy>Kopírovat pokyn</button><span class="copied" id="d-copied" aria-live="polite"></span></div>' +
     '<p class="soft" style="margin-top:8px">Text v hranatých závorkách nahraďte svými údaji.</p></div>' +
     '<div class="sec note">' + ICON_WARN + '<span><b>Na co si dát pozor:</b> ' + esc(u.x) + '</span></div>' +
-    gzPanel(u, id) +
-    '<div class="sheet-actions"><button class="btn ' + (on ? 'on' : 'btn-primary') + '" type="button" data-plan="' + id + '" aria-pressed="' + on + '">' + (on ? 'V plánu ✓' : '+ Přidat do plánu') + '</button></div>';
+    '<div class="sheet-actions"><p>Chcete, aby tohle a další postupy zvládal celý tým? Naučíme ho to v kurzu AI Akcelerátor.</p>' +
+    '<button class="btn btn-primary" type="button" data-kurz>Stáhnout ukázku kurzu</button></div>';
   $('#ov').hidden = false;
   document.body.style.overflow = 'hidden';
   setTimeout(() => $('#sheet [data-close]').focus(), 30);
-  startGa();
 }
 function closeDetail(){
   $('#ov').hidden = true; openId = null;
-  clearInterval(gaTimer);
-  if ($('#gz').hidden) document.body.style.overflow = '';
+  document.body.style.overflow = '';
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll:true });
 }
 async function copyPrompt(){
@@ -954,102 +744,23 @@ async function copyPrompt(){
     msg.textContent = ok ? 'Zkopírováno' : 'Text je označený, zkopírujte ho zkratkou Ctrl+C';
   }
 }
-
-/* ---------- Grizlet v detailu: krátká animace ---------- */
-let gaTimer = 0;
-function gzPanel(u, id){
-  const k = KVIZ[u.q], wrong = k.o.find((o, i) => i !== k.ok);
-  return '<div class="sec gzbox"><div class="gzbox-top">' +
-    '<div class="ga" data-scene="1" aria-hidden="true">' +
-      '<div class="ga-scr ga-s1"><p class="ga-time">9:41</p>' +
-        '<div class="ga-msg"><p class="ga-from"><span class="ga-ic">g</span><b>Grizlet</b></p><span class="t">Nová lekce: ' + esc(u.t) + '</span></div>' +
-        '<span class="ga-open">Otevřít lekci</span></div>' +
-      '<div class="ga-scr ga-s2"><div class="ga-prog"><i></i><i></i><i></i><i></i></div>' +
-        '<p class="ga-cat">' + esc(ODD_LABEL[u.d]) + '  3/4</p><p class="ga-q">' + esc(k.q) + '</p>' +
-        '<span class="ga-opt"><span>' + esc(wrong) + '</span></span><span class="ga-opt ga-right"><span>' + esc(k.o[k.ok]) + '</span></span>' +
-        '<span class="ga-fb">✓ Správně</span></div>' +
-      '<div class="ga-scr ga-s3"><p class="ga-h">Výsledky lekce</p><p class="ga-big">8 z 10</p><p class="ga-sub">lidí lekci dokončilo</p>' +
-        '<div class="ga-bar"><i></i></div>' +
-        '<ul class="ga-people"><li>Jana N. <b>100 %</b></li><li>Petr K. <b>80 %</b></li><li>Eva S. <b>100 %</b></li></ul></div>' +
-    '</div>' +
-    '<div class="gzbox-side"><h4>Naučte to tým v mobilu</h4>' +
-      '<ol class="ga-steps"><li class="on">Lekce přijde odkazem do mobilu</li><li>Za 3 až 4 minuty projdou postup a kvíz</li><li>Vy vidíte, kdo ji zvládl</li></ol></div>' +
-  '</div>' +
-  '<p class="gzbox-free"><b>První lekci pro váš tým připravíme v Grizletu zdarma.</b></p>' +
-  '<button class="btn btn-ghost btn-sm" type="button" data-lesson="' + id + '">Projít ukázku lekce</button></div>';
-}
-function startGa(){
-  clearInterval(gaTimer);
-  const el = $('#sheet .ga'); if (!el) return;
-  const steps = $$('#sheet .ga-steps li');
-  const set = s => { el.dataset.scene = String(s); steps.forEach((li, i) => li.classList.toggle('on', i === s - 1)); };
-  if (reduced()){ el.classList.add('ga-static'); el.dataset.scene = '2'; steps.forEach(li => li.classList.add('on')); return; }
-  let s = 1; set(1);
-  gaTimer = setInterval(() => { if (!document.contains(el)) { clearInterval(gaTimer); return; } s = s % 3 + 1; set(s); }, 3200);
-}
-
-/* ---------- ukázková lekce ve stylu Grizletu ---------- */
-let gz = { id:null, step:0, answered:false };
-function openLesson(id){
-  gz = { id, step:0, answered:false };
-  $('#gz').hidden = false;
-  document.body.style.overflow = 'hidden';
-  renderLesson();
-  setTimeout(() => { const b = $('#phone .gz-btn'); if (b) b.focus(); }, 30);
-}
-function closeLesson(){
-  $('#gz').hidden = true;
-  if ($('#ov').hidden) document.body.style.overflow = '';
-  const b = $('#sheet [data-lesson]'); if (b && !$('#ov').hidden) b.focus();
-}
-function renderLesson(){
-  const u = byId(gz.id), k = KVIZ[u.q];
-  const prog = '<div class="gz-prog" aria-hidden="true">' + [0, 1, 2, 3].map(i => '<i class="' + (i <= gz.step ? 'on' : '') + '"></i>').join('') + '</div>';
-  const cat = '<p class="gz-cat">' + esc(ODD_LABEL[u.d]) + '  ' + (gz.step + 1) + '/4</p>';
-  let body = '', btn = '';
-  if (gz.step === 0){
-    body = '<h3>' + esc(u.t) + '</h3><p>' + esc(u.w) + '</p><p style="margin-top:12px"><b>Ušetří ' + hrs(u.u) + '.</b></p>';
-    btn = '<button class="gz-btn" type="button" data-gz="next">Pokračovat</button>';
-  } else if (gz.step === 1){
-    body = '<h3>Jak na to</h3><ol>' + u.s.map(x => '<li>' + esc(x) + '</li>').join('') + '</ol><p style="margin-top:12px">Hotový pokyn pro AI najdete u lekce jako přílohu.</p>';
-    btn = '<button class="gz-btn" type="button" data-gz="next">Pokračovat</button>';
-  } else if (gz.step === 2){
-    body = '<h3>' + esc(k.q) + '</h3><div class="gz-opts">' + k.o.map((o, i) => '<button class="gz-opt" type="button" data-opt="' + i + '">' + esc(o) + '</button>').join('') + '</div><div id="gz-fb"></div>';
-    btn = '<button class="gz-btn" type="button" data-gz="next" disabled>Pokračovat</button>';
-  } else {
-    body = '<div class="gz-done"><p class="big">Hotovo!</p><p>Takhle se vaši lidé naučí nový postup za pár minut. Lekci jim pošlete odkazem, e-mailem nebo přes Teams a\u00a0otevře se v\u00a0mobilu bez instalace. Vy pak vidíte, kdo lekci dokončil a\u00a0s\u00a0jakým skóre.</p>' +
-      '<p><b>První lekci pro váš tým připravíme zdarma</b>, třeba z\u00a0tohoto postupu nebo z\u00a0vašeho materiálu.</p></div>';
-    btn = '<button class="gz-btn" type="button" data-gz="pilot">Chci první lekci zdarma</button>';
-  }
-  $('#phone').innerHTML = prog + cat + '<div class="gz-body">' + body + '</div>' + btn;
-}
-function answer(i){
-  if (gz.answered) return;
-  gz.answered = true;
-  const k = KVIZ[byId(gz.id).q];
-  $$('#phone .gz-opt').forEach((b, j) => { b.disabled = true; if (j === k.ok) b.classList.add('ok'); else if (j === i) b.classList.add('no'); });
-  const good = i === k.ok;
-  $('#gz-fb').innerHTML = '<div class="gz-fb' + (good ? '' : ' bad') + '"><b>' + (good ? 'Správně.' : 'Tohle ne.') + '</b> ' + esc(k.fb) + '</div>';
-  const b = $('#phone .gz-btn'); b.disabled = false; b.focus();
-}
-
-/* ---------- vstupní nabídka a formulář ---------- */
-function wantPilot(id){
-  if (id && byId(id) && !S.plan.includes(id)){ S.plan.push(id); persist(); }
-  S.pilot = true;
-  if (!$('#gz').hidden) closeLesson();
-  if (!$('#ov').hidden) closeDetail();
-  renderGrid(); renderPlan();
-  if (S.done) renderDone();
+function goKurz(){
+  if (!$('#ov').hidden){ lastFocus = null; closeDetail(); }
   const target = S.done ? $('#lead-ok') : $('#form-box');
   target.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block:'start' });
   if (!S.done) setTimeout(() => $('#l-email').focus({ preventScroll:true }), 450);
 }
+
+/* ---------- kurz a formulář ---------- */
+function renderKurz(){
+  $('#mods').innerHTML = KURZ.moduly.map(mo => '<li><b>' + esc(mo.t) + '</b><span>' + mo.h + ' hodiny. ' + esc(mo.praxe) + '</span></li>').join('');
+  $('#sub-one').textContent = kc(SUB_ONE);
+}
 const FREE = ['gmail.com', 'seznam.cz', 'email.cz', 'centrum.cz', 'post.cz', 'volny.cz', 'atlas.cz', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com', 'tiscali.cz', 'azet.sk'];
 const MSG = {
-  declined: 'Stažení jste zrušili. Plán zůstává připravený, stačí kliknout znovu.',
+  declined: 'Stažení jste zrušili. Ukázka zůstává připravená, stačí kliknout znovu.',
   busy: 'Okno se stažením už je otevřené. Potvrďte ho, nebo to za chvíli zkuste znovu.',
-  blocked: 'V\u00a0tomto zobrazení se PDF stáhnout nedá. Otevřete stránku v\u00a0Claudu v\u00a0prohlížeči nebo v\u00a0aplikaci a\u00a0zkuste to znovu.',
+  blocked: 'V tomto zobrazení se PDF stáhnout nedá. Otevřete stránku v Claudu v prohlížeči nebo v aplikaci a zkuste to znovu.',
   error: 'PDF se nepodařilo vytvořit. Zkuste to prosím znovu.'
 };
 function showErr(msg){ const e = $('#l-err'); e.textContent = msg; e.hidden = !msg; }
@@ -1057,8 +768,7 @@ async function submitLead(e){
   e.preventDefault();
   const name = $('#l-name').value.trim(), email = $('#l-email').value.trim(), firm = $('#l-firm').value.trim(), phone = $('#l-phone').value.trim();
   let msg = '', bad = null;
-  if (!S.plan.length) msg = 'Přidejte do plánu aspoň jednu možnost.';
-  else if (!email){ msg = 'Napište prosím svůj e-mail.'; bad = '#l-email'; }
+  if (!email){ msg = 'Napište prosím svůj e-mail.'; bad = '#l-email'; }
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ msg = 'E-mail nevypadá správně, zkontrolujte ho prosím.'; bad = '#l-email'; }
   else if (phone && phone.replace(/\D/g, '').length < 9){ msg = 'Telefon nevypadá správně. Opravte ho, nebo pole nechte prázdné.'; bad = '#l-phone'; }
   else if (!$('#l-consent').checked){ msg = 'Bez souhlasu se zpracováním údajů vám nemůžeme poslat nabídku ani se ozvat.'; bad = '#l-consent'; }
@@ -1066,7 +776,7 @@ async function submitLead(e){
   if (msg){ if (bad) $(bad).focus(); return; }
   S.lead = { name, email, firm, phone, free: FREE.includes(email.split('@')[1].toLowerCase()) };
   S.custom = $('#l-custom').checked;
-  $('#l-plan').value = JSON.stringify(planPayload());
+  syncLead();
   const btn = $('#l-submit'); btn.disabled = true; btn.textContent = 'Připravuji PDF…';
   let res = 'error';
   try { res = await savePdf(); } catch (e2) { res = 'error'; }
@@ -1085,18 +795,15 @@ function renderDone(){
   const box = $('#lead-ok'); box.hidden = false;
   const custom = S.custom
     ? '<div class="next"><span class="badge">Další krok</span><h4>Návrh na míru připravíme</h4>' +
-      '<p>Podle možností z\u00a0vašeho plánu připravíme, jak by kurz mohl vypadat u\u00a0vás, a\u00a0ozveme se na ' + esc(S.lead.email) + '.</p>' +
-      '<p class="noted">' + ICON_OK + 'Zájem o\u00a0návrh na míru máme poznamenaný.</p></div>'
+      '<p>Podle vašeho oboru a práce vašich lidí připravíme, jak by kurz mohl vypadat u vás, a ozveme se na ' + esc(S.lead.email) + '.</p>' +
+      '<p class="noted">' + ICON_OK + 'Zájem o návrh na míru máme poznamenaný.</p></div>'
     : '<div class="next"><span class="badge">Další krok</span><h4>Chcete vidět kurz na míru pro vaši firmu?</h4>' +
-      '<p>Podle možností z\u00a0vašeho plánu připravíme, jak by AI Akcelerátor mohl vypadat právě u\u00a0vás.</p>' +
+      '<p>Podle vašeho oboru a práce vašich lidí připravíme, jak by AI Akcelerátor mohl vypadat právě u vás.</p>' +
       '<button class="btn btn-primary" type="button" data-custom-yes>Chci návrh na míru</button></div>';
   box.innerHTML = '<p class="done-t" tabindex="-1">' + ICON_OK + 'Ukázka kurzu je stažená</p>' +
     '<p class="soft">Nestáhla se? <button class="linkish" type="button" data-again>Stáhnout znovu</button></p>' + custom +
-    '<div class="next alt"><h4>Vyzkoušejte první lekci zdarma</h4>' +
-    '<p>Z\u00a0jednoho vašeho materiálu nebo postupu z\u00a0plánu připravíme v\u00a0Grizletu lekci na 3 až 4 minuty s\u00a0kvízem a\u00a0pošleme ji týmu do mobilu. Uvidíte, kdo ji dokončil a\u00a0s\u00a0jakým skóre.</p>' +
-    (S.pilot ? '<p class="noted">' + ICON_OK + 'Zájem o\u00a0první lekci zdarma máme poznamenaný.</p>' : '<button class="btn btn-ghost" type="button" data-pilot-yes>Chci první lekci zdarma</button>') + '</div>' +
     '<p class="soft">Chcete to probrat hned? <a href="https://business.lifescale.cz/cz" target="_blank" rel="noopener">Rezervujte si nezávaznou konzultaci</a>.</p>' +
-    (S.lead && S.lead.free ? '<p class="soft">Tip: s\u00a0firemním e-mailem vám umíme poslat i nabídku přímo pro vaši firmu.</p>' : '');
+    (S.lead && S.lead.free ? '<p class="soft">Tip: s firemním e-mailem vám umíme poslat i nabídku přímo pro vaši firmu.</p>' : '');
 }
 
 /* ---------- PDF ---------- */
@@ -1130,7 +837,7 @@ function buildPdf(){
   doc.addFileToVFS('Figtree-R.ttf', FONT_R); doc.addFont('Figtree-R.ttf', 'Figtree', 'normal');
   doc.addFileToVFS('Figtree-B.ttf', FONT_B); doc.addFont('Figtree-B.ttf', 'Figtree', 'bold');
   const M = 18, PW = 210, PH = 297, W = PW - 2 * M, BOTTOM = PH - 18;
-  const INK = [32, 16, 11], MUTED = [92, 88, 85], BLUE = [0, 121, 181], NAVY = [11, 52, 96], AMBER = [122, 67, 0];
+  const INK = [32, 16, 11], MUTED = [92, 88, 85], BLUE = [0, 121, 181], NAVY = [11, 52, 96];
   let y = 0;
   const lh = size => size * 0.3528 * 1.38;
   const newPage = () => { doc.addPage(); y = M; };
@@ -1145,24 +852,6 @@ function buildPdf(){
     lines.forEach(line => { ensure(lh(size)); doc.text(line, x, y, { baseline:'top' }); y += lh(size); });
     y += opts.gap === undefined ? 1.5 : opts.gap;
   }
-  function box(str, size, fill, color){
-    doc.setFont('Figtree', 'normal'); doc.setFontSize(size);
-    const lines = doc.splitTextToSize(String(str), W - 10);
-    const step = lh(size);
-    let i = 0;
-    while (i < lines.length){
-      const room = Math.max(1, Math.floor((BOTTOM - y - 8) / step));
-      if (room < 2 && y > M + 10){ newPage(); continue; }
-      const chunk = lines.slice(i, i + room);
-      const h = chunk.length * step + 8;
-      doc.setFillColor.apply(doc, fill); doc.roundedRect(M, y, W, h, 2.5, 2.5, 'F');
-      doc.setTextColor.apply(doc, color);
-      chunk.forEach((line, j) => doc.text(line, M + 5, y + 4 + j * step, { baseline:'top' }));
-      y += h + 3; i += chunk.length;
-      if (i < lines.length) newPage();
-    }
-  }
-  const t = totals();
   const today = new Date().toLocaleDateString('cs-CZ', { day:'numeric', month:'long', year:'numeric' });
   // hlavička
   doc.setFillColor.apply(doc, NAVY); doc.rect(0, 0, PW, 54, 'F');
@@ -1180,19 +869,20 @@ function buildPdf(){
   let sy = ty + 1.5;
   doc.splitTextToSize(KURZ.podtitul + '. Ukázka standardní verze, každé firmě kurz upravujeme na míru.', W).forEach(line => { doc.text(line, M, sy, { baseline:'top' }); sy += lh(10.5) * 0.95; });
   doc.setFontSize(9.5); doc.setTextColor(150, 190, 225);
-  doc.text(doc.splitTextToSize('Staženo z\u00a0AI mapy ' + today + (S.lead.firm ? ' pro firmu ' + S.lead.firm.replace(/\.+$/, '') : '') + '.', W)[0], M, sy + 1, { baseline:'top' });
+  doc.text(doc.splitTextToSize('Staženo z AI mapy ' + today + (S.lead.firm ? ' pro firmu ' + S.lead.firm.replace(/\.+$/, '') : '') + '.', W)[0], M, sy + 1, { baseline:'top' });
   y = 66;
   const bullet = (txt) => { ensure(lh(10.5) + 1); doc.setFont('Figtree', 'normal'); doc.setFontSize(10.5); doc.setTextColor.apply(doc, INK); doc.text('•', M + 3, y, { baseline:'top' }); para(txt, 10.5, 'normal', INK, { indent:7, gap:0.8 }); };
   // o kurzu
   para('O kurzu', 14, 'bold', INK, { gap:2 });
-  para(KURZ.oKurzu + ' Tady je jeho standardní podoba, každé firmě ho upravujeme na míru.', 11, 'normal', INK, { gap:5 });
+  para(KURZ.oKurzu + ' Tady je jeho standardní podoba, každé firmě ho upravujeme na míru.', 11, 'normal', INK, { gap:3 });
+  para('Každých 160 hodin, které tým díky AI ušetří za měsíc, je jako jeden člověk navíc. Nemusíte ho hledat ani zaučovat.', 11, 'bold', BLUE, { gap:5 });
   // program
   para('Program kurzu', 14, 'bold', INK, { gap:2.5, keep:true });
   KURZ.moduly.forEach((mo, i) => {
     ensure(34);
     para('Modul ' + (i + 1) + ': ' + mo.t + ' (' + mo.h + ' hodiny)', 11.5, 'bold', INK, { gap:1 });
     mo.body.forEach(x => bullet(x));
-    para('V\u00a0praxi: ' + mo.praxe, 10, 'normal', BLUE, { gap:3.5, indent:7 });
+    para('V praxi: ' + mo.praxe, 10, 'normal', BLUE, { gap:3.5, indent:7 });
   });
   y += 1;
   para('Co si lidé odnesou', 12, 'bold', INK, { gap:1.2, keep:true });
@@ -1206,21 +896,21 @@ function buildPdf(){
   KURZ.naMiru.forEach(x => bullet(x));
   y += 2.5;
   ensure(30);
-  para('Jak to vypadalo u\u00a0jiných firem', 11, 'bold', INK, { gap:1.2 });
+  para('Jak to vypadalo u jiných firem', 11, 'bold', INK, { gap:1.2 });
   KURZ.priklady.forEach(p => bullet(p[0] + ': ' + p[1]));
   y += 5;
   // dotace
   ensure(36);
   para('Dotace na kurz', 14, 'bold', INK, { gap:2 });
-  para('Podporu z\u00a0výzvy Vzdělávání pro firmy dostanete na účastníka, který absolvuje aspoň 50 hodin. Standardní AI Akcelerátor má 12 hodin, pro dotaci ho proto doplníme o\u00a0další témata, třeba digitální produktivitu nebo kybernetickou bezpečnost, na ' + SUB_HOURS + ' hodin. Výzva hradí ' + nf(SUB_RATE, 2) + ' Kč na osobohodinu, tedy pro ' + t.p + ' ' + lidi(t.p) + ' a\u00a0' + SUB_HOURS + ' hodin až ' + kc(Math.round(t.sub)) + '. U\u00a0OSVČ a\u00a0dodavatelů je podpora poloviční a\u00a0proplácí se zpětně. S\u00a0žádostí vám pomůžeme a\u00a0dotační servis je v\u00a0ceně kurzu.', 10.5, 'normal', INK, { gap:3 });
+  para('Podporu z výzvy Vzdělávání pro firmy dostanete na účastníka, který absolvuje aspoň 50 hodin. Standardní AI Akcelerátor má 12 hodin, pro dotaci ho proto doplníme o další témata, třeba digitální produktivitu nebo kybernetickou bezpečnost, na ' + SUB_HOURS + ' hodin. Výzva hradí ' + nf(SUB_RATE, 2) + ' Kč na osobohodinu, tedy až ' + kc(SUB_ONE) + ' na účastníka. U OSVČ a dodavatelů je podpora poloviční a proplácí se zpětně. S žádostí vám pomůžeme a dotační servis je v ceně kurzu.', 10.5, 'normal', INK, { gap:3 });
   doc.setFont('Figtree', 'normal'); doc.setFontSize(10); doc.setTextColor.apply(doc, BLUE);
-  ensure(6); doc.textWithLink('Víc o\u00a0dotacích na vzdělávání: business.lifescale.cz/cz/pages/sluzby/dotace-z-eu-na-vzdelavani', M, y, { url:'https://business.lifescale.cz/cz/pages/sluzby/dotace-z-eu-na-vzdelavani', baseline:'top' }); y += lh(10) + 3;
+  ensure(6); doc.textWithLink('Víc o dotacích na vzdělávání: business.lifescale.cz/cz/pages/sluzby/dotace-z-eu-na-vzdelavani', M, y, { url:'https://business.lifescale.cz/cz/pages/sluzby/dotace-z-eu-na-vzdelavani', baseline:'top' }); y += lh(10) + 3;
   para('AI Act od února 2025 ukládá firmám, které AI používají, zajistit lidem, kteří s ní pracují, dostatečnou gramotnost v AI. Kurz s prezenční listinou to pomůže doložit.', 9.5, 'normal', MUTED, { gap:6 });
   // další krok
   const nextHead = S.custom ? 'Návrh na míru pro vaši firmu připravíme' : 'Chcete vidět, jak by kurz vypadal u vás?';
   const nextBody = S.custom
-    ? 'Podle možností, které jste si vybrali v AI mapě, připravíme, jak by kurz mohl vypadat u vás, a ozveme se.'
-    : 'Napište nám. Podle možností, které jste si vybrali v AI mapě, připravíme návrh kurzu na míru pro vaši firmu.';
+    ? 'Podle vašeho oboru a práce vašich lidí připravíme, jak by kurz mohl vypadat u vás, a ozveme se.'
+    : 'Napište nám. Podle vašeho oboru a práce vašich lidí připravíme návrh kurzu na míru pro vaši firmu.';
   doc.setFont('Figtree', 'normal'); doc.setFontSize(10.5);
   const nextTxt = doc.splitTextToSize(nextBody, W - 12);
   const boxH = 12 + nextTxt.length * lh(10.5) + 12;
@@ -1234,27 +924,6 @@ function buildPdf(){
   doc.setFontSize(10); doc.text('Ondřej Kamarýt, poradce růstu firem, ondrej.kamaryt@lifescale.cz, +420 606 786 231', M + 6, cy, { baseline:'top' });
   doc.setTextColor.apply(doc, BLUE); doc.text('business.lifescale.cz', M + 6, cy + 5, { baseline:'top' });
   y += boxH + 6;
-  para('Vyzkoušejte první lekci v\u00a0Grizletu zdarma', 12, 'bold', INK, { gap:1, keep:true });
-  para('Z\u00a0jednoho vašeho materiálu, třeba z\u00a0postupu v\u00a0příloze, připravíme v\u00a0Grizletu lekci na 3 až 4 minuty s\u00a0kvízem a\u00a0pošleme ji týmu do mobilu. Lekce se otevře odkazem, bez instalace a\u00a0bez hesla, a\u00a0vy uvidíte, kdo ji dokončil a\u00a0s\u00a0jakým skóre.' + (S.pilot ? ' Zájem o\u00a0první lekci zdarma máme poznamenaný.' : ''), 10.5, 'normal', INK, { gap:4 });
-  // váš výběr z AI mapy
-  newPage();
-  para('Váš výběr z AI mapy', 16, 'bold', INK, { gap:2 });
-  const H = roundH(t.h);
-  para('Tyto možnosti jste si vybrali v AI mapě. Postupy a pokyny můžete vyzkoušet hned. Pro ' + t.p + ' ' + lidi(t.p) + ' ušetří zhruba ' + nf(H) + ' ' + hodAcc(H) + ' měsíčně, tedy kolem ' + kc(sig2(t.k)) + ' měsíčně v nákladech na práci při ' + kc(RATE) + ' za hodinu. Podle toho, jak často úkoly děláte, to může být ' + nf(roundH(t.h1)) + ' až ' + nf(roundH(t.h2)) + ' hodin měsíčně.', 10.5, 'normal', INK, { gap:2 });
-  para(saveNote(t), 9.5, 'normal', MUTED, { gap:6 });
-  t.items.forEach((u, idx) => {
-    ensure(40);
-    if (idx){ doc.setDrawColor(230, 235, 239); doc.setLineWidth(0.3); doc.line(M, y, PW - M, y); y += 4; }
-    para((idx + 1) + '. ' + u.t, 14, 'bold', INK, { gap:1 });
-    para(ODD_LABEL[u.d] + (u.i.length ? ', ' + OBOR_LABEL[u.i[0]] : '') + '. Ušetří ' + hrs(u.u) + '. Obtížnost: ' + LEVEL[u.l].toLowerCase() + '.', 9.5, 'normal', BLUE, { gap:2 });
-    para(u.w, 11, 'normal', INK, { gap:2.5 });
-    para('Jak na to', 11, 'bold', INK, { gap:1 });
-    u.s.forEach((s, i) => para((i + 1) + '. ' + s, 10.5, 'normal', INK, { indent:3, gap:0.6 }));
-    y += 2;
-    para('Pokyn pro AI (text v hranatých závorkách nahraďte svými údaji)', 11, 'bold', INK, { gap:1.5 });
-    box(u.p, 10, [242, 250, 254], INK);
-    para('Na co si dát pozor: ' + u.x, 10, 'normal', AMBER, { gap:7 });
-  });
   // patička na každé straně
   const pages = doc.getNumberOfPages();
   for (let i = 1; i <= pages; i++){
@@ -1268,78 +937,56 @@ function buildPdf(){
 
 /* ---------- pohled obchodníka ---------- */
 function renderSales(){
-  const t = totals();
   const L = S.lead;
+  const seen = S.seen.map(byId).filter(Boolean);
   const rows = [
     ['Zdroj', 'AI mapa pro firmy'],
     ['Stáhl', S.done ? 'ukázku kurzu AI Akcelerátor' : 'zatím nic'],
     ['Kontakt', L ? esc([L.name, L.email, L.phone, L.firm].filter(Boolean).join(', ')) + (L.free ? ' <i>(soukromý e-mail)</i>' : '') + (L.phone ? '' : ' <i>(bez telefonu)</i>') : 'zatím nevyplněno'],
-    ['Návrh kurzu na míru', S.custom ? '<b>chce, připravit podle plánu</b>' : 'zatím ne'],
-    ['První lekce v\u00a0Grizletu zdarma', S.pilot ? '<b>chce, připravit první lekci</b>' : 'zatím ne'],
-    ['Velikost firmy', L && !L.firm ? 'firmu nevyplnil, dohledat v\u00a0BizMachine podle domény e-mailu' : 'dohledat v\u00a0BizMachine podle názvu firmy'],
+    ['Návrh kurzu na míru', S.custom ? '<b>chce, připravit podle oboru a prohlédnutých možností</b>' : 'zatím ne'],
+    ['Velikost firmy', L && !L.firm ? 'firmu nevyplnil, dohledat v BizMachine podle domény e-mailu' : 'dohledat v BizMachine podle názvu firmy'],
     ['Obor', S.obor ? esc(OBOR_LABEL[S.obor]) : 'nevybral'],
-    ['Plán', t.items.length ? esc(t.items.map(u => u.t + ' (' + ODD_LABEL[u.d] + ')').join('; ')) : 'prázdný'],
-    ['Odhad úspory', t.items.length ? 'zhruba ' + nf(roundH(t.h)) + ' h měsíčně pro ' + t.p + ' ' + lidi(t.p) : 'nic'],
-    ['Podpora Vzdělávání pro firmy', 'až ' + kc(Math.round(t.sub)) + ' pro ' + t.p + ' ' + lidi(t.p) + ' a\u00a060 hodin'],
-    ['Skryté pole formuláře', '<code>' + esc(JSON.stringify(planPayload())) + '</code>']
+    ['Oddělení', S.odd !== 'vse' ? esc(ODD_LABEL[S.odd]) : 'nevybral'],
+    ['Prohlédl si', seen.length ? esc(seen.map(u => u.t + ' (' + ODD_LABEL[u.d] + ')').join('; ')) : 'zatím nic'],
+    ['Skryté pole formuláře', '<code>' + esc(JSON.stringify(payload())) + '</code>']
   ];
   $('#sales').innerHTML = rows.map(r => '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>').join('');
 }
 
 /* ---------- ukázka v úvodu ---------- */
 function renderHeroVis(){
-  const u = byId('o1'), k = u && KVIZ[u.q], el = $('#hero-vis');
-  if (!u || !k || !el) return;
+  const u = byId('o1'), el = $('#hero-vis');
+  if (!u || !el) return;
   el.innerHTML = '<div class="hv-card"><div class="uc-top"><span class="dept">' + esc(ODD_LABEL[u.d]) + '</span></div>' +
     '<h3>' + esc(u.t) + '</h3>' +
-    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span><span class="lvl ' + u.l + '">' + LEVEL[u.l] + '</span></div>' +
+    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span>' + lvlTag(u.l, true) + '</div>' +
     '<p class="hv-label">Pokyn pro AI</p><div class="hv-prompt"><span>' + esc(u.p.replace(/\n/g, ' ')) + '</span></div>' +
-    '<div class="hv-row"><span class="hv-chip on">V plánu ✓</span></div></div>' +
-    '<div class="hv-phone"><div class="gz-prog"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>' +
-    '<p class="gz-cat">' + esc(ODD_LABEL[u.d]) + '  3/4</p><p class="hv-q">' + esc(k.q) + '</p>' +
-    '<div class="hv-opt">' + esc(k.o[0]) + '</div><div class="hv-opt hv-ok">' + esc(k.o[k.ok]) + '</div>' +
-    '<div class="hv-btn">Pokračovat</div></div>' +
-    '<p class="hv-cap"><i>g</i>Lekce pro tým do mobilu</p>';
+    '<div class="hv-row"><span class="hv-chip">Kopírovat pokyn</span><span class="hv-ok">' + ICON_OK + 'Zkopírováno</span></div></div>';
 }
 
 /* ---------- události ---------- */
 document.addEventListener('click', e => {
   const ob = e.target.closest('[data-obor]');
-  if (ob){ S.obor = S.obor === ob.dataset.obor ? null : ob.dataset.obor; renderChips(); renderGrid(); renderSales(); return; }
+  if (ob){ S.obor = S.obor === ob.dataset.obor ? null : ob.dataset.obor; renderChips(); renderGrid(); syncLead(); return; }
   const od = e.target.closest('[data-odd]');
-  if (od){ S.odd = od.dataset.odd; renderChips(); renderGrid(); return; }
+  if (od){ S.odd = od.dataset.odd; renderChips(); renderGrid(); syncLead(); return; }
+  const lv = e.target.closest('[data-lvl]');
+  if (lv){ S.lvl = lv.dataset.lvl; renderChips(); renderGrid(); return; }
   const op = e.target.closest('[data-open]');
   if (op){ openDetail(op.dataset.open, op); return; }
-  const pl = e.target.closest('[data-plan]');
-  if (pl){ togglePlan(pl.dataset.plan); return; }
   if (e.target.closest('[data-close]')){ closeDetail(); return; }
   if (e.target.closest('[data-copy]')){ copyPrompt(); return; }
-  const ls = e.target.closest('[data-lesson]');
-  if (ls){ openLesson(ls.dataset.lesson); return; }
-  const opt = e.target.closest('[data-opt]');
-  if (opt){ answer(Number(opt.dataset.opt)); return; }
-  const g = e.target.closest('[data-gz]');
-  if (g){ if (g.dataset.gz === 'pilot') wantPilot(gz.id); else { gz.step++; gz.answered = false; renderLesson(); const b = $('#phone .gz-btn'); if (b && !b.disabled) b.focus(); } return; }
-  const st = e.target.closest('[data-step]');
-  if (st){ const v = Math.min(5000, Math.max(1, (Math.round(Number(S.people)) || 1) + Number(st.dataset.step))); S.people = v; $('#c-n').value = v; renderPlan(); return; }
+  if (e.target.closest('[data-kurz]')){ goKurz(); return; }
   if (e.target.closest('[data-again]')){ savePdf().then(r => { if (r !== 'saved' && r !== 'fallback') alertDone(r); }).catch(() => alertDone('error')); return; }
-  if (e.target.closest('[data-custom-yes]')){ S.custom = true; $('#l-plan').value = JSON.stringify(planPayload()); renderDone(); renderSales(); const n = $('#lead-ok .next .noted'); if (n){ n.setAttribute('tabindex', '-1'); n.focus({ preventScroll:true }); } return; }
-  if (e.target.closest('[data-pilot-yes]')){ S.pilot = true; renderDone(); renderSales(); const n = $('#lead-ok .noted'); if (n){ n.setAttribute('tabindex', '-1'); n.focus({ preventScroll:true }); } return; }
+  if (e.target.closest('[data-custom-yes]')){ S.custom = true; syncLead(); renderDone(); const n = $('#lead-ok .next .noted'); if (n){ n.setAttribute('tabindex', '-1'); n.focus({ preventScroll:true }); } return; }
   if (e.target.id === 'ov') closeDetail();
-  if (e.target.id === 'gz') closeLesson();
 });
-$('#gz-close').addEventListener('click', closeLesson);
-$('#pilot-x').addEventListener('click', () => { S.pilot = false; renderPlan(); $('#l-email').focus({ preventScroll:true }); });
 $('#lead').addEventListener('submit', submitLead);
-$('#l-custom').addEventListener('change', e => { S.custom = e.target.checked; $('#l-plan').value = JSON.stringify(planPayload()); renderSales(); });
-let qt = 0;
-$('#f-q').addEventListener('input', e => { clearTimeout(qt); qt = setTimeout(() => { S.q = e.target.value; renderGrid(); }, 150); });
-$('#c-n').addEventListener('input', e => { S.people = e.target.value; renderPlan(); });
-$('#c-n').addEventListener('change', e => { const v = Math.min(5000, Math.max(1, Math.round(Number(e.target.value)) || 1)); S.people = v; e.target.value = v; renderPlan(); });
+$('#l-custom').addEventListener('change', e => { S.custom = e.target.checked; syncLead(); });
 document.addEventListener('keydown', e => {
-  const layer = !$('#gz').hidden ? $('#gz') : (!$('#ov').hidden ? $('#ov') : null);
+  const layer = !$('#ov').hidden ? $('#ov') : null;
   if (!layer) return;
-  if (e.key === 'Escape'){ if (layer.id === 'gz') closeLesson(); else closeDetail(); return; }
+  if (e.key === 'Escape'){ closeDetail(); return; }
   if (e.key === 'Tab'){
     const f = $$('button:not([disabled]), a[href], input, select, [tabindex="0"]', layer);
     if (!f.length) return;
@@ -1348,12 +995,9 @@ document.addEventListener('keydown', e => {
     f[(i + (e.shiftKey ? f.length - 1 : 1) + f.length) % f.length].focus();
   }
 });
-if ('IntersectionObserver' in window){
-  new IntersectionObserver(([en]) => { planVisible = en.isIntersecting; $('#tray').hidden = !S.plan.length || planVisible; }, { threshold:0.08 }).observe($('#plan'));
-}
 $('#hero-n').textContent = UC.length + ' konkrétních možností';
-renderHeroVis();
-renderChips(); renderGrid(); renderPlan();
+renderHeroVis(); renderKurz();
+renderChips(); renderGrid(); syncLead();
 })();
 </script>
 </body>
