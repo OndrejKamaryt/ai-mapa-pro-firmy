@@ -1,49 +1,68 @@
-# AI mapa pro firmy
+# Složte si vlastní AI Akcelerátor
 
-Prototyp lead magnetu pro LifeScale Business. Cílí hlavně na výrobní firmy s 50 až 250 zaměstnanci, které si neumí představit, k čemu by u nich AI byla. Firma si zdarma najde, kde jí AI ušetří práci, a vyzkouší si hotové postupy. Stránka ji pak vede ke kurzu AI Akcelerátor, našemu bestselleru: za kontakt si stáhne jeho ukázku a může si říct o návrh kurzu na míru. Obor, oddělení a prohlédnuté možnosti odcházejí s formulářem ve skrytém poli, takže obchodník ví, z čeho návrh připravit.
+Lead magnet pro LifeScale Business, dřív „AI mapa pro firmy“. Cílí hlavně na výrobní firmy s 50 až 250 zaměstnanci, které si neumí představit, k čemu by u nich AI byla. Návštěvník si podle oboru vybere, s čím by AI pomohla jeho lidem, a pošle výběr. Konzultant LifeScale mu z něj připraví návrh kurzu AI Akcelerátor na míru. Koncept je z porady Ondřeje Kamarýta a Martina Ptáčka 4. 11. 2026.
 
 ![Úvod stránky na notebooku](docs/desktop.png)
 
-![Možnosti seřazené podle obtížnosti a sekce kurzu na telefonu](docs/mobil.png)
+![Úvod, výběr pro výrobu, formulář a potvrzení na telefonu](docs/mobil.png)
 
 ## Jak to funguje
 
-1. Návštěvník si vybere obor, oddělení a případně obtížnost a projde 42 konkrétních možností využití AI, seřazených od nejsnazších. Obtížnost ukazuje ikona se třemi sloupečky: snadné mají vyplněný jeden, střední dva.
-2. U každé možnosti najde postup, pokyn pro AI ke zkopírování, odhad ušetřeného času a upozornění, na co si dát pozor. Z detailu vede tlačítko rovnou ke kurzu.
-3. Sekce o kurzu AI Akcelerátor ukazuje tři moduly, přepočet „160 ušetřených hodin měsíčně je jeden člověk navíc“ a dotaci z výzvy Vzdělávání pro firmy na účastníka.
-4. Za firemní e-mail si stáhne v PDF ukázku kurzu ve standardní podobě (12 hodin, tři moduly). Součástí je, co si lidé odnesou, jak kurz upravujeme na míru, příklady úprav u jiných firem a dotace. Jméno, telefon a firma jsou nepovinné.
-5. Zaškrtnutím nebo po stažení tlačítkem si může říct o návrh kurzu na míru. S formulářem odchází skryté pole `zajem` jako JSON: obor, oddělení, prohlédnuté možnosti a zájem o návrh na míru.
-6. Dole na stránce je skrytý „Pohled obchodníka“. Ukazuje, co by dorazilo do Pipedrivu, i obsah skrytého pole. Do ostré verze nepatří.
+1. Nahoře je tenká linka o dotaci, společná pro všechny kurzy, a pod ní úvod s fotkou: „Složte si vlastní AI Akcelerátor na míru“.
+2. Pod úvodem je jen řádek s obory, výroba je první. Bez vybraného oboru stránka ukáže šest snadných možností, každou z jiného oddělení (pole `START` v `src/app.js`), a tlačítko „Zobrazit všech 42 možností“. Po výběru oboru ukáže všechny možnosti, které k němu patří, seřazené od nejsnazších. Obtížnost ukazuje ikona se třemi sloupečky: snadné mají vyplněný jeden, střední dva.
+3. Každá karta říká, co možnost přinese a kolik času týdně ušetří, a má jediné tlačítko: „Přidat do výběru“, případně „Odebrat z výběru“. Detail s postupem a pokynem pro AI už stránka nemá.
+4. U spodního okraje je pořád vidět lišta s počtem vybraných možností a tlačítkem „Poslat výběr“, které vede k formuláři. Když je formulář na obrazovce nebo se do něj píše, lišta uhne.
+5. Formulář „Pošlete nám výběr a připravíme vám návrh kurzu“ ukazuje výběr s možností odebírat. Povinný je jen e-mail a souhlas se zpracováním údajů, jméno, telefon a firma jsou nepovinné. Odeslat jde i prázdný výběr, konzultant ho pak projde s návštěvníkem.
+6. Po odeslání stránka poděkuje, ukáže shrnutí výběru a malý odkaz na rezervaci konzultace v Calendly. Potvrzení se ukáže až ve chvíli, kdy web LifeScale kontakt převezme. Když se to nepovede, formulář zůstane vyplněný a stránka nabídne odeslat znovu.
+7. Dole je skrytý „Pohled konzultanta“. Ukazuje kontakt, shrnutí pro Slack a celé pole Zajem. Na webu LifeScale se nezobrazuje.
 
 ## Spuštění
 
-Otevřete `index.html` v prohlížeči. Stránka nepotřebuje server ani instalaci, knihovnu jsPDF a písma si načte z CDN.
-
-Stejná stránka běží i jako artefakt v Claudu. Tam se PDF stahuje přes schopnost `downloads`, na běžném webu klasickým stažením souboru.
+Otevřete `index.html` v prohlížeči. Stránka nepotřebuje server ani instalaci, písma si načte z Google Fonts a fotku v úvodu z LifeScale CMS. Samostatně otevřená stránka kontakt nikam neposílá, potvrzení je jen náhled pro tým.
 
 ## Struktura
 
 | Soubor | Co obsahuje |
 | --- | --- |
 | `index.html` | sestavená stránka, tu otevírejte a nasazujte |
-| `src/head.html` | titulek, odkazy na písma a všechny styly |
+| `src/head.html` | titulek, popis, odkazy na písma a všechny styly |
 | `src/body.html` | obsah stránky |
-| `src/data.js` | obory, oddělení, všech 42 možností a osnova kurzu `KURZ` |
-| `src/app.js` | filtry a řazení, detail možnosti, sekce kurzu, formulář a PDF |
-| `src/font.js` | písmo Figtree pro PDF, podmnožina s českými znaky v base64 |
+| `src/data.js` | obory, oddělení a všech 42 možností |
+| `src/app.js` | obory a řazení, výběr, lišta, formulář a předání kontaktu webu |
 | `build.sh` | složí `src/` do `index.html` a do `dist/artifact.html` pro Claude |
 | `cms/html-blok.html` | HTML blok pro stránku v LifeScale CMS, viz níže |
+| `podklady/postupy.json` | postupy, pokyny pro AI a upozornění ke všem možnostem jako podklad pro návrh kurzu. Na stránce nejsou a do veřejného repozitáře nejdou, soubor je jen v pracovní složce. |
 | `tests/` | automatický průchod stránkou na telefonu a notebooku |
 | `tools/nbsp.py` | doplní pevné mezery za jednopísmenné předložky a spojky |
 
 ## Vložení na web LifeScale
 
-Na webu běží stránka z LifeScale CMS (Directus) s jedním HTML blokem z `cms/html-blok.html`. Blok zobrazí AI mapu z GitHub Pages přes celou obrazovku pod hlavičkou webu.
+Na webu běží stránka z LifeScale CMS (Directus) s jedním HTML blokem z `cms/html-blok.html`. Blok zobrazí stránku z GitHub Pages přes celou obrazovku pod hlavičkou webu.
 
-- Lead magnet pozná, že je vložený, a schová vlastní hlavičku a pohled obchodníka.
-- Po odeslání formuláře pošle kontakt a pole `zajem` stránce zprávou `postMessage`, a to jen na `https://business.lifescale.cz`. Stránka přijímá zprávy jen z `https://ondrejkamaryt.github.io`.
-- Stránka kontakt odešle na `/api/form-submit` stejně jako formuláře webu, se scénářem `general_inquiry` a poli Vaše jméno, E-mail, Telefon, Firma, Zajem a GDPR. Odtud jde do `form_submissions` a webhookem do Make.
-- Když zájemce po stažení klikne na „Chci návrh na míru“, odejde druhé odeslání s `navrh_na_miru: true`.
+- Stránka pozná, že je vložená, a schová vlastní hlavičku a pohled konzultanta.
+- Po odeslání formuláře pošle kontakt a pole `zajem` stránce zprávou `postMessage` typu `ls-ai-mapa-lead`, a to jen na `https://business.lifescale.cz`. Stránka webu přijímá zprávy jen z `https://ondrejkamaryt.github.io`.
+- Stránka webu kontakt odešle na `/api/form-submit` stejně jako formuláře webu, se scénářem `general_inquiry` a poli Vaše jméno, E-mail, Telefon, Firma, Zajem a GDPR. Odtud jde do `form_submissions` a webhookem do Make, který lead ohlásí v kanálu #lifescale-leads. Výsledek vrátí zprávou `ls-ai-mapa-lead-ack` a podle ní stránka ukáže potvrzení, nebo chybu.
+
+### Pole Zajem
+
+JSON s obsahem výběru. Jako první je hotové textové shrnutí, které stačí v Make vložit do zprávy ve Slacku:
+
+```json
+{
+  "shrnuti": "AI Akcelerátor na míru\nObor: Výroba a průmysl\nVýběr (2):\n• Návod ke stroji v jazyce operátora (Provoz a odborná práce)\n• Předávka směny bez zmatků (Provoz a odborná práce)",
+  "v": 2,
+  "zdroj": "AI mapa: AI Akcelerátor na míru",
+  "obor": "Výroba a průmysl",
+  "obor_id": "vyroba",
+  "pocet": 2,
+  "vyber": [
+    { "id": "vy1", "nazev": "Návod ke stroji v jazyce operátora", "oddeleni": "Provoz a odborná práce" },
+    { "id": "p3", "nazev": "Předávka směny bez zmatků", "oddeleni": "Provoz a odborná práce" }
+  ]
+}
+```
+
+Bez vybraného oboru je `obor` i `obor_id` `null` a ve shrnutí „Obor: nevybrán“. Prázdný výběr má `pocet` 0 a ve shrnutí „Výběr: nic nevybráno, zeptat se při hovoru“. Postup a pokyn ke každé možnosti najde konzultant podle `id` v `podklady/postupy.json`.
 
 ## Úprava obsahu
 
@@ -56,51 +75,36 @@ Možnosti jsou v `src/data.js` v poli `UC`. Každá má tato pole:
 | `i` | obory, pro které je možnost určená, prázdné pole znamená všechny obory |
 | `u` | úspora v hodinách týdně na člověka ve tvaru `[od, do]` |
 | `l` | obtížnost: `s` snadné, `m` střední |
-| `n` | nástroj: `chat`, `dok`, `excel` nebo `prepis` |
-| `t`, `w` | název a popis |
-| `s` | kroky postupu |
-| `p` | pokyn pro AI, text v hranatých závorkách si návštěvník nahradí svými údaji |
-| `x` | na co si dát pozor |
+| `t`, `w` | název a co možnost přinese |
 
-Osnova kurzu AI Akcelerátor pro PDF je v `src/data.js` v objektu `KURZ`: moduly, co si lidé odnesou, rozsah a forma, co se upravuje na míru a příklady úprav. Vychází z dokumentu a prezentace „AI 12 hodin“ na sdíleném Disku LifeScale Business, příklady jsou anonymizované podle návrhů kurzů pro klienty.
-
-Po úpravě spusťte:
+Pořadí oborů určuje pole `OBORY`, šest úvodních možností pole `START` v `src/app.js`. Po úpravě spusťte:
 
 ```
 python3 tools/nbsp.py src/body.html src/data.js src/app.js
 ./build.sh
 ```
 
-## Výpočty
-
-- Dotace na účastníka: 60 hodin × 478,19 Kč na osobohodinu, tedy 28 691 Kč. Podpora se uzná účastníkovi, který absolvuje aspoň 50 hodin. Standardní AI Akcelerátor má 12 hodin, pro dotaci se proto doplní o další témata na 60 hodin a stránka to tak i říká.
-- Jeden člověk navíc odpovídá 160 hodinám práce měsíčně.
-
 ## Testy
 
-Potřebujete Node.js a Python s Playwrightem.
+Potřebujete Python s Playwrightem. Prohlížeč stačí nainstalovaný Chrome.
 
 ```
 pip install playwright
-playwright install chromium
-./tests/setup.sh
-python3 tests/test_flow.py
+PW_CHANNEL=chrome python3 tests/test_flow.py
 ```
 
-Test proklikne filtry, řazení podle obtížnosti, detail, kopírování pokynu, přechod ke kurzu, formulář i stažení PDF. Snímky obrazovky a stažené PDF uloží do `tests/out/`.
+Test proklikne obory, rozbalení všech možností, řazení podle obtížnosti, přidání a odebrání na kartě i ve formuláři, lištu, kontrolu formuláře a odeslání. Ve vloženém režimu podstrčí potvrzení od webu LifeScale jednou chybné a jednou úspěšné. Snímky obrazovky uloží do `tests/out/`.
 
 ## Před ostrým spuštěním
 
-- Ověřit, že scénář v Make založí lead z AI mapy v Pipedrivu B2B i s polem Zajem, a rozhodnout, jestli druhé odeslání kvůli návrhu na míru nemá jen doplnit existující lead.
-- Přesunout lead magnet z osobního GitHubu na firemní hosting a změnit adresu v `cms/html-blok.html` i v `PARENTS` v `src/app.js`.
-- Potvrdit, že anonymizované příklady úprav kurzu u klientů smíme ukazovat.
-- Rozhodnout, jestli do PDF patří cena kurzu (prezentace uvádí 600 Kč za osobohodinu).
-- Ověřit s dotačním servisem čísla k výzvě Vzdělávání pro firmy.
-- Odkaz u souhlasu vést na skutečné zásady zpracování osobních údajů.
+- Doplnit do scénáře v Make pole Zajem: přidat Parse JSON a do zprávy v #lifescale-leads vložit `shrnuti`, aby konzultant výběr viděl ve Slacku i v Pipedrivu. Když JSON nepůjde načíst, vložit text pole celý.
+- Přesunout stránku z osobního GitHubu na firemní hosting a změnit adresu v `cms/html-blok.html` i v `PARENTS` v `src/app.js`.
+- Doplnit stránce v CMS titulek a popis pro vyhledávače a do HTML bloku v CMS přenést nový titulek iframe z `cms/html-blok.html`.
+- Potvrdit tvrzení na stránce: „nejprodávanější kurz“, dotace z výzvy Vzdělávání pro firmy u AI Akcelerátoru a „Nezávazné“.
 - Nahradit písmo Figtree písmem Satoshi z webu.
-- Ztmavit modrá tlačítka. Bílé písmo na #00B4F1 má kontrast 2,4 : 1, pro dobrou čitelnost je potřeba aspoň 4,5 : 1.
-- Odstranit sekci „Pohled obchodníka“ a štítek Prototyp.
+- Ztmavit modrá tlačítka. Bílé písmo na #00B4F1 má kontrast 2,4 : 1, pro dobrou čitelnost je potřeba aspoň 4,5 : 1. Stránka zatím drží barvy webu LifeScale.
+- Odstranit pohled konzultanta a štítek Prototyp.
 
 ## Licence
 
-Kód je interní materiál LifeScale. Písmo Figtree je pod licencí SIL Open Font License 1.1, plné znění je v `src/FIGTREE-OFL.txt`.
+Kód je interní materiál LifeScale.

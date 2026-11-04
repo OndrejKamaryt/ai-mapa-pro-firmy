@@ -5,72 +5,61 @@
       <span>LifeScale <span class="sub">Business</span></span>
     </a>
     <span class="proto">Prototyp</span>
-    <a class="top-cta" href="#kurz">Ukázka kurzu</a>
   </div>
 </header>
+
+<p class="dotace"><span class="wrap">Na kurzy LifeScale můžete čerpat dotaci z výzvy Vzdělávání pro firmy. Se žádostí vám pomůžeme.</span></p>
 
 <main id="top">
 <section class="hero">
   <div class="wrap hero-in">
-    <div class="hero-txt">
-    <span class="kicker">AI mapa pro firmy</span>
-    <h1>Najděte oblasti, kde vám <span class="mark">AI zkrátí</span> práci na minuty</h1>
-    <p class="lede"><b id="hero-n">42 konkrétních možností</b> pro 7 oborů a 7 oddělení. U každé najdete postup, hotový pokyn pro AI a odhad, kolik času ušetří.</p>
-    <div class="hero-facts"><span>Zdarma a bez registrace</span><span>Pokyny ke zkopírování</span><span>Ukázka kurzu v PDF</span></div>
-    </div>
-    <div class="hero-vis" id="hero-vis" aria-hidden="true"></div>
+    <h1><span class="h1-pre">Složte si vlastní</span> <span class="h1-name"><span class="mark">AI Akcelerátor</span> na míru</span></h1>
+    <p class="lede">Náš nejprodávanější kurz pro firmy. Každé firmě ho skládáme z jejích konkrétních úkolů, takže je pro každou jiný. Vyberte níže, s čím by AI pomohla vašim lidem.</p>
   </div>
 </section>
 
 <div class="wrap">
-  <div class="filters" id="vyber">
-    <div class="frow"><span class="flabel" id="lab-obor">Váš obor</span><div class="chips" id="f-obor" role="group" aria-labelledby="lab-obor"></div></div>
-    <div class="frow"><span class="flabel" id="lab-odd">Oddělení</span><div class="chips" id="f-odd" role="group" aria-labelledby="lab-odd"></div></div>
-    <div class="frow"><span class="flabel" id="lab-lvl">Obtížnost</span><div class="chips" id="f-lvl" role="group" aria-labelledby="lab-lvl"></div></div>
-  </div>
-  <div class="res-head"><h2 id="res-title">Všechny možnosti</h2><p id="res-sub">Vyberte obor a oddělení, ať vidíte jen to, co se vás týká.</p></div>
-  <div class="grid" id="grid" aria-live="polite"></div>
+  <div class="filters" id="vyber"><div class="chips" id="f-obor" role="group" aria-label="Váš obor"></div></div>
+  <div class="res-head"><h2 id="res-title">Z čeho si můžete kurz složit</h2></div>
+  <div class="grid" id="grid"></div>
+  <div class="more" id="more" hidden><button class="btn btn-ghost" type="button" data-more></button></div>
 </div>
 
-<section class="kurz" id="kurz">
+<section class="send" id="odeslat" aria-labelledby="send-title">
   <div class="wrap">
-    <span class="kicker">Kurz AI Akcelerátor</span>
-    <h2>Naučte tým používat AI ve vlastní práci</h2>
-    <p class="kurz-lede">Náš nejžádanější kurz: 12 hodin praktického tréninku ve třech blocích. Každé firmě ho upravujeme na míru, podle práce jejích lidí a nástrojů, které používá.</p>
-    <div class="kurz-grid">
-      <div class="box">
-        <h3>Co se lidé naučí</h3>
-        <ol class="mods" id="mods"></ol>
-        <div class="virt"><b>Každých 160 hodin, které tým díky AI ušetří za měsíc, je jako jeden člověk navíc.</b><span>Nemusíte ho hledat ani zaučovat.</span></div>
-        <p class="subsidy">Na kurz můžete získat dotaci z výzvy Vzdělávání pro firmy, až <b id="sub-one"></b> na účastníka. Pro dotaci kurz doplníme na 60 hodin a se žádostí vám pomůžeme. <a href="https://business.lifescale.cz/cz/pages/sluzby/dotace-z-eu-na-vzdelavani" target="_blank" rel="noopener">Víc o dotacích</a></p>
-      </div>
-      <div class="box form-box" id="form-box">
-        <h3>Stáhněte si ukázku kurzu</h3>
-        <p class="hint">Uvidíte, jak AI Akcelerátor vypadá ve standardní podobě a co u vás můžeme upravit.</p>
-        <ul class="ticks gets"><li>Program kurzu a co si lidé odnesou</li><li>Příklady, jak jsme kurz upravili jiným firmám</li><li>Jak na kurz získat dotaci</li></ul>
+    <div class="send-box" id="send-box">
+      <div id="send-form">
+        <h2 id="send-title" tabindex="-1">Pošlete nám výběr a připravíme vám návrh kurzu</h2>
+        <div class="pick" id="pick"></div>
         <form class="lead" id="lead" novalidate>
-          <div class="field"><label for="l-email">Firemní e-mail</label><input id="l-email" type="email" autocomplete="email" placeholder="jana.novakova@firma.cz" required></div>
+          <div class="field"><label for="l-email">Firemní e-mail</label><input id="l-email" type="email" autocomplete="email" placeholder="jana.novakova@firma.cz" required aria-describedby="l-err"></div>
           <div class="row2">
             <div class="field"><label for="l-name">Jméno a příjmení <span class="opt">nepovinné</span></label><input id="l-name" type="text" autocomplete="name" placeholder="Jana Nováková"></div>
-            <div class="field"><label for="l-phone">Telefon <span class="opt">nepovinné</span></label><input id="l-phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+420 777 123 456"></div>
+            <div class="field"><label for="l-phone">Telefon <span class="opt">nepovinné</span></label><input id="l-phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+420 777 123 456" aria-describedby="l-err"></div>
           </div>
           <div class="field"><label for="l-firm">Firma <span class="opt">nepovinné</span></label><input id="l-firm" type="text" autocomplete="organization" placeholder="Firma s.r.o."></div>
-          <label class="check strong"><input type="checkbox" id="l-custom"><span>Chci vidět, jak by mohl vypadat kurz na míru pro naši firmu<small>Připravíme ho podle vašeho oboru a práce vašich lidí.</small></span></label>
           <input type="hidden" id="l-zajem" name="zajem" value="">
-          <label class="check"><input type="checkbox" id="l-consent"><span>Souhlasím se <a href="https://business.lifescale.cz/cz" target="_blank" rel="noopener">zpracováním osobních údajů</a>, aby se mi LifeScale mohl ozvat.</span></label>
+          <label class="check"><input type="checkbox" id="l-consent" aria-describedby="l-err"><span>Souhlasím se <a href="https://business.lifescale.cz/cz/pages/gdpr-business" target="_blank" rel="noopener">zpracováním osobních údajů</a>, aby se mi konzultant LifeScale mohl ozvat s návrhem kurzu.</span></label>
           <p class="err" id="l-err" hidden></p>
-          <button class="btn btn-primary" type="submit" id="l-submit">Stáhnout ukázku kurzu</button>
+          <button class="btn btn-primary btn-block" type="submit" id="l-submit">Poslat výběr a získat návrh kurzu</button>
+          <p class="soft center">Nezávazné. Ozve se vám konzultant LifeScale.</p>
         </form>
-        <div class="done" id="lead-ok" hidden></div>
       </div>
+      <div class="done" id="lead-ok" hidden></div>
     </div>
   </div>
 </section>
 
 <div class="wrap">
-  <details class="sales"><summary><span><span class="int">Jen pro tým LifeScale, návštěvník tuto část neuvidí</span>Pohled obchodníka: co dorazí do Pipedrivu</span></summary><dl id="sales"></dl></details>
-  <p class="foot">Prototyp lead magnetu LifeScale Business, listopad 2026. Odhady úspory času jsou orientační a vycházejí z toho, jak dlouho úkoly obvykle trvají bez AI a s ní.</p>
+  <details class="sales"><summary><span><span class="int">Jen pro tým LifeScale, návštěvník tuto část neuvidí</span>Pohled konzultanta: co dorazí do Slacku</span></summary><dl id="sales"></dl></details>
+  <p class="foot">Odhady úspory času jsou orientační a vycházejí z toho, jak dlouho úkoly obvykle trvají bez AI a s ní.</p>
 </div>
 </main>
 
-<div class="overlay" id="ov" hidden role="dialog" aria-modal="true" aria-labelledby="d-title"><div class="sheet" id="sheet"></div></div>
+<div class="bar" id="bar">
+  <div class="wrap bar-in">
+    <p class="bar-t"><b id="bar-n">Zatím nic nevybráno</b><span class="bar-names" id="bar-names"></span></p>
+    <button class="btn btn-primary" type="button" data-go>Poslat výběr</button>
+  </div>
+</div>
+<div id="live" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>

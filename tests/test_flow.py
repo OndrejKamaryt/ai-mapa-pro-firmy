@@ -1,110 +1,125 @@
-"""Automatický průchod AI mapou na telefonu (390 px) a notebooku (1366 px).
+"""Automatický průchod stránkou „Složte si vlastní AI Akcelerátor“ na telefonu (390 px) a notebooku (1366 px).
 
 Spuštění z kořene repozitáře:
-    ./tests/setup.sh            # jednou, stáhne jsPDF pro offline běh
     python3 tests/test_flow.py  # volitelně: cesta k HTML a složka pro výstupy
 
-Skript proklikne filtry, řazení podle obtížnosti, detail, kopírování pokynu, přechod ke kurzu,
-formulář a stažení PDF a uloží snímky obrazovky do tests/out/.
+Skript proklikne obory, šest úvodních možností a rozbalení všech, přidání a odebrání z výběru, lištu,
+formulář a odeslání. Odeslání zkouší i ve vloženém režimu: stránku otevře v iframe a potvrzení od webu
+LifeScale podstrčí sám, jednou úspěšné a jednou chybné. Fotku a písma z internetu zablokuje, takže běží
+i bez sítě. Snímky obrazovky uloží do tests/out/.
+Bez stažených prohlížečů Playwrightu jde použít nainstalovaný Chrome: PW_CHANNEL=chrome python3 tests/test_flow.py
 """
-import asyncio, sys, re, os, json
+import asyncio, sys, re, os, json, pathlib
 from playwright.async_api import async_playwright
 HERE = os.path.dirname(os.path.abspath(__file__))
 P = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.join(HERE, '..', 'index.html')
+URL = pathlib.Path(P).as_uri()
 OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, 'out')
 os.makedirs(OUT, exist_ok=True)
-JSPDF = os.path.join(HERE, 'vendor', 'jspdf', 'dist', 'jspdf.umd.min.js')
-if not os.path.exists(JSPDF):
-    sys.exit('Chybí jsPDF, spusťte nejdřív ./tests/setup.sh')
-norm = lambda s: re.sub(r'[  ]', ' ', s or '')
+norm = lambda s: re.sub(r'[  ]', ' ', s or '')
 
-async def setup(b, w, h, dpr=1):
-    ctx = await b.new_context(viewport={'width': w, 'height': h}, device_scale_factor=dpr, accept_downloads=True)
+# rodičovská stránka jako na webu LifeScale: přijme kontakt a odpoví potvrzením, ok podle window.ACK_OK
+PARENT = '''<!doctype html><meta charset="utf-8"><style>body{margin:0}iframe{display:block;width:100vw;height:100vh;border:0}</style>
+<iframe id="f" src="%s"></iframe>
+<script>
+window.ACK_OK = true; window.LEADS = [];
+window.postMessage = function (msg) {
+  if (!msg || msg.type !== 'ls-ai-mapa-lead') return;
+  window.LEADS.push(msg);
+  const w = document.getElementById('f').contentWindow;
+  setTimeout(() => w.dispatchEvent(new MessageEvent('message', { origin: 'https://business.lifescale.cz',
+    data: { type: 'ls-ai-mapa-lead-ack', id: msg.id, ok: window.ACK_OK } })), 50);
+};
+</script>'''
+
+async def setup(b, w, h, dpr=1, embed=False):
+    ctx = await b.new_context(viewport={'width': w, 'height': h}, device_scale_factor=dpr)
     pg = await ctx.new_page()
     errs = []
     pg.on('pageerror', lambda e: errs.append(str(e)))
-    async def cdn(route): await route.fulfill(path=JSPDF, content_type='application/javascript')
-    await pg.route('https://cdnjs.cloudflare.com/**', cdn)
+    await pg.route('https://cms.lifescale.cz/**', lambda r: r.abort())
     await pg.route('https://fonts.googleapis.com/**', lambda r: r.abort())
-    await pg.goto('file://' + P); await pg.wait_for_timeout(500)
-    return ctx, pg, errs
-
-async def levels(pg):
-    return await pg.eval_on_selector_all('.uc .lvl', 'els => els.map(e => e.getAttribute("aria-label"))')
+    if embed:
+        harness = os.path.join(OUT, 'parent.html')
+        open(harness, 'w', encoding='utf-8').write(PARENT % URL)
+        await pg.goto(pathlib.Path(harness).as_uri()); await pg.wait_for_timeout(600)
+        return ctx, pg, pg.frame_locator('#f'), errs
+    await pg.goto(URL); await pg.wait_for_timeout(500)
+    return ctx, pg, pg, errs
 
 async def main():
     ok, out = {}, []
     async with async_playwright() as pw:
-        b = await pw.chromium.launch()
+        b = await pw.chromium.launch(channel=os.environ.get('PW_CHANNEL') or None, args=['--allow-file-access-from-files'])
 
-        # telefon
-        ctx, pg, errs = await setup(b, 390, 844, 2)
+        # telefon, samostatná stránka
+        ctx, pg, f, errs = await setup(b, 390, 844, 2)
         await pg.screenshot(path=f'{OUT}/m-start.png')
-        ok['42 karet na startu'] = await pg.locator('.uc').count() == 42
-        lv = await levels(pg)
+        ok['nadpis s AI Akcelerátorem'] = 'AI Akcelerátor' in norm(await pg.inner_text('h1'))
+        ok['dotace jen jako linka nahoře'] = await pg.locator('.dotace').count() == 1 and 'dotac' not in norm(await pg.inner_text('main')).lower()
+        ok['6 karet a tlačítko pro všechny'] = await pg.locator('.uc').count() == 6 and await pg.is_visible('#more')
+        ok['bez detailu a pokynů pro AI'] = await pg.locator('#ov, [data-open], [data-copy]').count() == 0
+        ok['bez sekce kurzu a PDF'] = await pg.locator('#kurz, #mods, .subsidy, .virt').count() == 0
+        ok['výroba je první obor'] = await pg.get_attribute('#f-obor .chip >> nth=0', 'data-obor') == 'vyroba'
+        ok['lišta je vidět hned'] = await pg.is_visible('#bar') and norm(await pg.inner_text('#bar-n')) == 'Zatím nic nevybráno'
+        await pg.click('[data-more]'); await pg.wait_for_timeout(150)
+        ok['všech 42 po kliknutí'] = await pg.locator('.uc').count() == 42 and await pg.is_hidden('#more')
+        lv = await pg.eval_on_selector_all('.uc .lvl', 'els => els.map(e => e.getAttribute("aria-label"))')
         ok['seřazeno od nejsnazších'] = lv == sorted(lv, key=lambda a: 'střední' in a)
-        ok['bez hledání, plánu a Grizletu'] = (await pg.locator('#f-q, #plan, #tray, #gz').count()) == 0
-        await pg.click('[data-obor="logistika"]'); await pg.click('[data-odd="obchod"]'); await pg.wait_for_timeout(200)
-        t = norm(await pg.inner_text('#res-title')); out.append('m filtr: ' + t)
-        ok['filtr obchod a logistika'] = t.startswith('4 možnosti pro obchod v logistice')
-        await pg.click('[data-odd="vse"]'); await pg.click('[data-lvl="m"]'); await pg.wait_for_timeout(150)
-        lv = await levels(pg); t = norm(await pg.inner_text('#res-title')); out.append('m obtížnost: ' + t)
-        ok['filtr obtížnosti'] = lv and all(a == 'Obtížnost: střední' for a in lv) and ' střední' in t
-        await pg.click('[data-lvl="vse"]'); await pg.click('[data-odd="pece"]'); await pg.wait_for_timeout(150)
-        ok['stránka na telefonu nescrolluje do strany'] = await pg.evaluate('document.documentElement.scrollWidth') == 390
-        await pg.locator('[data-open]').first.click(); await pg.wait_for_timeout(350)
-        await pg.screenshot(path=f'{OUT}/m-detail.png')
-        await pg.click('[data-copy]'); await pg.wait_for_timeout(200)
-        ok['kopírování pokynu'] = norm(await pg.inner_text('#d-copied')) == 'Zkopírováno'
+        await pg.click('[data-obor="vyroba"]'); await pg.wait_for_timeout(200)
+        t = norm(await pg.inner_text('#res-title')); out.append('m obor: ' + t)
+        ok['filtr výroba'] = t.endswith('ve výrobě a průmyslu') and await pg.get_attribute('.uc >> nth=0', 'data-id') == 'vy1'
+        ok['fokus zůstává na čipu'] = await pg.evaluate("document.activeElement.dataset.obor") == 'vyroba'
+        await pg.click('[data-pick="vy1"]'); await pg.click('[data-pick="p3"]'); await pg.click('[data-pick="h2"]')
+        await pg.wait_for_timeout(250)
+        ok['přidání do výběru'] = norm(await pg.inner_text('#bar-n')) == 'Váš výběr: 3 možnosti' and await pg.locator('.uc.in').count() == 3
+        ok['fokus zůstává na tlačítku karty'] = await pg.evaluate("document.activeElement.dataset.pick") == 'h2'
+        ok['hlášení pro čtečku'] = norm(await pg.inner_text('#live')).startswith('Přidáno do výběru: Plán zaškolení')
+        await pg.click('[data-pick="h2"]'); await pg.wait_for_timeout(100)
+        ok['odebrání na kartě'] = norm(await pg.inner_text('#bar-n')) == 'Váš výběr: 2 možnosti'
+        ok['na telefonu nescrolluje do strany'] = await pg.evaluate('document.documentElement.scrollWidth') == 390
+        await pg.screenshot(path=f'{OUT}/m-vyber.png')
+        await pg.click('[data-go]'); await pg.wait_for_timeout(900)
+        ok['lišta vede k formuláři'] = await pg.evaluate("document.activeElement.id") == 'send-title'
+        ok['nad formulářem lišta uhne'] = await pg.evaluate("document.getElementById('bar').classList.contains('is-hidden')")
+        ok['výběr ve formuláři'] = await pg.locator('#pick li').count() == 2
+        ok['bez zaškrtávátka kurz na míru'] = await pg.locator('#l-custom').count() == 0
+        await pg.click('[data-unpick="vy1"]'); await pg.wait_for_timeout(100)
+        ok['odebrání ve formuláři'] = await pg.locator('#pick li').count() == 1 and await pg.locator('.uc.in').count() == 1
+        ok['fokus na další položku'] = await pg.evaluate("document.activeElement.dataset.unpick") == 'p3'
         zajem = json.loads(await pg.input_value('#l-zajem'))
-        ok['skryté pole s oborem a prohlédnutou možností'] = zajem['obor'] == 'Logistika' and len(zajem['prohlednute']) == 1
-        await pg.click('#sheet [data-kurz]'); await pg.wait_for_timeout(1200)
-        ok['z detailu ke kurzu'] = await pg.is_hidden('#ov') and await pg.evaluate("document.activeElement.id") == 'l-email'
-        await pg.screenshot(path=f'{OUT}/m-kurz-full.png', full_page=True)
+        ok['pole Zajem'] = zajem['obor'] == 'Výroba a průmysl' and [x['id'] for x in zajem['vyber']] == ['p3'] and zajem['shrnuti'].startswith('AI Akcelerátor na míru')
         await pg.click('#l-submit'); await pg.wait_for_timeout(100)
-        ok['validace formuláře'] = norm(await pg.inner_text('#l-err')) == 'Napište prosím svůj e-mail.'
-        await pg.fill('#l-name', 'Jana Nováková'); await pg.fill('#l-email', 'jana.novakova@kvasek.cz'); await pg.fill('#l-firm', 'Pekárna Kvásek s.r.o.')
-        await pg.fill('#l-phone', '+420 777 123 456')
-        await pg.check('#l-consent')
-        async with pg.expect_download() as dl_info:
-            await pg.click('#l-submit')
-        dl = await dl_info.value
-        await dl.save_as(f'{OUT}/ukazka.pdf')
-        await pg.wait_for_timeout(300)
-        out.append('m stažení: ' + dl.suggested_filename)
-        ok['PDF se stáhlo'] = dl.suggested_filename.startswith('AI-Akcelerator-') and os.path.getsize(f'{OUT}/ukazka.pdf') > 20000
-        ok['po stažení další krok'] = await pg.is_visible('#lead-ok .next') and await pg.is_hidden('#lead')
-        await pg.click('[data-custom-yes]'); await pg.wait_for_timeout(150)
-        ok['zájem o návrh na míru po stažení'] = await pg.is_visible('#lead-ok .next .noted')
-        ok['návrh na míru ve skrytém poli'] = json.loads(await pg.input_value('#l-zajem'))['navrh_na_miru'] is True
-        await pg.locator('#lead-ok').scroll_into_view_if_needed(); await pg.wait_for_timeout(300)
+        ok['validace formuláře'] = norm(await pg.inner_text('#l-err')).startswith('Vyplňte prosím e-mail')
+        await pg.fill('#l-email', 'jana.novakova@kvasek.cz'); await pg.fill('#l-phone', '+420 777 123 456')
+        await pg.click('#l-submit'); await pg.wait_for_timeout(100)
+        ok['souhlas je povinný'] = norm(await pg.inner_text('#l-err')).startswith('Bez souhlasu')
+        await pg.check('#l-consent'); await pg.click('#l-submit'); await pg.wait_for_timeout(500)
+        ok['potvrzení se shrnutím'] = await pg.is_visible('#lead-ok') and 'Předávka směny' in norm(await pg.inner_text('#lead-ok'))
+        ok['konzultant, ne obchodník'] = 'obchodník' not in norm(await pg.inner_text('body')).lower()
+        ok['po odeslání bez tlačítek na kartách'] = not await pg.is_visible('[data-pick]')
         await pg.screenshot(path=f'{OUT}/m-done.png')
-        await pg.click('.sales summary'); await pg.wait_for_timeout(100)
-        sales = norm(await pg.inner_text('#sales')); out.append('m obchodník: ' + sales.replace('\n', ' | ')[:320])
-        ok['obchodník vidí telefon'] = '+420 777 123 456' in sales
-        ok['obchodník vidí návrh na míru'] = 'chce, připravit podle oboru' in sales
         ok['žádné chyby na telefonu'] = not errs
         if errs: out.append('m chyby: ' + '; '.join(errs))
         await ctx.close()
 
-        # notebook
-        ctx, pg, errs = await setup(b, 1366, 768)
+        # notebook, vloženo na web: chybné a pak úspěšné předání kontaktu
+        ctx, pg, f, errs = await setup(b, 1366, 768, embed=True)
         await pg.screenshot(path=f'{OUT}/d-start.png')
-        await pg.click('[data-obor="vyroba"]'); await pg.wait_for_timeout(150)
-        await pg.locator('[data-open="vy1"]').click(); await pg.wait_for_timeout(350)
-        await pg.screenshot(path=f'{OUT}/d-detail.png')
-        inside = []
-        for i in range(8):
-            await pg.keyboard.press('Tab'); inside.append(await pg.evaluate("!!document.activeElement.closest('#ov')"))
-        ok['fokus zůstává v detailu'] = all(inside)
-        await pg.keyboard.press('Escape'); await pg.wait_for_timeout(200)
-        ok['Esc zavře detail'] = await pg.is_hidden('#ov')
-        await pg.click('.top-cta'); await pg.wait_for_timeout(1200)
-        await pg.screenshot(path=f'{OUT}/d-kurz.png')
-        await pg.fill('#l-email', 'petr@firma.cz'); await pg.check('#l-consent')
-        async with pg.expect_download() as dl2:
-            await pg.click('#l-submit')
-        ok['stačí jen e-mail'] = (await dl2.value).suggested_filename.startswith('AI-Akcelerator-')
+        ok['ve vloženém režimu bez hlavičky'] = not await f.locator('.top').is_visible() and not await f.locator('.sales').is_visible()
+        await f.locator('[data-pick="o1"]').click(); await f.locator('[data-pick="v1"]').click()
+        await f.locator('[data-go]').click(); await pg.wait_for_timeout(900)
+        await f.locator('#l-email').fill('petr@firma.cz'); await f.locator('#l-consent').check()
+        await pg.evaluate('window.ACK_OK = false')
+        await f.locator('#l-submit').click(); await pg.wait_for_timeout(400)
+        ok['chyba při nepředání'] = 'nepodařilo odeslat' in norm(await f.locator('#l-err').inner_text()) and await f.locator('#lead').is_visible()
+        await pg.evaluate('window.ACK_OK = true')
+        await f.locator('#l-submit').click(); await pg.wait_for_timeout(500)
+        ok['potvrzení po předání'] = await f.locator('#lead-ok').is_visible()
+        leads = await pg.evaluate('window.LEADS')
+        out.append('d předáno: ' + json.dumps(leads[-1]['zajem']['shrnuti'], ensure_ascii=False))
+        ok['předaný kontakt a výběr'] = leads[-1]['lead']['email'] == 'petr@firma.cz' and [x['id'] for x in leads[-1]['zajem']['vyber']] == ['o1', 'v1']
+        await pg.screenshot(path=f'{OUT}/d-done.png')
         ok['žádné chyby na notebooku'] = not errs
         if errs: out.append('d chyby: ' + '; '.join(errs))
         await ctx.close(); await b.close()
