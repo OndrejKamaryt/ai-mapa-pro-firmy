@@ -32,8 +32,18 @@ Stejná stránka běží i jako artefakt v Claudu. Tam se PDF stahuje přes scho
 | `src/app.js` | filtry a řazení, detail možnosti, sekce kurzu, formulář a PDF |
 | `src/font.js` | písmo Figtree pro PDF, podmnožina s českými znaky v base64 |
 | `build.sh` | složí `src/` do `index.html` a do `dist/artifact.html` pro Claude |
+| `cms/html-blok.html` | HTML blok pro stránku v LifeScale CMS, viz níže |
 | `tests/` | automatický průchod stránkou na telefonu a notebooku |
 | `tools/nbsp.py` | doplní pevné mezery za jednopísmenné předložky a spojky |
+
+## Vložení na web LifeScale
+
+Na webu běží stránka z LifeScale CMS (Directus) s jedním HTML blokem z `cms/html-blok.html`. Blok zobrazí AI mapu z GitHub Pages přes celou obrazovku pod hlavičkou webu.
+
+- Lead magnet pozná, že je vložený, a schová vlastní hlavičku a pohled obchodníka.
+- Po odeslání formuláře pošle kontakt a pole `zajem` stránce zprávou `postMessage`, a to jen na `https://business.lifescale.cz`. Stránka přijímá zprávy jen z `https://ondrejkamaryt.github.io`.
+- Stránka kontakt odešle na `/api/form-submit` stejně jako formuláře webu, se scénářem `general_inquiry` a poli Vaše jméno, E-mail, Telefon, Firma, Zajem a GDPR. Odtud jde do `form_submissions` a webhookem do Make.
+- Když zájemce po stažení klikne na „Chci návrh na míru“, odejde druhé odeslání s `navrh_na_miru: true`.
 
 ## Úprava obsahu
 
@@ -81,7 +91,8 @@ Test proklikne filtry, řazení podle obtížnosti, detail, kopírování pokynu
 
 ## Před ostrým spuštěním
 
-- Napojit formulář na Pipedrive B2B přes vlastní endpoint na serveru, včetně skrytého pole `zajem`. API token Pipedrivu nesmí být v kódu stránky.
+- Ověřit, že scénář v Make založí lead z AI mapy v Pipedrivu B2B i s polem Zajem, a rozhodnout, jestli druhé odeslání kvůli návrhu na míru nemá jen doplnit existující lead.
+- Přesunout lead magnet z osobního GitHubu na firemní hosting a změnit adresu v `cms/html-blok.html` i v `PARENTS` v `src/app.js`.
 - Potvrdit, že anonymizované příklady úprav kurzu u klientů smíme ukazovat.
 - Rozhodnout, jestli do PDF patří cena kurzu (prezentace uvádí 600 Kč za osobohodinu).
 - Ověřit s dotačním servisem čísla k výzvě Vzdělávání pro firmy.

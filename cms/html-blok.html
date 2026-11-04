@@ -1,0 +1,50 @@
+<!-- HTML blok pro stránku v LifeScale CMS (Directus). Zobrazí AI mapu z GitHub Pages přes celou obrazovku
+     a kontakt z jejího formuláře odešle stejnou cestou jako formuláře webu: /api/form-submit, form_submissions, Make. -->
+<style>
+section:has(.ls-ai-mapa){padding-left:0 !important; padding-right:0 !important}
+.container:has(.ls-ai-mapa), .prose:has(.ls-ai-mapa){max-width:none !important; overflow:visible !important}
+.ls-ai-mapa{height:calc(100vh - 56px); height:calc(100dvh - 56px); margin:0}
+.ls-ai-mapa iframe{display:block; width:100%; height:100%; border:0; margin:0}
+</style>
+<div class="ls-ai-mapa not-prose"><iframe src="https://ondrejkamaryt.github.io/ai-mapa-pro-firmy/" title="AI mapa pro firmy" allow="clipboard-write"></iframe></div>
+<script>
+(function () {
+  if (window.__lsAiMapa) return;
+  window.__lsAiMapa = true;
+  var ORIGIN = 'https://ondrejkamaryt.github.io';
+  var PAGE = { type: 'page', id: '__PAGE_ID__', slug: 'ai-mapa-pro-firmy-test', title: 'LP: AI mapa pro firmy (test)' };
+  window.addEventListener('message', function (e) {
+    var d = e.data;
+    if (e.origin !== ORIGIN || !d || d.type !== 'ls-ai-mapa-lead') return;
+    var L = d.lead || {};
+    var q = new URLSearchParams(location.search), utm = {};
+    ['source', 'medium', 'campaign', 'term', 'content'].forEach(function (k) { utm[k] = q.get('utm_' + k) || ''; });
+    var body = {
+      leadProcessingScenario: 'general_inquiry',
+      subdomain: 'business',
+      values: { jmeno: L.name || '', email: L.email || '', telefon: L.phone || '', firma: L.firm || '', zajem: JSON.stringify(d.zajem || {}), gdpr: 'true' },
+      items: [
+        { id: 'jmeno', variableMapping: 'name', label: 'Vaše jméno' },
+        { id: 'email', variableMapping: 'email', label: 'E-mail' },
+        { id: 'telefon', variableMapping: 'telephone', label: 'Telefon' },
+        { id: 'firma', variableMapping: null, label: 'Firma' },
+        { id: 'zajem', variableMapping: null, label: 'Zajem' },
+        { id: 'gdpr', variableMapping: 'gdpr_consent', label: 'GDPR' }
+      ],
+      sourceUrl: location.href,
+      locale: 'cs-cz',
+      utm: utm,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      contentContext: PAGE
+    };
+    var reply = function (ok) { try { e.source.postMessage({ type: 'ls-ai-mapa-lead-ack', id: d.id, ok: ok }, ORIGIN); } catch (x) {} };
+    fetch('/api/form-submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) {
+        reply(r.ok);
+        if (r.ok) (window.dataLayer = window.dataLayer || []).push({ event: 'form_submit', form_name: 'general_inquiry' });
+        else console.error('[AI mapa] Odeslání kontaktu selhalo:', r.status);
+      })
+      .catch(function (err) { reply(false); console.error('[AI mapa] Odeslání kontaktu selhalo:', err); });
+  });
+})();
+</script>

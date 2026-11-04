@@ -8,7 +8,11 @@ const nf = (n, d) => Number(n).toLocaleString('cs-CZ', { maximumFractionDigits: 
 const kc = n => nf(n) + ' Kč';
 const SUB_RATE = 478.19, SUB_HOURS = 60, SUB_ONE = Math.round(SUB_RATE * SUB_HOURS);
 
-const S = { obor:null, odd:'vse', lvl:'vse', seen:[], custom:false, lead:null, done:false, fname:'' };
+const S = { obor:null, odd:'vse', lvl:'vse', seen:[], custom:false, lead:null, done:false, fname:'', sent:null };
+// vložené na web LifeScale: hlavičku má stránka webu a kontakt odešle web stejnou cestou jako své formuláře
+const EMBED = window.parent !== window;
+const PARENTS = ['https://business.lifescale.cz'];
+if (EMBED) document.documentElement.classList.add('embed');
 
 const byId = id => UC.find(u => u.id === id);
 const hrs = u => nf(u[0], 1) + ' až ' + nf(u[1], 1) + ' h týdně';
@@ -76,6 +80,20 @@ function payload(){
            navrh_na_miru: S.custom };
 }
 function syncLead(){ $('#l-zajem').value = JSON.stringify(payload()); renderSales(); }
+let msgN = 0;
+function sendLead(){
+  if (!EMBED || !S.lead) return Promise.resolve(null);
+  const id = 'lead-' + (++msgN) + '-' + Date.now();
+  const L = S.lead;
+  const msg = { type:'ls-ai-mapa-lead', id, lead:{ name:L.name, email:L.email, phone:L.phone, firm:L.firm }, zajem:payload() };
+  return new Promise(res => {
+    const done = ok => { window.removeEventListener('message', on); clearTimeout(tm); if (!ok) console.error('[AI mapa] Kontakt se nepodařilo předat webu LifeScale.'); res(ok); };
+    const on = e => { if (PARENTS.includes(e.origin) && e.data && e.data.type === 'ls-ai-mapa-lead-ack' && e.data.id === id) done(!!e.data.ok); };
+    const tm = setTimeout(() => done(false), 8000);
+    window.addEventListener('message', on);
+    PARENTS.forEach(o => { try { window.parent.postMessage(msg, o); } catch (e) {} });
+  });
+}
 
 /* ---------- detail možnosti ---------- */
 let lastFocus = null, openId = null;
@@ -150,8 +168,11 @@ async function submitLead(e){
   S.custom = $('#l-custom').checked;
   syncLead();
   const btn = $('#l-submit'); btn.disabled = true; btn.textContent = 'Připravuji PDF…';
+  // kontakt jde webu hned, PDF se stahuje bez čekání na odpověď, aby prohlížeč stažení nezablokoval
+  const sent = sendLead();
   let res = 'error';
   try { res = await savePdf(); } catch (e2) { res = 'error'; }
+  S.sent = await sent;
   btn.disabled = false; btn.textContent = 'Stáhnout ukázku kurzu';
   if (res === 'saved' || res === 'fallback'){
     S.done = true; renderDone(); renderSales();
@@ -320,6 +341,7 @@ function renderSales(){
     ['Obor', S.obor ? esc(OBOR_LABEL[S.obor]) : 'nevybral'],
     ['Oddělení', S.odd !== 'vse' ? esc(ODD_LABEL[S.odd]) : 'nevybral'],
     ['Prohlédl si', seen.length ? esc(seen.map(u => u.t + ' (' + ODD_LABEL[u.d] + ')').join('; ')) : 'zatím nic'],
+    ['Předáno webu LifeScale', !EMBED ? 'ne, stránka není vložená na web' : (S.sent === null ? 'zatím ne' : (S.sent ? 'ano' : '<b>nepodařilo se</b>'))],
     ['Skryté pole formuláře', '<code>' + esc(JSON.stringify(payload())) + '</code>']
   ];
   $('#sales').innerHTML = rows.map(r => '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>').join('');
@@ -350,7 +372,7 @@ document.addEventListener('click', e => {
   if (e.target.closest('[data-copy]')){ copyPrompt(); return; }
   if (e.target.closest('[data-kurz]')){ goKurz(); return; }
   if (e.target.closest('[data-again]')){ savePdf().then(r => { if (r !== 'saved' && r !== 'fallback') alertDone(r); }).catch(() => alertDone('error')); return; }
-  if (e.target.closest('[data-custom-yes]')){ S.custom = true; syncLead(); renderDone(); const n = $('#lead-ok .next .noted'); if (n){ n.setAttribute('tabindex', '-1'); n.focus({ preventScroll:true }); } return; }
+  if (e.target.closest('[data-custom-yes]')){ S.custom = true; syncLead(); sendLead().then(ok => { if (ok !== null){ S.sent = ok; renderSales(); } }); renderDone(); const n = $('#lead-ok .next .noted'); if (n){ n.setAttribute('tabindex', '-1'); n.focus({ preventScroll:true }); } return; }
   if (e.target.id === 'ov') closeDetail();
 });
 $('#lead').addEventListener('submit', submitLead);
