@@ -195,7 +195,7 @@ function renderDone(){
       '<button class="btn btn-primary" type="button" data-custom-yes>Chci návrh na míru</button></div>';
   box.innerHTML = '<p class="done-t" tabindex="-1">' + ICON_OK + 'Ukázka kurzu je stažená</p>' +
     '<p class="soft">Nestáhla se? <button class="linkish" type="button" data-again>Stáhnout znovu</button></p>' + custom +
-    '<p class="soft">Chcete to probrat hned? <a href="https://business.lifescale.cz/cz" target="_blank" rel="noopener">Rezervujte si nezávaznou konzultaci</a>.</p>' +
+    '<p class="soft">Chcete to probrat hned? <a href="https://calendly.com/d/ctjs-ppn-pxz/online-konzultace-lifescale" target="_blank" rel="noopener">Rezervujte si nezávaznou konzultaci</a>.</p>' +
     (S.lead && S.lead.free ? '<p class="soft">Tip: s firemním e-mailem vám umíme poslat i nabídku přímo pro vaši firmu.</p>' : '');
 }
 
