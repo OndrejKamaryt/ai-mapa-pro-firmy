@@ -87,10 +87,10 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 /* pracovní část: vlevo filtr, vpravo karty; na telefonu dvě rozbalovací menu nad kartami */
 .app{background:var(--blue-wash); border-top:1px solid var(--line); padding:40px 0 48px}
 .app-grid{display:grid; grid-template-columns:248px minmax(0,1fr); gap:24px; align-items:start}
-.side{position:sticky; top:80px; max-height:calc(100vh - var(--bar-h) - 96px); overflow-y:auto; background:#fff; border:1.5px solid var(--line); border-radius:var(--r); padding:8px}
+.side{position:sticky; top:80px; scrollbar-width:thin; max-height:calc(100vh - var(--bar-h) - 96px); overflow-y:auto; background:#fff; border:1.5px solid var(--line); border-radius:var(--r); padding:8px}
 .embed .side{top:16px; max-height:calc(100vh - var(--bar-h) - 32px)}
 .fgroup + .fgroup{margin-top:6px; padding-top:6px; border-top:1px solid var(--line)}
-.fgroup summary{display:flex; align-items:center; gap:8px; min-height:40px; padding:6px 10px; border-radius:var(--r-sm); font-size:15px; font-weight:800; cursor:pointer; list-style:none}
+.fgroup summary{display:flex; align-items:center; gap:8px; min-height:38px; padding:6px 10px; border-radius:var(--r-sm); font-size:15px; font-weight:800; cursor:pointer; list-style:none}
 .fgroup summary::-webkit-details-marker{display:none}
 .fgroup summary:hover{background:var(--blue-wash)}
 .fname{margin-right:auto}
@@ -98,8 +98,8 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .fgroup[open] .fval{display:none}
 .fgroup summary svg{flex:none; width:16px; height:16px; fill:none; stroke:var(--muted); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; transition:transform .15s}
 .fgroup[open] summary svg{transform:rotate(180deg)}
-.flist{display:grid; gap:2px; padding:2px 0 4px}
-.chip{display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; min-height:34px; padding:5px 10px; border:0; border-radius:var(--r-sm); background:none; font:600 14px/1.25 var(--font); color:var(--ink); text-align:left; cursor:pointer}
+.flist{display:grid; padding:2px 0 4px}
+.chip{display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; min-height:32px; padding:4px 10px; border:0; border-radius:var(--r-sm); background:none; font:600 14px/1.25 var(--font); color:var(--ink); text-align:left; cursor:pointer}
 .chip:hover{background:var(--blue-wash)}
 .chip[aria-pressed="true"]{background:var(--ink); color:#fff}
 .chip[aria-pressed="true"]::after{content:"×"; font-size:18px; line-height:1}
