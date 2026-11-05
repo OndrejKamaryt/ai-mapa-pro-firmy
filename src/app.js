@@ -92,7 +92,7 @@ function vyberN(n){ return n + ' ' + moznost(n); }
 function renderBar(){
   const items = cartItems(), n = items.length;
   $('#bar-n').textContent = n ? 'Váš výběr: ' + vyberN(n) : 'Zatím nic nevybráno';
-  $('#bar-names').textContent = n ? items.map(u => u.t).join(', ') : 'Přidejte možnosti, které by pomohly vašim lidem.';
+  $('#bar-names').textContent = n ? items.map(u => u.t).join(', ') : 'Přidejte možnosti a získejte návrh kurzu zdarma.';
 }
 function renderPick(){
   const items = cartItems();
@@ -161,7 +161,7 @@ function showErr(html, bad){
 }
 function setSending(on){
   S.sending = on;
-  const b = $('#l-submit'); b.disabled = on; b.textContent = on ? 'Odesílám…' : 'Poslat výběr a získat návrh kurzu';
+  const b = $('#l-submit'); b.disabled = on; b.textContent = on ? 'Odesílám…' : 'Chci konzultaci a návrh kurzu zdarma';
 }
 async function submitLead(e){
   e.preventDefault();
@@ -218,11 +218,11 @@ function syncBar(){
   document.body.classList.toggle('bar-off', S.done);
 }
 function goForm(){
-  scrollToEl($('#send-box'));
+  scrollToEl($('#send-title'));
   $('#send-title').focus({ preventScroll:true });
 }
 if ('IntersectionObserver' in window){
-  new IntersectionObserver(en => { formInView = en[0].isIntersecting; syncBar(); }, { rootMargin:'0px 0px -96px 0px' }).observe($('#send-box'));
+  new IntersectionObserver(en => { formInView = en[0].isIntersecting; syncBar(); }, { rootMargin:'0px 0px -96px 0px' }).observe($('#odeslat'));
 }
 $('#lead').addEventListener('focusin', () => { formFocus = true; syncBar(); });
 $('#lead').addEventListener('focusout', () => { setTimeout(() => { formFocus = $('#lead').contains(document.activeElement); syncBar(); }, 0); });
@@ -260,7 +260,9 @@ document.addEventListener('click', e => {
   const up = e.target.closest('[data-unpick]');
   if (up){ unpick(up.dataset.unpick); return; }
   if (e.target.closest('[data-go]')){ goForm(); return; }
+  if (e.target.closest('[data-start]')){ scrollToEl($('#vyber')); $('#f-obor .chip').focus({ preventScroll:true }); return; }
 });
 $('#lead').addEventListener('submit', submitLead);
+$$('[data-logos]').forEach(ul => { ul.innerHTML = LOGA.map(([n, id, h]) => '<li><img style="--h:' + h + 'px" src="https://cms.lifescale.cz/assets/' + id + '?width=360" alt="' + esc(n) + '"></li>').join(''); });
 renderChips(); renderGrid(); renderBar(); renderPick(); syncLead(); syncBar();
 })();

@@ -15,6 +15,14 @@ const ODD_LABEL = Object.fromEntries(ODDELENI);
 const OBOR_PRO = { stavebnictvi:'Pro stavebnictví', zdravotnictvi:'Pro zdravotnictví', logistika:'Pro logistiku', fin:'Pro finanční služby', pravo:'Pro advokátní kanceláře', vyroba:'Pro výrobu', auto:'Pro automotive' };
 const LEVEL = { s:'Snadné', m:'Střední' };
 
+/* loga z bloku „Firmy, které s námi spolupracují“ na webu LifeScale: název, soubor v CMS, výška v px */
+const LOGA = [
+  ['Toyota Financial Services', '8802cfca-e538-4205-bfe2-1b3d1be90388', 30], ['Solodoor', '28d97156-0c2a-44f2-b473-6b72b33f8de1', 26],
+  ['Kunzmann', '49351863-1fc9-47fb-9dc4-b9610d8b2397', 26], ['Systemotronic', '856cf58e-cda7-4dd8-91b4-60ad1683ec24', 24],
+  ['Colas', '190e5e04-02dc-4644-aa4a-8d25199a14c1', 26], ['Tchibo', '121990d9-6bd2-4a25-b532-a3f9b64a2414', 34],
+  ['Accenture', 'dc6bbda4-8421-4c81-8104-01467aed29ed', 28]
+];
+
 /* možnosti: d = oddělení, i = obory (prázdné = všechny), u = úspora v hodinách týdně [od, do], l = obtížnost, t = název, w = co to přinese.
    Postupy, pokyny pro AI a upozornění ke každé možnosti jsou v podklady/postupy.json, stránka je nezobrazuje. */
 const UC = [

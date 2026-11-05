@@ -48,10 +48,6 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .proto{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--blue-ink); background:var(--blue-soft); border-radius:999px; padding:4px 9px}
 @media (max-width:560px){ .brand{font-size:17px} }
 
-/* malá linka o dotaci, společná pro všechny kurzy */
-.dotace{background:var(--blue-wash); border-bottom:1px solid #DDEFF8; color:var(--muted); font-size:13px; line-height:1.45}
-.dotace .wrap{display:block; padding-top:7px; padding-bottom:7px; text-align:center}
-
 /* tlačítka */
 .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:46px; padding:11px 24px; border-radius:999px; border:1.5px solid transparent; font:700 15px/1.2 var(--font); cursor:pointer; text-decoration:none; text-align:center; transition:background .15s, border-color .15s, color .15s}
 .btn-primary{background:var(--blue); color:#fff}
@@ -60,19 +56,41 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .btn-ghost:hover{border-color:var(--ink)}
 .btn:disabled{opacity:.6; cursor:progress}
 .btn-block{width:100%}
+.btn-lg{min-height:56px; padding:14px 32px; font-size:17px}
 .linkish{background:none; border:0; padding:6px 0; font:600 14px var(--font); color:var(--blue-ink); cursor:pointer; text-decoration:underline; text-underline-offset:3px}
 
 /* úvod: fotka z webu LifeScale s tmavým přechodem, jako hlavičky stránek webu */
-.hero{position:relative; overflow:hidden; color:#fff; padding:48px 0 72px; background:#0B3460 url("https://cms.lifescale.cz/assets/0bef6855-0b73-4e5a-b731-7e51b3e7ce15?width=1800&quality=72&format=webp") center/cover no-repeat}
-.hero::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,.58) 0%, rgba(0,0,0,.3) 50%, rgba(0,0,0,0) 80%); pointer-events:none}
+.hero{position:relative; overflow:hidden; color:#fff; padding:56px 0 88px; background:#0B3460 url("https://cms.lifescale.cz/assets/0bef6855-0b73-4e5a-b731-7e51b3e7ce15?width=1800&quality=72&format=webp") center/cover no-repeat}
+.hero::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(4,20,40,.78) 0%, rgba(4,20,40,.55) 48%, rgba(4,20,40,.12) 82%), linear-gradient(0deg, rgba(4,20,40,.62) 0%, rgba(4,20,40,0) 38%); pointer-events:none}
 .hero-in{position:relative; z-index:1}
 .hero h1{font-weight:800; letter-spacing:-.03em; color:#fff; max-width:980px}
-.h1-pre{display:block; font-size:clamp(24px,3vw,34px); line-height:1.15; font-weight:700; letter-spacing:-.02em; color:rgba(255,255,255,.92)}
-.h1-name{display:block; font-size:clamp(40px,6.4vw,74px); line-height:1.02; margin-top:6px}
-.mark{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 24' preserveAspectRatio='none'%3E%3Cpath d='M3 16C70 9 150 7 297 12' stroke='%2300B4F1' stroke-opacity='.6' stroke-width='12' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") left 92% / 100% .34em no-repeat; padding-bottom:2px; white-space:nowrap}
-.lede{font-size:clamp(17px,1.9vw,20px); color:rgba(255,255,255,.92); max-width:54ch; margin-top:18px}
-@media (max-width:720px){ .hero::after{background:rgba(0,0,0,.5)} }
-@media (max-width:560px){ .hero{padding:26px 0 56px} .lede{font-size:16px; margin-top:12px} }
+.h1-pre{display:block; font-size:clamp(24px,3vw,34px); line-height:1.15; font-weight:700; letter-spacing:-.02em; color:rgba(255,255,255,.94)}
+.h1-name{display:block; font-size:clamp(40px,6.4vw,76px); line-height:1.02; margin-top:6px}
+.nowrap{white-space:nowrap}
+.lede{font-size:clamp(17px,1.7vw,20px); line-height:1.5; color:rgba(255,255,255,.94); max-width:60ch; margin-top:18px}
+.hero-cta{display:flex; flex-wrap:wrap; align-items:center; gap:16px 30px; margin-top:26px}
+.perks{display:flex; flex-wrap:wrap; gap:14px 28px}
+.perk{display:flex; align-items:center; gap:11px; font-size:14px; line-height:1.25; color:rgba(255,255,255,.9)}
+.perk b{display:block; font-size:16px; color:#fff}
+.coin{width:42px; height:42px; flex:none; display:grid; place-items:center; border-radius:50%; background:#fff; color:var(--navy); font-size:15px; font-weight:800; letter-spacing:-.02em}
+.coin svg{width:22px; height:22px; fill:none; stroke:var(--navy); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.trust{margin-top:32px}
+.trust p{font-size:14px; font-weight:600; color:rgba(255,255,255,.85); margin-bottom:12px}
+.logos{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; align-items:center; gap:14px 34px}
+.logos img{display:block; width:auto; height:var(--h, 26px); filter:brightness(0) invert(1)}
+@media (max-width:720px){ .hero::after{background:rgba(4,20,40,.62)} }
+@media (max-width:560px){
+  .hero{padding:28px 0 60px}
+  .lede{font-size:16px; margin-top:12px}
+  .hero-cta{margin-top:18px}
+  .hero-cta .btn{width:100%}
+  .btn-lg{padding:14px 12px; font-size:16px}
+  .perks{display:grid; gap:10px}
+  .trust{margin-top:22px}
+  .trust p{margin-bottom:10px}
+  .logos{gap:12px 22px}
+  .logos img{height:calc(var(--h, 26px) * .78)}
+}
 
 /* obory */
 .filters{position:relative; z-index:2; background:#fff; border-radius:var(--r); box-shadow:var(--shadow); padding:16px 20px; margin-top:-34px}
@@ -123,12 +141,36 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .more{display:flex; justify-content:center; margin-top:20px}
 @media (max-width:640px){ .more .btn{width:100%} }
 
-/* formulář s výběrem */
-.send{margin-top:48px; padding:48px 0 56px; background:var(--blue-wash); border-top:1px solid #DDEFF8; border-bottom:1px solid #DDEFF8}
-.send-box{max-width:640px; margin:0 auto; background:#fff; border:1px solid var(--line); border-radius:20px; padding:28px; box-shadow:var(--shadow)}
-.send-box h2{font-size:clamp(24px,3vw,32px); line-height:1.15; font-weight:800; letter-spacing:-.025em}
-.send-box h2:focus{outline:0}
-@media (max-width:560px){ .send{padding:28px 0 32px} .send-box{padding:22px 16px; border-radius:16px} }
+/* závěr stránky: nabídka konzultace, reference a formulář */
+.send{margin-top:56px; padding:72px 0; background:var(--navy); color:#fff}
+.send-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,540px); grid-template-rows:auto 1fr; gap:30px 64px; align-items:start}
+.send-intro{grid-column:1; grid-row:1}
+.send-box{grid-column:2; grid-row:1 / span 2; background:#fff; color:var(--ink); border-radius:20px; padding:32px; box-shadow:0 24px 60px rgba(2,14,30,.4)}
+.send-quotes{grid-column:1; grid-row:2}
+.send-intro h2{font-size:clamp(30px,3.7vw,46px); line-height:1.08; font-weight:800; letter-spacing:-.03em; color:#fff}
+.send-intro h2:focus{outline:0}
+.send-intro > p{font-size:18px; line-height:1.5; color:rgba(255,255,255,.9); margin-top:14px; max-width:46ch}
+.gains{list-style:none; margin:20px 0 0; padding:0; display:grid; gap:10px; font-size:16px; font-weight:600; line-height:1.4}
+.gains li{display:flex; gap:10px; align-items:flex-start}
+.gains li::before{content:""; width:22px; height:22px; flex:none; border-radius:50%; background:var(--blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/13px no-repeat}
+.send-quotes{display:grid; gap:24px; padding-top:28px; border-top:1px solid rgba(255,255,255,.2)}
+.quote{margin:0}
+.quote blockquote{margin:0; font-size:16px; line-height:1.55; color:#fff}
+.quote figcaption{display:flex; align-items:center; gap:12px; margin-top:12px; font-size:13px; line-height:1.3; color:rgba(255,255,255,.8)}
+.quote figcaption b{display:block; font-size:14px; color:#fff}
+.face{width:46px; height:46px; flex:none; border-radius:50%; object-fit:cover; background:#1B4A7E}
+.send-quotes .trust{margin-top:2px}
+.send-quotes .logos{gap:12px 26px}
+.send-quotes .logos img{height:calc(var(--h, 26px) * .8)}
+.form-title{font-size:clamp(22px,2.2vw,26px); line-height:1.18; font-weight:800; letter-spacing:-.02em}
+.done-t{font-size:clamp(24px,2.6vw,30px); line-height:1.15; font-weight:800; letter-spacing:-.025em}
+.done-t:focus{outline:0}
+@media (max-width:980px){
+  .send{padding:44px 0}
+  .send-grid{grid-template-columns:minmax(0,1fr); grid-template-rows:none}
+  .send-intro, .send-box, .send-quotes{grid-column:1; grid-row:auto}
+}
+@media (max-width:560px){ .send-box{padding:22px 16px; border-radius:16px} .send-intro > p{font-size:16px} }
 .pick{margin:18px 0 20px}
 .pick-h{font-size:15px; font-weight:800; margin-bottom:6px}
 .pick-list{list-style:none; margin:0; padding:0; border-top:1px solid var(--line)}
@@ -206,13 +248,22 @@ form.lead{display:grid; gap:12px}
   </div>
 </header>
 
-<p class="dotace"><span class="wrap">Na kurzy LifeScale můžete čerpat dotaci z výzvy Vzdělávání pro firmy. Se žádostí vám pomůžeme.</span></p>
-
 <main id="top">
 <section class="hero">
   <div class="wrap hero-in">
-    <h1><span class="h1-pre">Složte si vlastní</span> <span class="h1-name"><span class="mark">AI Akcelerátor</span> na míru</span></h1>
-    <p class="lede">Náš nejprodávanější kurz pro firmy. Každé firmě ho skládáme z jejích konkrétních úkolů, takže je pro každou jiný. Vyberte níže, s čím by AI pomohla vašim lidem.</p>
+    <h1><span class="h1-pre">Složte si vlastní</span> <span class="h1-name"><span class="nowrap">AI Akcelerátor</span> na míru</span></h1>
+    <p class="lede">Náš nejprodávanější kurz pro firmy. Vaši lidé se naučí používat AI na své každodenní práci a každý ušetří čas v řádu dní měsíčně. Kurz skládáme z konkrétních úkolů vaší firmy, takže je pro každou jiný.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary btn-lg" type="button" data-start>Začít skládat kurz</button>
+      <div class="perks">
+        <p class="perk"><span class="coin" aria-hidden="true">Kč</span><span><b>Lze čerpat dotaci</b>Vzdělávání pro firmy</span></p>
+        <p class="perk"><span class="coin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span><span><b>Konzultace zdarma</b>i návrh kurzu na míru</span></p>
+      </div>
+    </div>
+    <div class="trust">
+      <p>Firmy, které s námi spolupracují</p>
+      <ul class="logos" data-logos></ul>
+    </div>
   </div>
 </section>
 
@@ -224,12 +275,22 @@ form.lead{display:grid; gap:12px}
 </div>
 
 <section class="send" id="odeslat" aria-labelledby="send-title">
-  <div class="wrap">
+  <div class="wrap send-grid">
+    <div class="send-intro">
+      <h2 id="send-title" tabindex="-1">Konzultace a návrh kurzu máte od nás zdarma</h2>
+      <p>Společně projdeme, kde vašim lidem AI ušetří nejvíc času a co z toho do kurzu zařadit.</p>
+      <ul class="gains">
+        <li>Zjistíte, kolik času a peněz vám dnes uniká</li>
+        <li>Získáte jasný plán využití AI a návrh kurzu pro vaši firmu</li>
+        <li>Dozvíte se, jak náklady pokrýt dotací, se žádostí vám pomůžeme</li>
+      </ul>
+    </div>
+
     <div class="send-box" id="send-box">
       <div id="send-form">
-        <h2 id="send-title" tabindex="-1">Pošlete nám výběr a připravíme vám návrh kurzu</h2>
+        <h3 class="form-title" id="form-title">Pošlete nám výběr a připravíme vám návrh kurzu</h3>
         <div class="pick" id="pick"></div>
-        <form class="lead" id="lead" novalidate>
+        <form class="lead" id="lead" novalidate aria-labelledby="form-title">
           <div class="field"><label for="l-email">Firemní e-mail</label><input id="l-email" type="email" autocomplete="email" placeholder="jana.novakova@firma.cz" required aria-describedby="l-err"></div>
           <div class="row2">
             <div class="field"><label for="l-name">Jméno a příjmení <span class="opt">nepovinné</span></label><input id="l-name" type="text" autocomplete="name" placeholder="Jana Nováková"></div>
@@ -239,11 +300,26 @@ form.lead{display:grid; gap:12px}
           <input type="hidden" id="l-zajem" name="zajem" value="">
           <label class="check"><input type="checkbox" id="l-consent" aria-describedby="l-err"><span>Souhlasím se <a href="https://business.lifescale.cz/cz/pages/gdpr-business" target="_blank" rel="noopener">zpracováním osobních údajů</a>, aby se mi konzultant LifeScale mohl ozvat s návrhem kurzu.</span></label>
           <p class="err" id="l-err" hidden></p>
-          <button class="btn btn-primary btn-block" type="submit" id="l-submit">Poslat výběr a získat návrh kurzu</button>
+          <button class="btn btn-primary btn-lg btn-block" type="submit" id="l-submit">Chci konzultaci a návrh kurzu zdarma</button>
           <p class="soft center">Nezávazné. Ozve se vám konzultant LifeScale.</p>
         </form>
       </div>
       <div class="done" id="lead-ok" hidden></div>
+    </div>
+
+    <div class="send-quotes">
+      <figure class="quote">
+        <blockquote>„Před začátkem jsme přesně nevěděli, jak v naší firmě téma AI a automatizace uchopit. Kurz nám pomohl se zorientovat, nastavit směr a začít AI reálně používat.“</blockquote>
+        <figcaption><img class="face" loading="lazy" src="https://cms.lifescale.cz/assets/be53d7d7-02c5-4117-be0a-f2b008976be0?width=120&height=120&fit=cover&quality=75&format=webp" alt=""><span><b>Ing. Petr Szuścik</b>Jednatel, Systemotronic</span></figcaption>
+      </figure>
+      <figure class="quote">
+        <blockquote>„Od prvního hovoru bylo fajn vidět, že to není jen prodejní schůzka - chtěli pochopit, jak u nás fungujeme. A pak se podle toho zařídili i v kurzu.“</blockquote>
+        <figcaption><img class="face" loading="lazy" src="https://cms.lifescale.cz/assets/e6c9b6d6-290e-4d60-a533-eac58b5c8c44?width=120&height=120&fit=cover&quality=75&format=webp" alt=""><span><b>Bc. Karel Kunzmann</b>Majitel a výkonný ředitel, Kunzmann Cables</span></figcaption>
+      </figure>
+      <div class="trust">
+        <p>Firmy, které s námi spolupracují</p>
+        <ul class="logos" data-logos></ul>
+      </div>
     </div>
   </div>
 </section>
@@ -278,6 +354,14 @@ const OBOR_LABEL = Object.fromEntries(OBORY);
 const ODD_LABEL = Object.fromEntries(ODDELENI);
 const OBOR_PRO = { stavebnictvi:'Pro stavebnictví', zdravotnictvi:'Pro zdravotnictví', logistika:'Pro logistiku', fin:'Pro finanční služby', pravo:'Pro advokátní kanceláře', vyroba:'Pro výrobu', auto:'Pro automotive' };
 const LEVEL = { s:'Snadné', m:'Střední' };
+
+/* loga z bloku „Firmy, které s námi spolupracují“ na webu LifeScale: název, soubor v CMS, výška v px */
+const LOGA = [
+  ['Toyota Financial Services', '8802cfca-e538-4205-bfe2-1b3d1be90388', 30], ['Solodoor', '28d97156-0c2a-44f2-b473-6b72b33f8de1', 26],
+  ['Kunzmann', '49351863-1fc9-47fb-9dc4-b9610d8b2397', 26], ['Systemotronic', '856cf58e-cda7-4dd8-91b4-60ad1683ec24', 24],
+  ['Colas', '190e5e04-02dc-4644-aa4a-8d25199a14c1', 26], ['Tchibo', '121990d9-6bd2-4a25-b532-a3f9b64a2414', 34],
+  ['Accenture', 'dc6bbda4-8421-4c81-8104-01467aed29ed', 28]
+];
 
 /* možnosti: d = oddělení, i = obory (prázdné = všechny), u = úspora v hodinách týdně [od, do], l = obtížnost, t = název, w = co to přinese.
    Postupy, pokyny pro AI a upozornění ke každé možnosti jsou v podklady/postupy.json, stránka je nezobrazuje. */
@@ -475,7 +559,7 @@ function vyberN(n){ return n + ' ' + moznost(n); }
 function renderBar(){
   const items = cartItems(), n = items.length;
   $('#bar-n').textContent = n ? 'Váš výběr: ' + vyberN(n) : 'Zatím nic nevybráno';
-  $('#bar-names').textContent = n ? items.map(u => u.t).join(', ') : 'Přidejte možnosti, které by pomohly vašim lidem.';
+  $('#bar-names').textContent = n ? items.map(u => u.t).join(', ') : 'Přidejte možnosti a získejte návrh kurzu zdarma.';
 }
 function renderPick(){
   const items = cartItems();
@@ -544,7 +628,7 @@ function showErr(html, bad){
 }
 function setSending(on){
   S.sending = on;
-  const b = $('#l-submit'); b.disabled = on; b.textContent = on ? 'Odesílám…' : 'Poslat výběr a získat návrh kurzu';
+  const b = $('#l-submit'); b.disabled = on; b.textContent = on ? 'Odesílám…' : 'Chci konzultaci a návrh kurzu zdarma';
 }
 async function submitLead(e){
   e.preventDefault();
@@ -601,11 +685,11 @@ function syncBar(){
   document.body.classList.toggle('bar-off', S.done);
 }
 function goForm(){
-  scrollToEl($('#send-box'));
+  scrollToEl($('#send-title'));
   $('#send-title').focus({ preventScroll:true });
 }
 if ('IntersectionObserver' in window){
-  new IntersectionObserver(en => { formInView = en[0].isIntersecting; syncBar(); }, { rootMargin:'0px 0px -96px 0px' }).observe($('#send-box'));
+  new IntersectionObserver(en => { formInView = en[0].isIntersecting; syncBar(); }, { rootMargin:'0px 0px -96px 0px' }).observe($('#odeslat'));
 }
 $('#lead').addEventListener('focusin', () => { formFocus = true; syncBar(); });
 $('#lead').addEventListener('focusout', () => { setTimeout(() => { formFocus = $('#lead').contains(document.activeElement); syncBar(); }, 0); });
@@ -643,8 +727,10 @@ document.addEventListener('click', e => {
   const up = e.target.closest('[data-unpick]');
   if (up){ unpick(up.dataset.unpick); return; }
   if (e.target.closest('[data-go]')){ goForm(); return; }
+  if (e.target.closest('[data-start]')){ scrollToEl($('#vyber')); $('#f-obor .chip').focus({ preventScroll:true }); return; }
 });
 $('#lead').addEventListener('submit', submitLead);
+$$('[data-logos]').forEach(ul => { ul.innerHTML = LOGA.map(([n, id, h]) => '<li><img style="--h:' + h + 'px" src="https://cms.lifescale.cz/assets/' + id + '?width=360" alt="' + esc(n) + '"></li>').join(''); });
 renderChips(); renderGrid(); renderBar(); renderPick(); syncLead(); syncBar();
 })();
 </script>

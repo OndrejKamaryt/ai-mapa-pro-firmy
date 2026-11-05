@@ -56,7 +56,12 @@ async def main():
         ctx, pg, f, errs = await setup(b, 390, 844, 2)
         await pg.screenshot(path=f'{OUT}/m-start.png')
         ok['nadpis s AI Akcelerátorem'] = 'AI Akcelerátor' in norm(await pg.inner_text('h1'))
-        ok['dotace jen jako linka nahoře'] = await pg.locator('.dotace').count() == 1 and 'dotac' not in norm(await pg.inner_text('main')).lower()
+        hero = norm(await pg.inner_text('.hero'))
+        ok['dotace a konzultace zdarma v úvodu'] = 'Lze čerpat dotaci' in hero and 'Konzultace zdarma' in hero
+        ok['loga v úvodu i u formuláře'] = await pg.locator('.hero .logos img').count() == 7 and await pg.locator('.send-quotes .logos img').count() == 7
+        ok['reference u formuláře'] = await pg.locator('.send-quotes .quote').count() == 2
+        await pg.click('[data-start]'); await pg.wait_for_timeout(900)
+        ok['tlačítko v úvodu vede k oborům'] = await pg.evaluate("document.activeElement.dataset.obor") == 'vyroba'
         ok['6 karet a tlačítko pro všechny'] = await pg.locator('.uc').count() == 6 and await pg.is_visible('#more')
         ok['bez detailu a pokynů pro AI'] = await pg.locator('#ov, [data-open], [data-copy]').count() == 0
         ok['bez sekce kurzu a PDF'] = await pg.locator('#kurz, #mods, .subsidy, .virt').count() == 0
