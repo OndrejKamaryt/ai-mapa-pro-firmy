@@ -5,12 +5,12 @@ const $ = (s, el) => (el || document).querySelector(s);
 const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nf = (n, d) => Number(n).toLocaleString('cs-CZ', { maximumFractionDigits: d || 0 });
-// bez vybraného oboru ukážeme jen šest snadných možností, každou z jiného oddělení; pořadí jde změnit tady
+// bez vybraného oboru a oddělení ukážeme jen šest snadných možností, každou z jiného oddělení; pořadí jde změnit tady
 const START = ['p3', 'o1', 'h2', 'z3', 'f3', 'v1'];
 const CALENDLY = 'https://calendly.com/d/ctjs-ppn-pxz/online-konzultace-lifescale';
 const ACK_MS = 12000;   // jak dlouho čekáme, než web LifeScale potvrdí převzetí kontaktu
 
-const S = { obor:null, all:false, cart:[], lead:null, done:false, sending:false, sent:null };
+const S = { obor:null, odd:null, all:false, cart:[], lead:null, done:false, sending:false, sent:null };
 // vložené na web LifeScale: hlavičku má stránka webu a kontakt odešle web stejnou cestou jako své formuláře
 const EMBED = window.parent !== window;
 const PARENTS = ['https://business.lifescale.cz'];
@@ -26,6 +26,8 @@ const ICON_MINUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h1
 const ICON_CLOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 const V_OBOR = { stavebnictvi:'ve stavebnictví', zdravotnictvi:'ve zdravotnictví', logistika:'v logistice', fin:'ve finančních službách',
                  pravo:'v advokátní kanceláři', vyroba:'ve výrobě a průmyslu', auto:'v automobilovém průmyslu', jine:'ve vašem oboru' };
+const PRO_ODD = { obchod:'pro obchod', marketing:'pro marketing', hr:'pro HR a nábor', finance:'pro finance a účetnictví',
+                  pece:'pro zákaznickou péči', provoz:'pro provoz a odbornou práci', vedeni:'pro vedení firmy' };
 
 /* obtížnost jako tři sloupečky: snadné má vyplněný jeden, střední dva */
 const BARS = { s:1, m:2 };
@@ -41,17 +43,19 @@ function scrollToEl(el){
 let liveT = null;
 function announce(msg){ clearTimeout(liveT); liveT = setTimeout(() => { $('#live').textContent = msg; }, 150); }
 
-/* ---------- obor a karty ---------- */
+/* ---------- obor, oddělení a karty ---------- */
+const chip = (pole, k, l, on) => '<button class="chip" type="button" data-' + pole + '="' + k + '" aria-pressed="' + on + '">' + esc(l) + '</button>';
 function renderChips(){
-  $('#f-obor').innerHTML = OBORY.map(([k, l]) => '<button class="chip" type="button" data-obor="' + k + '" aria-pressed="' + (S.obor === k) + '">' + esc(l) + '</button>').join('');
+  $('#f-obor').innerHTML = OBORY.map(([k, l]) => chip('obor', k, l, S.obor === k)).join('');
+  $('#f-odd').innerHTML = ODDELENI.map(([k, l]) => chip('odd', k, l, S.odd === k)).join('');
 }
-// od nejsnazších, v rámci obtížnosti napřed možnosti přímo pro obor
-const rank = u => (u.l === 's' ? 0 : 2) + (u.i.length ? 0 : 1);
+// od nejsnazších, v rámci obtížnosti napřed možnosti přímo pro obor; bez oboru napřed ty obecné
+const rank = u => (u.l === 's' ? 0 : 2) + ((S.obor ? !u.i.length : u.i.length > 0) ? 1 : 0);
 function visible(){
-  const list = UC.filter(u => !S.obor || (S.obor === 'jine' ? !u.i.length : (!u.i.length || u.i.includes(S.obor))))
+  const list = UC.filter(u => (!S.odd || u.d === S.odd) && (!S.obor || (S.obor === 'jine' ? !u.i.length : (!u.i.length || u.i.includes(S.obor)))))
     .sort((a, b) => rank(a) - rank(b));
-  if (S.obor) return list;
-  // bez oboru jde napřed pevná šestice, zbytek až po rozbalení
+  if (S.obor || S.odd) return list;
+  // bez filtru jde napřed pevná šestice, zbytek až po rozbalení
   return START.map(byId).filter(Boolean).concat(list.filter(u => !START.includes(u.id)));
 }
 const inCart = id => S.cart.includes(id);
@@ -71,8 +75,8 @@ function card(u){
 function renderGrid(){
   const list = visible();
   const n = list.length;
-  const cut = !S.obor && !S.all && n > START.length;
-  $('#res-title').textContent = 'Z čeho si můžete kurz složit' + (S.obor ? ' ' + V_OBOR[S.obor] : '');
+  const cut = !S.obor && !S.odd && !S.all && n > START.length;
+  $('#res-title').textContent = 'Z čeho si můžete kurz složit' + (S.odd ? ' ' + PRO_ODD[S.odd] : '') + (S.obor ? ' ' + V_OBOR[S.obor] : '');
   $('#grid').innerHTML = (cut ? list.slice(0, START.length) : list).map(card).join('');
   $('#more').hidden = !cut;
   $('#more [data-more]').textContent = 'Zobrazit všech ' + n + ' ' + moznost(n);
@@ -123,14 +127,17 @@ function unpick(id){
 function buildSummary(){
   const items = cartItems();
   const clean = s => String(s).replace(/[<>&]/g, ' ').replace(/\s+/g, ' ').trim();
-  return ['AI Akcelerátor na míru', 'Obor: ' + (S.obor ? OBOR_LABEL[S.obor] : 'nevybrán'),
-    items.length ? 'Výběr (' + items.length + '):\n' + items.map(u => '• ' + clean(u.t) + ' (' + ODD_LABEL[u.d] + ')').join('\n')
-                 : 'Výběr: nic nevybráno, zeptat se při hovoru'].join('\n');
+  const radky = ['AI Akcelerátor na míru', 'Obor: ' + (S.obor ? OBOR_LABEL[S.obor] : 'nevybrán')];
+  if (S.odd) radky.push('Oddělení: ' + ODD_LABEL[S.odd]);
+  radky.push(items.length ? 'Výběr (' + items.length + '):\n' + items.map(u => '• ' + clean(u.t) + ' (' + ODD_LABEL[u.d] + ')').join('\n')
+    : 'Výběr: nic nevybráno, zeptat se při hovoru');
+  return radky.join('\n');
 }
 function payload(){
   const items = cartItems();
   return { shrnuti: buildSummary(), v: 2, zdroj: 'AI mapa: AI Akcelerátor na míru',
-           obor: S.obor ? OBOR_LABEL[S.obor] : null, obor_id: S.obor, pocet: items.length,
+           obor: S.obor ? OBOR_LABEL[S.obor] : null, obor_id: S.obor,
+           oddeleni: S.odd ? ODD_LABEL[S.odd] : null, oddeleni_id: S.odd, pocet: items.length,
            vyber: items.map(u => ({ id: u.id, nazev: u.t, oddeleni: ODD_LABEL[u.d] })) };
 }
 function syncLead(){ $('#l-zajem').value = JSON.stringify(payload()); renderSales(); }
@@ -244,6 +251,12 @@ document.addEventListener('click', e => {
     $$('#f-obor [data-obor]').forEach(c => c.setAttribute('aria-pressed', String(S.obor === c.dataset.obor)));
     renderGrid(); renderPick(); syncLead(); return;
   }
+  const od = e.target.closest('[data-odd]');
+  if (od){
+    S.odd = S.odd === od.dataset.odd ? null : od.dataset.odd;
+    $$('#f-odd [data-odd]').forEach(c => c.setAttribute('aria-pressed', String(S.odd === c.dataset.odd)));
+    renderGrid(); syncLead(); return;
+  }
   if (e.target.closest('[data-more]')){
     S.all = true; renderGrid();
     const first = $$('#grid [data-pick]')[START.length]; if (first) first.focus({ preventScroll:true });
@@ -258,5 +271,11 @@ document.addEventListener('click', e => {
 });
 $('#lead').addEventListener('submit', submitLead);
 $$('[data-logos]').forEach(ul => { ul.innerHTML = LOGA.map(([n, id, h]) => '<li><img style="--h:' + h + 'px" src="https://cms.lifescale.cz/assets/' + id + '?width=360" alt="' + esc(n) + '"></li>').join(''); });
-renderChips(); renderGrid(); renderBar(); renderPick(); syncLead(); syncBar();
+renderChips();
+// na telefonu se řádek čipů posouvá do strany: šipka napoví, že je v něm víc, a na konci zmizí
+$$('.filter-row').forEach(r => {
+  const c = $('.chips', r), sync = () => r.classList.toggle('at-end', c.scrollLeft + c.clientWidth >= c.scrollWidth - 8);
+  c.addEventListener('scroll', sync, { passive:true }); window.addEventListener('resize', sync); sync();
+});
+renderGrid(); renderBar(); renderPick(); syncLead(); syncBar();
 })();

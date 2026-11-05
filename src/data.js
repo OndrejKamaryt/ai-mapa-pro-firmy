@@ -6,7 +6,7 @@ const OBORY = [
   ['pravo', 'Advokátní kanceláře'], ['jine', 'Jiný obor']
 ];
 const ODDELENI = [
-  ['vse', 'Všechna oddělení'], ['obchod', 'Obchod'], ['marketing', 'Marketing'],
+  ['obchod', 'Obchod'], ['marketing', 'Marketing'],
   ['hr', 'HR a nábor'], ['finance', 'Finance a účetnictví'],
   ['pece', 'Zákaznická péče'], ['provoz', 'Provoz a odborná práce'], ['vedeni', 'Vedení firmy']
 ];

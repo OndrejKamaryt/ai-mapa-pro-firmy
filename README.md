@@ -11,7 +11,7 @@ Lead magnet pro LifeScale Business, dřív „AI mapa pro firmy“. Cílí hlavn
 ## Jak to funguje
 
 1. Úvod s fotkou: „Složte si vlastní AI Akcelerátor na míru“, jedna věta o kurzu, tlačítko „Začít skládat kurz“, ikony „Lze čerpat dotaci Vzdělávání pro firmy“ a „Konzultace zdarma“ a pět log firem (pole `LOGA` v `src/data.js`).
-2. Pod úvodem je jen řádek s obory, výroba je první. Bez vybraného oboru stránka ukáže šest snadných možností, každou z jiného oddělení (pole `START` v `src/app.js`), a tlačítko „Zobrazit všech 42 možností“. Po výběru oboru ukáže všechny možnosti, které k němu patří, seřazené od nejsnazších. Obtížnost ukazuje ikona se třemi sloupečky: snadné mají vyplněný jeden, střední dva.
+2. Pod úvodem jsou dva řádky filtru: obory (výroba je první) a oddělení. Bez vybraného oboru a oddělení stránka ukáže šest snadných možností, každou z jiného oddělení (pole `START` v `src/app.js`), a tlačítko „Zobrazit všech 42 možností“. Po výběru oboru nebo oddělení ukáže všechny možnosti, které k němu patří, seřazené od nejsnazších. Oba filtry platí zároveň. Obtížnost ukazuje ikona se třemi sloupečky: snadné mají vyplněný jeden, střední dva.
 3. Každá karta říká, co možnost přinese a kolik času týdně ušetří, a má jediné tlačítko: „Přidat do výběru“, případně „Odebrat z výběru“. Detail s postupem a pokynem pro AI už stránka nemá.
 4. U spodního okraje je pořád vidět lišta s počtem vybraných možností a tlačítkem „Poslat výběr“, které vede k formuláři. Když je formulář na obrazovce nebo se do něj píše, lišta uhne.
 5. Závěr stránky je tmavá sekce „Pošlete nám výběr a připravíme vám návrh kurzu“: tři krátké body, co se návštěvník na konzultaci dozví, jedna reference a formulář s výběrem, ze kterého jde odebírat. Povinný je jen e-mail a souhlas se zpracováním údajů, jméno, telefon a firma jsou nepovinné. Odeslat jde i prázdný výběr, konzultant ho pak projde s návštěvníkem.
@@ -30,7 +30,7 @@ Otevřete `index.html` v prohlížeči. Stránka nepotřebuje server ani instala
 | `src/head.html` | titulek, popis, odkazy na písma a všechny styly |
 | `src/body.html` | obsah stránky |
 | `src/data.js` | obory, oddělení, loga a všech 42 možností |
-| `src/app.js` | obory a řazení, výběr, lišta, formulář a předání kontaktu webu |
+| `src/app.js` | filtry a řazení, výběr, lišta, formulář a předání kontaktu webu |
 | `build.sh` | složí `src/` do `index.html` a do `dist/artifact.html` pro Claude |
 | `cms/html-blok.html` | HTML blok pro stránku v LifeScale CMS, viz níže |
 | `podklady/postupy.json` | postupy, pokyny pro AI a upozornění ke všem možnostem jako podklad pro návrh kurzu. Na stránce nejsou a do veřejného repozitáře nejdou, soubor je jen v pracovní složce. |
@@ -51,11 +51,13 @@ JSON s obsahem výběru. Jako první je hotové textové shrnutí, které stač�
 
 ```json
 {
-  "shrnuti": "AI Akcelerátor na míru\nObor: Výroba a průmysl\nVýběr (2):\n• Návod ke stroji v jazyce operátora (Provoz a odborná práce)\n• Předávka směny bez zmatků (Provoz a odborná práce)",
+  "shrnuti": "AI Akcelerátor na míru\nObor: Výroba a průmysl\nOddělení: Provoz a odborná práce\nVýběr (2):\n• Návod ke stroji v jazyce operátora (Provoz a odborná práce)\n• Předávka směny bez zmatků (Provoz a odborná práce)",
   "v": 2,
   "zdroj": "AI mapa: AI Akcelerátor na míru",
   "obor": "Výroba a průmysl",
   "obor_id": "vyroba",
+  "oddeleni": "Provoz a odborná práce",
+  "oddeleni_id": "provoz",
   "pocet": 2,
   "vyber": [
     { "id": "vy1", "nazev": "Návod ke stroji v jazyce operátora", "oddeleni": "Provoz a odborná práce" },
@@ -64,7 +66,7 @@ JSON s obsahem výběru. Jako první je hotové textové shrnutí, které stač�
 }
 ```
 
-Bez vybraného oboru je `obor` i `obor_id` `null` a ve shrnutí „Obor: nevybrán“. Prázdný výběr má `pocet` 0 a ve shrnutí „Výběr: nic nevybráno, zeptat se při hovoru“. Postup a pokyn ke každé možnosti najde konzultant podle `id` v `podklady/postupy.json`.
+Bez vybraného oboru je `obor` i `obor_id` `null` a ve shrnutí „Obor: nevybrán“. Bez vybraného oddělení je `oddeleni` i `oddeleni_id` `null` a řádek „Oddělení“ ve shrnutí chybí. Prázdný výběr má `pocet` 0 a ve shrnutí „Výběr: nic nevybráno, zeptat se při hovoru“. Postup a pokyn ke každé možnosti najde konzultant podle `id` v `podklady/postupy.json`.
 
 ## Úprava obsahu
 
@@ -95,7 +97,7 @@ pip install playwright
 PW_CHANNEL=chrome python3 tests/test_flow.py
 ```
 
-Test proklikne obory, rozbalení všech možností, řazení podle obtížnosti, přidání a odebrání na kartě i ve formuláři, lištu, kontrolu formuláře a odeslání. Ve vloženém režimu podstrčí potvrzení od webu LifeScale jednou chybné a jednou úspěšné. Snímky obrazovky uloží do `tests/out/`.
+Test proklikne obory, oddělení, rozbalení všech možností, řazení podle obtížnosti, přidání a odebrání na kartě i ve formuláři, lištu, kontrolu formuláře a odeslání. Ve vloženém režimu podstrčí potvrzení od webu LifeScale jednou chybné a jednou úspěšné. Snímky obrazovky uloží do `tests/out/`.
 
 ## Před ostrým spuštěním
 
