@@ -27,8 +27,7 @@
 }
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
-body{margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 var(--font); -webkit-font-smoothing:antialiased; padding-bottom:calc(var(--bar-h) + env(safe-area-inset-bottom, 0px))}
-body.bar-off{padding-bottom:0}
+body{margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 var(--font); -webkit-font-smoothing:antialiased}
 .wrap{max-width:1180px; margin:0 auto; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px))}
 a{color:var(--blue-ink)}
 p{margin:0}
@@ -214,7 +213,7 @@ form.lead{display:grid; gap:12px}
 .embed .top, .embed .sales{display:none}
 
 /* pohled konzultanta */
-.sales{margin:30px 0 0; border:1.5px dashed #C9D4DB; border-radius:var(--r); padding:16px 18px; background:#FAFCFD}
+.sales{margin:30px 0; border:1.5px dashed #C9D4DB; border-radius:var(--r); padding:16px 18px; background:#FAFCFD}
 .sales summary{cursor:pointer; font-weight:800; list-style:none; display:flex; justify-content:space-between; gap:10px}
 .sales summary::-webkit-details-marker{display:none}
 .sales summary::after{content:"Zobrazit"; font-size:13px; font-weight:700; color:var(--blue-ink)}
@@ -225,7 +224,7 @@ form.lead{display:grid; gap:12px}
 .sales dd{margin:0}
 .sales pre, .sales code{display:block; margin:0; white-space:pre-wrap; word-break:break-word; font:12px/1.5 var(--mono); background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px 10px}
 @media (max-width:560px){ .sales dl{grid-template-columns:minmax(0,1fr)} .sales dd{margin-bottom:8px} }
-.foot{padding:28px 0 32px; font-size:13px; color:var(--muted)}
+.foot{margin:16px 0 0; text-align:center; font-size:13px; color:var(--muted)}
 
 </style>
 </head>
@@ -264,6 +263,7 @@ form.lead{display:grid; gap:12px}
   <div class="res-head"><h2 id="res-title">Z čeho si můžete kurz složit</h2></div>
   <div class="grid" id="grid"></div>
   <div class="more" id="more" hidden><button class="btn btn-ghost" type="button" data-more></button></div>
+  <p class="foot">Odhady úspory času jsou orientační.</p>
 </div>
 
 <section class="send" id="odeslat" aria-labelledby="send-title">
@@ -309,7 +309,6 @@ form.lead{display:grid; gap:12px}
 
 <div class="wrap">
   <details class="sales"><summary><span><span class="int">Jen pro tým LifeScale, návštěvník tuto část neuvidí</span>Pohled konzultanta: co dorazí do Slacku</span></summary><dl id="sales"></dl></details>
-  <p class="foot">Odhady úspory času jsou orientační.</p>
 </div>
 </main>
 
@@ -659,7 +658,6 @@ function syncBar(){
   const bar = $('#bar');
   bar.classList.toggle('is-hidden', hide);
   bar.inert = hide;
-  document.body.classList.toggle('bar-off', S.done);
 }
 function goForm(){
   scrollToEl($('#send-title'));

@@ -210,7 +210,6 @@ function syncBar(){
   const bar = $('#bar');
   bar.classList.toggle('is-hidden', hide);
   bar.inert = hide;
-  document.body.classList.toggle('bar-off', S.done);
 }
 function goForm(){
   scrollToEl($('#send-title'));
