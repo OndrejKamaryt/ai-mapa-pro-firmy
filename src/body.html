@@ -12,12 +12,12 @@
 <section class="hero">
   <div class="wrap hero-in">
     <h1><span class="h1-pre">Složte si vlastní</span> <span class="h1-name"><span class="nowrap">AI Akcelerátor</span> na míru</span></h1>
-    <p class="lede">Náš nejprodávanější kurz pro firmy. Vaši lidé se naučí používat AI na své každodenní práci a každý ušetří čas v řádu dní měsíčně. Kurz skládáme z konkrétních úkolů vaší firmy, takže je pro každou jiný.</p>
+    <p class="lede">Náš nejprodávanější kurz. Každé firmě ho skládáme z jejích konkrétních úkolů.</p>
     <div class="hero-cta">
       <button class="btn btn-primary btn-lg" type="button" data-start>Začít skládat kurz</button>
       <div class="perks">
         <p class="perk"><span class="coin" aria-hidden="true">Kč</span><span><b>Lze čerpat dotaci</b>Vzdělávání pro firmy</span></p>
-        <p class="perk"><span class="coin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span><span><b>Konzultace zdarma</b>i návrh kurzu na míru</span></p>
+        <p class="perk"><span class="coin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span><span><b>Konzultace zdarma</b></span></p>
       </div>
     </div>
     <div class="trust">
@@ -37,31 +37,30 @@
 <section class="send" id="odeslat" aria-labelledby="send-title">
   <div class="wrap send-grid">
     <div class="send-intro">
-      <h2 id="send-title" tabindex="-1">Konzultace a návrh kurzu máte od nás zdarma</h2>
-      <p>Společně projdeme, kde vašim lidem AI ušetří nejvíc času a co z toho do kurzu zařadit.</p>
+      <h2 id="send-title" tabindex="-1">Pošlete nám výběr a připravíme vám návrh kurzu</h2>
+      <p>Konzultace i návrh jsou zdarma. Dozvíte se:</p>
       <ul class="gains">
-        <li>Zjistíte, kolik času a peněz vám dnes uniká</li>
-        <li>Získáte jasný plán využití AI a návrh kurzu pro vaši firmu</li>
-        <li>Dozvíte se, jak náklady pokrýt dotací, se žádostí vám pomůžeme</li>
+        <li>kde vám AI ušetří nejvíc času</li>
+        <li>jak by vypadal kurz pro vaši firmu</li>
+        <li>jak na něj získat dotaci</li>
       </ul>
     </div>
 
     <div class="send-box" id="send-box">
       <div id="send-form">
-        <h3 class="form-title" id="form-title">Pošlete nám výběr a připravíme vám návrh kurzu</h3>
         <div class="pick" id="pick"></div>
-        <form class="lead" id="lead" novalidate aria-labelledby="form-title">
-          <div class="field"><label for="l-email">Firemní e-mail</label><input id="l-email" type="email" autocomplete="email" placeholder="jana.novakova@firma.cz" required aria-describedby="l-err"></div>
-          <div class="row2">
-            <div class="field"><label for="l-name">Jméno a příjmení <span class="opt">nepovinné</span></label><input id="l-name" type="text" autocomplete="name" placeholder="Jana Nováková"></div>
-            <div class="field"><label for="l-phone">Telefon <span class="opt">nepovinné</span></label><input id="l-phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+420 777 123 456" aria-describedby="l-err"></div>
+        <form class="lead" id="lead" novalidate aria-labelledby="send-title">
+          <div class="fields">
+            <div class="field"><label for="l-email">Firemní e-mail</label><input id="l-email" type="email" autocomplete="email" required aria-describedby="l-err"></div>
+            <div class="field"><label for="l-phone">Telefon <span class="opt">nepovinné</span></label><input id="l-phone" type="tel" autocomplete="tel" inputmode="tel" aria-describedby="l-err"></div>
+            <div class="field"><label for="l-name">Jméno <span class="opt">nepovinné</span></label><input id="l-name" type="text" autocomplete="name"></div>
+            <div class="field"><label for="l-firm">Firma <span class="opt">nepovinné</span></label><input id="l-firm" type="text" autocomplete="organization"></div>
           </div>
-          <div class="field"><label for="l-firm">Firma <span class="opt">nepovinné</span></label><input id="l-firm" type="text" autocomplete="organization" placeholder="Firma s.r.o."></div>
           <input type="hidden" id="l-zajem" name="zajem" value="">
-          <label class="check"><input type="checkbox" id="l-consent" aria-describedby="l-err"><span>Souhlasím se <a href="https://business.lifescale.cz/cz/pages/gdpr-business" target="_blank" rel="noopener">zpracováním osobních údajů</a>, aby se mi konzultant LifeScale mohl ozvat s návrhem kurzu.</span></label>
+          <label class="check"><input type="checkbox" id="l-consent" aria-describedby="l-err"><span>Souhlasím s <a href="https://business.lifescale.cz/cz/pages/gdpr-business" target="_blank" rel="noopener">podmínkami zpracování osobních údajů</a></span></label>
           <p class="err" id="l-err" hidden></p>
           <button class="btn btn-primary btn-lg btn-block" type="submit" id="l-submit">Chci konzultaci a návrh kurzu zdarma</button>
-          <p class="soft center">Nezávazné. Ozve se vám konzultant LifeScale.</p>
+          <p class="soft center">Nezávazné. Ozve se vám konzultant.</p>
         </form>
       </div>
       <div class="done" id="lead-ok" hidden></div>
@@ -69,30 +68,22 @@
 
     <div class="send-quotes">
       <figure class="quote">
-        <blockquote>„Před začátkem jsme přesně nevěděli, jak v naší firmě téma AI a automatizace uchopit. Kurz nám pomohl se zorientovat, nastavit směr a začít AI reálně používat.“</blockquote>
-        <figcaption><img class="face" loading="lazy" src="https://cms.lifescale.cz/assets/be53d7d7-02c5-4117-be0a-f2b008976be0?width=120&height=120&fit=cover&quality=75&format=webp" alt=""><span><b>Ing. Petr Szuścik</b>Jednatel, Systemotronic</span></figcaption>
+        <blockquote>„Od prvního hovoru bylo fajn vidět, že to není jen prodejní schůzka - chtěli pochopit, jak u nás fungujeme.“</blockquote>
+        <figcaption><img class="face" loading="lazy" src="https://cms.lifescale.cz/assets/e6c9b6d6-290e-4d60-a533-eac58b5c8c44?width=120&height=120&fit=cover&quality=75&format=webp" alt=""><span><b>Bc. Karel Kunzmann</b>Majitel, Kunzmann Cables</span></figcaption>
       </figure>
-      <figure class="quote">
-        <blockquote>„Od prvního hovoru bylo fajn vidět, že to není jen prodejní schůzka - chtěli pochopit, jak u nás fungujeme. A pak se podle toho zařídili i v kurzu.“</blockquote>
-        <figcaption><img class="face" loading="lazy" src="https://cms.lifescale.cz/assets/e6c9b6d6-290e-4d60-a533-eac58b5c8c44?width=120&height=120&fit=cover&quality=75&format=webp" alt=""><span><b>Bc. Karel Kunzmann</b>Majitel a výkonný ředitel, Kunzmann Cables</span></figcaption>
-      </figure>
-      <div class="trust">
-        <p>Firmy, které s námi spolupracují</p>
-        <ul class="logos" data-logos></ul>
-      </div>
     </div>
   </div>
 </section>
 
 <div class="wrap">
   <details class="sales"><summary><span><span class="int">Jen pro tým LifeScale, návštěvník tuto část neuvidí</span>Pohled konzultanta: co dorazí do Slacku</span></summary><dl id="sales"></dl></details>
-  <p class="foot">Odhady úspory času jsou orientační a vycházejí z toho, jak dlouho úkoly obvykle trvají bez AI a s ní.</p>
+  <p class="foot">Odhady úspory času jsou orientační.</p>
 </div>
 </main>
 
 <div class="bar" id="bar">
   <div class="wrap bar-in">
-    <p class="bar-t"><b id="bar-n">Zatím nic nevybráno</b><span class="bar-names" id="bar-names"></span></p>
+    <p class="bar-t"><b id="bar-n">Zatím nic nevybráno</b></p>
     <button class="btn btn-primary" type="button" data-go>Poslat výběr</button>
   </div>
 </div>

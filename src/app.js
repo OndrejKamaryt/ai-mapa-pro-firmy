@@ -92,16 +92,14 @@ function vyberN(n){ return n + ' ' + moznost(n); }
 function renderBar(){
   const items = cartItems(), n = items.length;
   $('#bar-n').textContent = n ? 'Váš výběr: ' + vyberN(n) : 'Zatím nic nevybráno';
-  $('#bar-names').textContent = n ? items.map(u => u.t).join(', ') : 'Přidejte možnosti a získejte návrh kurzu zdarma.';
 }
 function renderPick(){
   const items = cartItems();
-  const obor = S.obor ? '<p class="pick-obor">Obor: ' + esc(OBOR_LABEL[S.obor]) + '</p>' : '';
   $('#pick').innerHTML = items.length
     ? '<h3 class="pick-h">Váš výběr (' + items.length + ')</h3><ul class="pick-list">' + items.map(u =>
-        '<li data-id="' + u.id + '"><span><b>' + esc(u.t) + '</b><small>' + esc(ODD_LABEL[u.d]) + '</small></span>' +
-        '<button class="linkish" type="button" data-unpick="' + u.id + '">Odebrat<span class="sr-only">: ' + esc(u.t) + '</span></button></li>').join('') + '</ul>' + obor
-    : '<p class="pick-empty" id="pick-empty" tabindex="-1">Zatím nemáte nic vybráno. Můžete poslat jen kontakt, konzultant s vámi projde, s čím by AI vašim lidem pomohla.</p>' + obor;
+        '<li data-id="' + u.id + '"><span>' + esc(u.t) + '</span>' +
+        '<button class="x-btn" type="button" data-unpick="' + u.id + '" aria-label="Odebrat: ' + esc(u.t) + '" title="Odebrat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></li>').join('') + '</ul>'
+    : '<p class="pick-empty" id="pick-empty" tabindex="-1">Zatím nic nevybráno. Nevadí, vyberete to s konzultantem.</p>';
 }
 function toggle(id){
   const u = byId(id); if (!u || S.done) return;
@@ -193,14 +191,11 @@ function renderDone(){
   $('#send-form').hidden = true;
   document.querySelector('main').classList.add('is-sent');
   const items = cartItems(), L = S.lead;
-  const kam = 'na e-mail ' + esc(L.email) + (L.phone ? ' nebo na telefon ' + esc(L.phone) : '');
+  const kam = esc(L.email) + (L.phone ? ' nebo ' + esc(L.phone) : '');
   const box = $('#lead-ok'); box.hidden = false;
   box.innerHTML = '<h2 class="done-t" id="done-t" tabindex="-1">' + ICON_OK + 'Děkujeme, výběr máme</h2>' +
-    '<p>' + (items.length ? 'Konzultant LifeScale si ho projde a ozve se vám s návrhem kurzu ' + kam + '.'
-                          : 'Konzultant LifeScale se vám ozve ' + kam + ' a společně projdete, s čím by AI vašim lidem pomohla.') + '</p>' +
-    (items.length ? '<h3 class="pick-h">Co jste nám poslali</h3><ul class="pick-list sent">' + items.map(u =>
-      '<li><span><b>' + esc(u.t) + '</b><small>' + esc(ODD_LABEL[u.d]) + '</small></span></li>').join('') + '</ul>' : '') +
-    (S.obor ? '<p class="pick-obor">Obor: ' + esc(OBOR_LABEL[S.obor]) + '</p>' : '') +
+    '<p>' + (items.length ? 'Ozveme se vám s návrhem kurzu na ' + kam + '.' : 'Ozveme se vám na ' + kam + ' a kurz složíme spolu.') + '</p>' +
+    (items.length ? '<ul class="pick-list sent">' + items.map(u => '<li><span>' + esc(u.t) + '</span></li>').join('') + '</ul>' : '') +
     '<p class="soft">Chcete to probrat hned? <a href="' + CALENDLY + '" target="_blank" rel="noopener">Rezervujte si konzultaci</a>.</p>' +
     (EMBED ? '' : '<p class="soft preview">Náhled pro tým: stránka není vložená na web LifeScale, kontakt se nikam neodeslal.</p>');
   scrollToEl($('#send-box'));

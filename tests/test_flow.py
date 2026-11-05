@@ -58,8 +58,8 @@ async def main():
         ok['nadpis s AI Akcelerátorem'] = 'AI Akcelerátor' in norm(await pg.inner_text('h1'))
         hero = norm(await pg.inner_text('.hero'))
         ok['dotace a konzultace zdarma v úvodu'] = 'Lze čerpat dotaci' in hero and 'Konzultace zdarma' in hero
-        ok['loga v úvodu i u formuláře'] = await pg.locator('.hero .logos img').count() == 7 and await pg.locator('.send-quotes .logos img').count() == 7
-        ok['reference u formuláře'] = await pg.locator('.send-quotes .quote').count() == 2
+        ok['loga jen v úvodu'] = await pg.locator('.hero .logos img').count() == 5 and await pg.locator('.send .logos img').count() == 0
+        ok['jedna reference u formuláře'] = await pg.locator('.send-quotes .quote').count() == 1
         await pg.click('[data-start]'); await pg.wait_for_timeout(900)
         ok['tlačítko v úvodu vede k oborům'] = await pg.evaluate("document.activeElement.dataset.obor") == 'vyroba'
         ok['6 karet a tlačítko pro všechny'] = await pg.locator('.uc').count() == 6 and await pg.is_visible('#more')

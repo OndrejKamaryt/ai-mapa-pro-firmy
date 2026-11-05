@@ -22,7 +22,7 @@
   --mono:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --r:16px; --r-sm:10px;
   --shadow:0 6px 24px rgba(16, 52, 84, .08);
-  --bar-h:72px;
+  --bar-h:64px;
   color-scheme: light;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -60,7 +60,7 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .linkish{background:none; border:0; padding:6px 0; font:600 14px var(--font); color:var(--blue-ink); cursor:pointer; text-decoration:underline; text-underline-offset:3px}
 
 /* úvod: fotka z webu LifeScale s tmavým přechodem, jako hlavičky stránek webu */
-.hero{position:relative; overflow:hidden; color:#fff; padding:56px 0 88px; background:#0B3460 url("https://cms.lifescale.cz/assets/0bef6855-0b73-4e5a-b731-7e51b3e7ce15?width=1800&quality=72&format=webp") center/cover no-repeat}
+.hero{position:relative; overflow:hidden; color:#fff; padding:60px 0 92px; background:#0B3460 url("https://cms.lifescale.cz/assets/0bef6855-0b73-4e5a-b731-7e51b3e7ce15?width=1800&quality=72&format=webp") center/cover no-repeat}
 .hero::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(4,20,40,.78) 0%, rgba(4,20,40,.55) 48%, rgba(4,20,40,.12) 82%), linear-gradient(0deg, rgba(4,20,40,.62) 0%, rgba(4,20,40,0) 38%); pointer-events:none}
 .hero-in{position:relative; z-index:1}
 .hero h1{font-weight:800; letter-spacing:-.03em; color:#fff; max-width:980px}
@@ -150,19 +150,15 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .send-intro h2{font-size:clamp(30px,3.7vw,46px); line-height:1.08; font-weight:800; letter-spacing:-.03em; color:#fff}
 .send-intro h2:focus{outline:0}
 .send-intro > p{font-size:18px; line-height:1.5; color:rgba(255,255,255,.9); margin-top:14px; max-width:46ch}
-.gains{list-style:none; margin:20px 0 0; padding:0; display:grid; gap:10px; font-size:16px; font-weight:600; line-height:1.4}
+.gains{list-style:none; margin:12px 0 0; padding:0; display:grid; gap:10px; font-size:17px; font-weight:600; line-height:1.35}
 .gains li{display:flex; gap:10px; align-items:flex-start}
 .gains li::before{content:""; width:22px; height:22px; flex:none; border-radius:50%; background:var(--blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/13px no-repeat}
-.send-quotes{display:grid; gap:24px; padding-top:28px; border-top:1px solid rgba(255,255,255,.2)}
+.send-quotes{padding-top:26px; border-top:1px solid rgba(255,255,255,.2)}
 .quote{margin:0}
 .quote blockquote{margin:0; font-size:16px; line-height:1.55; color:#fff}
 .quote figcaption{display:flex; align-items:center; gap:12px; margin-top:12px; font-size:13px; line-height:1.3; color:rgba(255,255,255,.8)}
 .quote figcaption b{display:block; font-size:14px; color:#fff}
 .face{width:46px; height:46px; flex:none; border-radius:50%; object-fit:cover; background:#1B4A7E}
-.send-quotes .trust{margin-top:2px}
-.send-quotes .logos{gap:12px 26px}
-.send-quotes .logos img{height:calc(var(--h, 26px) * .8)}
-.form-title{font-size:clamp(22px,2.2vw,26px); line-height:1.18; font-weight:800; letter-spacing:-.02em}
 .done-t{font-size:clamp(24px,2.6vw,30px); line-height:1.15; font-weight:800; letter-spacing:-.025em}
 .done-t:focus{outline:0}
 @media (max-width:980px){
@@ -171,18 +167,17 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
   .send-intro, .send-box, .send-quotes{grid-column:1; grid-row:auto}
 }
 @media (max-width:560px){ .send-box{padding:22px 16px; border-radius:16px} .send-intro > p{font-size:16px} }
-.pick{margin:18px 0 20px}
+.pick{margin:0 0 18px}
 .pick-h{font-size:15px; font-weight:800; margin-bottom:6px}
 .pick-list{list-style:none; margin:0; padding:0; border-top:1px solid var(--line)}
-.pick-list li{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:9px 0; border-bottom:1px solid var(--line)}
-.pick-list b{display:block; font-size:15px; line-height:1.35}
-.pick-list small{display:block; font-size:13px; color:var(--muted)}
-.pick-list .linkish{flex:none}
-.pick-obor{font-size:14px; color:var(--muted); margin-top:8px}
+.pick-list li{display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:44px; padding:5px 0; border-bottom:1px solid var(--line); font-size:15px; font-weight:600; line-height:1.3}
+.x-btn{flex:none; width:36px; height:36px; display:grid; place-items:center; border:0; border-radius:50%; background:none; color:var(--muted); cursor:pointer; margin-right:-8px}
+.x-btn:hover{background:var(--blue-wash); color:var(--ink)}
+.x-btn svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round}
 .pick-empty{font-size:15px; color:var(--muted); background:var(--blue-wash); border-radius:12px; padding:12px 14px}
 .pick-empty:focus{outline:2px solid var(--blue); outline-offset:2px}
-.row2{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px}
-@media (max-width:480px){ .row2{grid-template-columns:minmax(0,1fr)} }
+.fields{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px}
+@media (max-width:480px){ .fields{grid-template-columns:minmax(0,1fr)} }
 .opt{font-weight:500; color:var(--muted); font-size:13px; margin-left:4px}
 .field{display:grid; gap:6px}
 .field label{font-weight:700; font-size:14px}
@@ -206,15 +201,12 @@ form.lead{display:grid; gap:12px}
 .bar{position:fixed; left:0; right:0; bottom:0; z-index:40; background:#fff; border-top:1px solid var(--line); box-shadow:0 -6px 20px rgba(32,16,11,.08); padding-bottom:env(safe-area-inset-bottom, 0px); transition:transform .2s ease, visibility .2s}
 .bar.is-hidden{transform:translateY(110%); visibility:hidden}
 .bar-in{display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:var(--bar-h); padding-top:10px; padding-bottom:10px}
-.bar-t{min-width:0; display:grid; line-height:1.3}
 .bar-t b{font-size:16px}
-.bar-names{font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .bar .btn{flex:none}
 @media (max-width:560px){
   :root{--bar-h:64px}
   .bar-in{gap:10px}
   .bar-t b{font-size:15px}
-  .bar-names{display:none}
   .bar .btn{padding:10px 18px}
 }
 
@@ -252,12 +244,12 @@ form.lead{display:grid; gap:12px}
 <section class="hero">
   <div class="wrap hero-in">
     <h1><span class="h1-pre">Složte si vlastní</span> <span class="h1-name"><span class="nowrap">AI Akcelerátor</span> na míru</span></h1>
-    <p class="lede">Náš nejprodávanější kurz pro firmy. Vaši lidé se naučí používat AI na své každodenní práci a každý ušetří čas v řádu dní měsíčně. Kurz skládáme z konkrétních úkolů vaší firmy, takže je pro každou jiný.</p>
+    <p class="lede">Náš nejprodávanější kurz. Každé firmě ho skládáme z jejích konkrétních úkolů.</p>
     <div class="hero-cta">
       <button class="btn btn-primary btn-lg" type="button" data-start>Začít skládat kurz</button>
       <div class="perks">
         <p class="perk"><span class="coin" aria-hidden="true">Kč</span><span><b>Lze čerpat dotaci</b>Vzdělávání pro firmy</span></p>
-        <p class="perk"><span class="coin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span><span><b>Konzultace zdarma</b>i návrh kurzu na míru</span></p>
+        <p class="perk"><span class="coin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span><span><b>Konzultace zdarma</b></span></p>
       </div>
     </div>
     <div class="trust">
@@ -277,31 +269,30 @@ form.lead{display:grid; gap:12px}
 <section class="send" id="odeslat" aria-labelledby="send-title">
   <div class="wrap send-grid">
     <div class="send-intro">
-      <h2 id="send-title" tabindex="-1">Konzultace a návrh kurzu máte od nás zdarma</h2>
-      <p>Společně projdeme, kde vašim lidem AI ušetří nejvíc času a co z toho do kurzu zařadit.</p>
+      <h2 id="send-title" tabindex="-1">Pošlete nám výběr a připravíme vám návrh kurzu</h2>
+      <p>Konzultace i návrh jsou zdarma. Dozvíte se:</p>
       <ul class="gains">
-        <li>Zjistíte, kolik času a peněz vám dnes uniká</li>
-        <li>Získáte jasný plán využití AI a návrh kurzu pro vaši firmu</li>
-        <li>Dozvíte se, jak náklady pokrýt dotací, se žádostí vám pomůžeme</li>
+        <li>kde vám AI ušetří nejvíc času</li>
+        <li>jak by vypadal kurz pro vaši firmu</li>
+        <li>jak na něj získat dotaci</li>
       </ul>
     </div>
 
     <div class="send-box" id="send-box">
       <div id="send-form">
-        <h3 class="form-title" id="form-title">Pošlete nám výběr a připravíme vám návrh kurzu</h3>
         <div class="pick" id="pick"></div>
-        <form class="lead" id="lead" novalidate aria-labelledby="form-title">
-          <div class="field"><label for="l-email">Firemní e-mail</label><input id="l-email" type="email" autocomplete="email" placeholder="jana.novakova@firma.cz" required aria-describedby="l-err"></div>
-          <div class="row2">
-            <div class="field"><label for="l-name">Jméno a příjmení <span class="opt">nepovinné</span></label><input id="l-name" type="text" autocomplete="name" placeholder="Jana Nováková"></div>
-            <div class="field"><label for="l-phone">Telefon <span class="opt">nepovinné</span></label><input id="l-phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+420 777 123 456" aria-describedby="l-err"></div>
+        <form class="lead" id="lead" novalidate aria-labelledby="send-title">
+          <div class="fields">
+            <div class="field"><label for="l-email">Firemní e-mail</label><input id="l-email" type="email" autocomplete="email" required aria-describedby="l-err"></div>
+            <div class="field"><label for="l-phone">Telefon <span class="opt">nepovinné</span></label><input id="l-phone" type="tel" autocomplete="tel" inputmode="tel" aria-describedby="l-err"></div>
+            <div class="field"><label for="l-name">Jméno <span class="opt">nepovinné</span></label><input id="l-name" type="text" autocomplete="name"></div>
+            <div class="field"><label for="l-firm">Firma <span class="opt">nepovinné</span></label><input id="l-firm" type="text" autocomplete="organization"></div>
           </div>
-          <div class="field"><label for="l-firm">Firma <span class="opt">nepovinné</span></label><input id="l-firm" type="text" autocomplete="organization" placeholder="Firma s.r.o."></div>
           <input type="hidden" id="l-zajem" name="zajem" value="">
-          <label class="check"><input type="checkbox" id="l-consent" aria-describedby="l-err"><span>Souhlasím se <a href="https://business.lifescale.cz/cz/pages/gdpr-business" target="_blank" rel="noopener">zpracováním osobních údajů</a>, aby se mi konzultant LifeScale mohl ozvat s návrhem kurzu.</span></label>
+          <label class="check"><input type="checkbox" id="l-consent" aria-describedby="l-err"><span>Souhlasím s <a href="https://business.lifescale.cz/cz/pages/gdpr-business" target="_blank" rel="noopener">podmínkami zpracování osobních údajů</a></span></label>
           <p class="err" id="l-err" hidden></p>
           <button class="btn btn-primary btn-lg btn-block" type="submit" id="l-submit">Chci konzultaci a návrh kurzu zdarma</button>
-          <p class="soft center">Nezávazné. Ozve se vám konzultant LifeScale.</p>
+          <p class="soft center">Nezávazné. Ozve se vám konzultant.</p>
         </form>
       </div>
       <div class="done" id="lead-ok" hidden></div>
@@ -309,30 +300,22 @@ form.lead{display:grid; gap:12px}
 
     <div class="send-quotes">
       <figure class="quote">
-        <blockquote>„Před začátkem jsme přesně nevěděli, jak v naší firmě téma AI a automatizace uchopit. Kurz nám pomohl se zorientovat, nastavit směr a začít AI reálně používat.“</blockquote>
-        <figcaption><img class="face" loading="lazy" src="https://cms.lifescale.cz/assets/be53d7d7-02c5-4117-be0a-f2b008976be0?width=120&height=120&fit=cover&quality=75&format=webp" alt=""><span><b>Ing. Petr Szuścik</b>Jednatel, Systemotronic</span></figcaption>
+        <blockquote>„Od prvního hovoru bylo fajn vidět, že to není jen prodejní schůzka - chtěli pochopit, jak u nás fungujeme.“</blockquote>
+        <figcaption><img class="face" loading="lazy" src="https://cms.lifescale.cz/assets/e6c9b6d6-290e-4d60-a533-eac58b5c8c44?width=120&height=120&fit=cover&quality=75&format=webp" alt=""><span><b>Bc. Karel Kunzmann</b>Majitel, Kunzmann Cables</span></figcaption>
       </figure>
-      <figure class="quote">
-        <blockquote>„Od prvního hovoru bylo fajn vidět, že to není jen prodejní schůzka - chtěli pochopit, jak u nás fungujeme. A pak se podle toho zařídili i v kurzu.“</blockquote>
-        <figcaption><img class="face" loading="lazy" src="https://cms.lifescale.cz/assets/e6c9b6d6-290e-4d60-a533-eac58b5c8c44?width=120&height=120&fit=cover&quality=75&format=webp" alt=""><span><b>Bc. Karel Kunzmann</b>Majitel a výkonný ředitel, Kunzmann Cables</span></figcaption>
-      </figure>
-      <div class="trust">
-        <p>Firmy, které s námi spolupracují</p>
-        <ul class="logos" data-logos></ul>
-      </div>
     </div>
   </div>
 </section>
 
 <div class="wrap">
   <details class="sales"><summary><span><span class="int">Jen pro tým LifeScale, návštěvník tuto část neuvidí</span>Pohled konzultanta: co dorazí do Slacku</span></summary><dl id="sales"></dl></details>
-  <p class="foot">Odhady úspory času jsou orientační a vycházejí z toho, jak dlouho úkoly obvykle trvají bez AI a s ní.</p>
+  <p class="foot">Odhady úspory času jsou orientační.</p>
 </div>
 </main>
 
 <div class="bar" id="bar">
   <div class="wrap bar-in">
-    <p class="bar-t"><b id="bar-n">Zatím nic nevybráno</b><span class="bar-names" id="bar-names"></span></p>
+    <p class="bar-t"><b id="bar-n">Zatím nic nevybráno</b></p>
     <button class="btn btn-primary" type="button" data-go>Poslat výběr</button>
   </div>
 </div>
@@ -358,8 +341,7 @@ const LEVEL = { s:'Snadné', m:'Střední' };
 /* loga z bloku „Firmy, které s námi spolupracují“ na webu LifeScale: název, soubor v CMS, výška v px */
 const LOGA = [
   ['Toyota Financial Services', '8802cfca-e538-4205-bfe2-1b3d1be90388', 30], ['Solodoor', '28d97156-0c2a-44f2-b473-6b72b33f8de1', 26],
-  ['Kunzmann', '49351863-1fc9-47fb-9dc4-b9610d8b2397', 26], ['Systemotronic', '856cf58e-cda7-4dd8-91b4-60ad1683ec24', 24],
-  ['Colas', '190e5e04-02dc-4644-aa4a-8d25199a14c1', 26], ['Tchibo', '121990d9-6bd2-4a25-b532-a3f9b64a2414', 34],
+  ['Kunzmann', '49351863-1fc9-47fb-9dc4-b9610d8b2397', 26], ['Colas', '190e5e04-02dc-4644-aa4a-8d25199a14c1', 26],
   ['Accenture', 'dc6bbda4-8421-4c81-8104-01467aed29ed', 28]
 ];
 
@@ -559,16 +541,14 @@ function vyberN(n){ return n + ' ' + moznost(n); }
 function renderBar(){
   const items = cartItems(), n = items.length;
   $('#bar-n').textContent = n ? 'Váš výběr: ' + vyberN(n) : 'Zatím nic nevybráno';
-  $('#bar-names').textContent = n ? items.map(u => u.t).join(', ') : 'Přidejte možnosti a získejte návrh kurzu zdarma.';
 }
 function renderPick(){
   const items = cartItems();
-  const obor = S.obor ? '<p class="pick-obor">Obor: ' + esc(OBOR_LABEL[S.obor]) + '</p>' : '';
   $('#pick').innerHTML = items.length
     ? '<h3 class="pick-h">Váš výběr (' + items.length + ')</h3><ul class="pick-list">' + items.map(u =>
-        '<li data-id="' + u.id + '"><span><b>' + esc(u.t) + '</b><small>' + esc(ODD_LABEL[u.d]) + '</small></span>' +
-        '<button class="linkish" type="button" data-unpick="' + u.id + '">Odebrat<span class="sr-only">: ' + esc(u.t) + '</span></button></li>').join('') + '</ul>' + obor
-    : '<p class="pick-empty" id="pick-empty" tabindex="-1">Zatím nemáte nic vybráno. Můžete poslat jen kontakt, konzultant s vámi projde, s čím by AI vašim lidem pomohla.</p>' + obor;
+        '<li data-id="' + u.id + '"><span>' + esc(u.t) + '</span>' +
+        '<button class="x-btn" type="button" data-unpick="' + u.id + '" aria-label="Odebrat: ' + esc(u.t) + '" title="Odebrat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></li>').join('') + '</ul>'
+    : '<p class="pick-empty" id="pick-empty" tabindex="-1">Zatím nic nevybráno. Nevadí, vyberete to s konzultantem.</p>';
 }
 function toggle(id){
   const u = byId(id); if (!u || S.done) return;
@@ -660,14 +640,11 @@ function renderDone(){
   $('#send-form').hidden = true;
   document.querySelector('main').classList.add('is-sent');
   const items = cartItems(), L = S.lead;
-  const kam = 'na e-mail ' + esc(L.email) + (L.phone ? ' nebo na telefon ' + esc(L.phone) : '');
+  const kam = esc(L.email) + (L.phone ? ' nebo ' + esc(L.phone) : '');
   const box = $('#lead-ok'); box.hidden = false;
   box.innerHTML = '<h2 class="done-t" id="done-t" tabindex="-1">' + ICON_OK + 'Děkujeme, výběr máme</h2>' +
-    '<p>' + (items.length ? 'Konzultant LifeScale si ho projde a ozve se vám s návrhem kurzu ' + kam + '.'
-                          : 'Konzultant LifeScale se vám ozve ' + kam + ' a společně projdete, s čím by AI vašim lidem pomohla.') + '</p>' +
-    (items.length ? '<h3 class="pick-h">Co jste nám poslali</h3><ul class="pick-list sent">' + items.map(u =>
-      '<li><span><b>' + esc(u.t) + '</b><small>' + esc(ODD_LABEL[u.d]) + '</small></span></li>').join('') + '</ul>' : '') +
-    (S.obor ? '<p class="pick-obor">Obor: ' + esc(OBOR_LABEL[S.obor]) + '</p>' : '') +
+    '<p>' + (items.length ? 'Ozveme se vám s návrhem kurzu na ' + kam + '.' : 'Ozveme se vám na ' + kam + ' a kurz složíme spolu.') + '</p>' +
+    (items.length ? '<ul class="pick-list sent">' + items.map(u => '<li><span>' + esc(u.t) + '</span></li>').join('') + '</ul>' : '') +
     '<p class="soft">Chcete to probrat hned? <a href="' + CALENDLY + '" target="_blank" rel="noopener">Rezervujte si konzultaci</a>.</p>' +
     (EMBED ? '' : '<p class="soft preview">Náhled pro tým: stránka není vložená na web LifeScale, kontakt se nikam neodeslal.</p>');
   scrollToEl($('#send-box'));
