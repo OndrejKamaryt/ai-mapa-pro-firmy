@@ -67,6 +67,7 @@ async def main():
         ok['bez sekce kurzu a PDF'] = await pg.locator('#kurz, #mods, .subsidy, .virt').count() == 0
         ok['výroba je první obor'] = await pg.get_attribute('#f-obor .chip >> nth=0', 'data-obor') == 'vyroba'
         ok['lišta je vidět hned'] = await pg.is_visible('#bar') and norm(await pg.inner_text('#bar-n')) == 'Zatím nic nevybráno'
+        ok['krátký návod nad filtrem'] = norm(await pg.inner_text('.filter-hint')).startswith('Vyberte si obor a oddělení')
         ok['řada oddělení'] = await pg.locator('#f-odd .chip').count() == 7 and await pg.get_attribute('#f-odd .chip >> nth=0', 'data-odd') == 'obchod'
         await pg.click('[data-odd="provoz"]'); await pg.wait_for_timeout(150)
         d = await pg.eval_on_selector_all('.uc .dept', 'els => els.map(e => e.textContent)')

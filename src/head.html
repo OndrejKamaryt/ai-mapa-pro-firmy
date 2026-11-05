@@ -88,6 +88,7 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 
 /* obory a oddělení */
 .filters{position:relative; z-index:2; background:#fff; border-radius:var(--r); box-shadow:var(--shadow); padding:16px 20px; margin-top:-34px; display:grid; grid-template-columns:minmax(0,1fr); gap:10px}
+.filter-hint{margin:0 0 2px; font-size:16px; font-weight:700; line-height:1.35}
 .filter-row{display:grid; grid-template-columns:68px minmax(0,1fr); gap:10px; align-items:start}
 .filter-l{font-size:13px; font-weight:700; line-height:40px; color:var(--muted)}
 .chips{display:flex; flex-wrap:wrap; gap:6px}
@@ -96,6 +97,7 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .chip[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:#fff}
 @media (max-width:720px){
   .filters{padding:12px 0 12px 12px; border-radius:var(--r-sm); gap:8px}
+  .filter-hint{padding-right:12px; font-size:15px}
   .filter-row{display:block; position:relative}
   .filter-l{display:block; line-height:1.4; margin-bottom:6px}
   .filter-row::after{content:""; position:absolute; right:6px; bottom:6px; width:28px; height:28px; border-radius:50%; box-shadow:0 1px 5px rgba(32,16,11,.18); pointer-events:none; transition:opacity .15s;
