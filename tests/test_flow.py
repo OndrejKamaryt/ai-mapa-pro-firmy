@@ -3,7 +3,7 @@
 Spuštění z kořene repozitáře:
     python3 tests/test_flow.py  # volitelně: cesta k HTML a složka pro výstupy
 
-Skript proklikne obory, oddělení, šest úvodních možností a rozbalení všech, přidání a odebrání z výběru, lištu,
+Skript proklikne filtr oborů a oddělení, šest úvodních možností a rozbalení všech, přidání a odebrání z výběru, lištu,
 formulář a odeslání. Odeslání zkouší i ve vloženém režimu: stránku otevře v iframe a potvrzení od webu
 LifeScale podstrčí sám, jednou úspěšné a jednou chybné. Fotku a písma z internetu zablokuje, takže běží
 i bez sítě. Snímky obrazovky uloží do tests/out/.
@@ -54,42 +54,50 @@ async def main():
 
         # telefon, samostatná stránka
         ctx, pg, f, errs = await setup(b, 390, 844, 2)
+        async def pick(pole, skupina, k):
+            await pg.click('#' + skupina + ' summary'); await pg.click('[data-' + pole + '="' + k + '"]'); await pg.wait_for_timeout(200)
         await pg.screenshot(path=f'{OUT}/m-start.png')
         ok['nadpis s AI Akcelerátorem'] = 'AI Akcelerátor' in norm(await pg.inner_text('h1'))
         hero = norm(await pg.inner_text('.hero'))
         ok['dotace a konzultace zdarma v úvodu'] = 'Lze čerpat dotaci' in hero and 'Konzultace zdarma' in hero
-        ok['loga jen v úvodu'] = await pg.locator('.hero .logos img').count() == 5 and await pg.locator('.send .logos img').count() == 0
+        ok['nadpis v jedné velikosti'] = await pg.locator('h1 span.h1-pre, h1 span.h1-name').count() == 0
+        ok['text tlačítka v úvodu'] = norm(await pg.inner_text('[data-start]')) == 'Složte si kurz na míru'
+        ok['loga jen pod úvodem'] = await pg.locator('.trust .logos img').count() == 5 and await pg.locator('.hero .logos img, .send .logos img').count() == 0
         ok['jedna reference u formuláře'] = await pg.locator('.send-quotes .quote').count() == 1
         await pg.click('[data-start]'); await pg.wait_for_timeout(900)
-        ok['tlačítko v úvodu vede k oborům'] = await pg.evaluate("document.activeElement.dataset.obor") == 'vyroba'
+        ok['tlačítko v úvodu vede k filtru'] = await pg.evaluate("document.activeElement.closest('details') && document.activeElement.closest('details').id") == 'g-obor'
+        ok['na telefonu jsou menu zavřená'] = not await pg.evaluate("document.getElementById('g-obor').open || document.getElementById('g-odd').open")
         ok['6 karet a tlačítko pro všechny'] = await pg.locator('.uc').count() == 6 and await pg.is_visible('#more')
+        prvni = norm(await pg.inner_text('.uc >> nth=0'))
+        ok['úspora na člověka a obtížnost slovem'] = 'týdně na člověka' in prvni and 'Snadné' in prvni
         ok['bez detailu a pokynů pro AI'] = await pg.locator('#ov, [data-open], [data-copy]').count() == 0
         ok['bez sekce kurzu a PDF'] = await pg.locator('#kurz, #mods, .subsidy, .virt').count() == 0
         ok['výroba je první obor'] = await pg.get_attribute('#f-obor .chip >> nth=0', 'data-obor') == 'vyroba'
         ok['lišta je vidět hned'] = await pg.is_visible('#bar') and norm(await pg.inner_text('#bar-n')) == 'Zatím nic nevybráno'
         ok['krátký návod nad filtrem'] = norm(await pg.inner_text('.filter-hint')).startswith('Vyberte si obor a oddělení')
         ok['řada oddělení'] = await pg.locator('#f-odd .chip').count() == 7 and await pg.get_attribute('#f-odd .chip >> nth=0', 'data-odd') == 'obchod'
-        await pg.click('[data-odd="provoz"]'); await pg.wait_for_timeout(150)
+        await pick('odd', 'g-odd', 'provoz')
         d = await pg.eval_on_selector_all('.uc .dept', 'els => els.map(e => e.textContent)')
         ok['filtr oddělení ukáže všechny jeho možnosti'] = len(d) == 10 and {norm(x) for x in d} == {'Provoz a odborná práce'} and await pg.is_hidden('#more')
-        ok['fokus zůstává na čipu oddělení'] = await pg.evaluate("document.activeElement.dataset.odd") == 'provoz'
+        ok['po výběru se menu zavře a fokus je na něm'] = await pg.evaluate("document.activeElement.closest('details') && document.activeElement.closest('details').id") == 'g-odd' and not await pg.evaluate("document.getElementById('g-odd').open")
+        ok['menu ukazuje vybrané oddělení'] = norm(await pg.inner_text('#v-odd')) == 'Provoz a odborná práce'
         ok['nadpis podle oddělení'] = norm(await pg.inner_text('#res-title')).endswith('pro provoz a odbornou práci')
-        await pg.click('[data-odd="provoz"]'); await pg.wait_for_timeout(150)
+        await pick('odd', 'g-odd', 'provoz')
         ok['zrušení oddělení vrátí šestici'] = await pg.locator('.uc').count() == 6 and await pg.is_visible('#more')
         await pg.click('[data-more]'); await pg.wait_for_timeout(150)
         ok['všech 42 po kliknutí'] = await pg.locator('.uc').count() == 42 and await pg.is_hidden('#more')
         lv = await pg.eval_on_selector_all('.uc .lvl', 'els => els.map(e => e.getAttribute("aria-label"))')
         ok['seřazeno od nejsnazších'] = lv == sorted(lv, key=lambda a: 'střední' in a)
-        await pg.click('[data-obor="vyroba"]'); await pg.wait_for_timeout(200)
+        await pick('obor', 'g-obor', 'vyroba')
         t = norm(await pg.inner_text('#res-title')); out.append('m obor: ' + t)
         ok['filtr výroba'] = t.endswith('ve výrobě a průmyslu') and await pg.get_attribute('.uc >> nth=0', 'data-id') == 'vy1'
-        ok['fokus zůstává na čipu'] = await pg.evaluate("document.activeElement.dataset.obor") == 'vyroba'
-        await pg.click('[data-odd="obchod"]'); await pg.wait_for_timeout(150)
+        ok['fokus na menu oboru'] = await pg.evaluate("document.activeElement.closest('details') && document.activeElement.closest('details').id") == 'g-obor'
+        await pick('odd', 'g-odd', 'obchod')
         d = await pg.eval_on_selector_all('.uc .dept', 'els => els.map(e => e.textContent)')
         ok['obor a oddělení platí zároveň'] = len(d) == 4 and {norm(x) for x in d} == {'Obchod'} and norm(await pg.inner_text('#res-title')).endswith('pro obchod ve výrobě a průmyslu')
         z = json.loads(await pg.input_value('#l-zajem'))
         ok['oddělení v poli Zajem'] = z['oddeleni'] == 'Obchod' and z['oddeleni_id'] == 'obchod' and 'Oddělení: Obchod' in norm(z['shrnuti'])
-        await pg.click('[data-odd="obchod"]'); await pg.wait_for_timeout(150)
+        await pick('odd', 'g-odd', 'obchod')
         await pg.click('[data-pick="vy1"]'); await pg.click('[data-pick="p3"]'); await pg.click('[data-pick="h2"]')
         await pg.wait_for_timeout(250)
         ok['přidání do výběru'] = norm(await pg.inner_text('#bar-n')) == 'Váš výběr: 3 možnosti' and await pg.locator('.uc.in').count() == 3
@@ -103,6 +111,7 @@ async def main():
         ok['lišta vede k formuláři'] = await pg.evaluate("document.activeElement.id") == 'send-title'
         ok['nad formulářem lišta uhne'] = await pg.evaluate("document.getElementById('bar').classList.contains('is-hidden')")
         ok['výběr ve formuláři'] = await pg.locator('#pick li').count() == 2
+        ok['do 24 hodin u formuláře'] = 'do 24 hodin' in norm(await pg.inner_text('#lead .soft.center'))
         ok['bez zaškrtávátka kurz na míru'] = await pg.locator('#l-custom').count() == 0
         await pg.click('[data-unpick="vy1"]'); await pg.wait_for_timeout(100)
         ok['odebrání ve formuláři'] = await pg.locator('#pick li').count() == 1 and await pg.locator('.uc.in').count() == 1
@@ -116,6 +125,7 @@ async def main():
         ok['souhlas je povinný'] = norm(await pg.inner_text('#l-err')).startswith('Bez souhlasu')
         await pg.check('#l-consent'); await pg.click('#l-submit'); await pg.wait_for_timeout(500)
         ok['potvrzení se shrnutím'] = await pg.is_visible('#lead-ok') and 'Předávka směny' in norm(await pg.inner_text('#lead-ok'))
+        ok['potvrzení s 24 hodinami'] = 'Do 24 hodin se vám ozve konzultant' in norm(await pg.inner_text('#lead-ok'))
         ok['konzultant, ne obchodník'] = 'obchodník' not in norm(await pg.inner_text('body')).lower()
         ok['po odeslání bez tlačítek na kartách'] = not await pg.is_visible('[data-pick]')
         await pg.screenshot(path=f'{OUT}/m-done.png')
@@ -128,6 +138,9 @@ async def main():
         await pg.screenshot(path=f'{OUT}/d-start.png')
         ok['ve vloženém režimu bez hlavičky'] = not await f.locator('.top').is_visible() and not await f.locator('.sales').is_visible()
         await f.locator('[data-pick="o1"]').click(); await f.locator('[data-pick="v1"]').click()
+        ok['na notebooku jsou filtry otevřené'] = await f.locator('#g-obor').evaluate('e => e.open') and await f.locator('#g-odd').evaluate('e => e.open')
+        top = await f.locator('.side').evaluate("e => { window.scrollTo({ top: document.getElementById('grid').getBoundingClientRect().bottom + scrollY - innerHeight + 100, behavior: 'instant' }); return e.getBoundingClientRect().top; }")
+        ok['filtr zůstává vidět při posouvání'] = abs(top - 16) < 2
         # po přidání je formulář už vidět a lišta schovaná, proto napřed zpátky nahoru
         await f.locator('#vyber').evaluate("() => window.scrollTo({ top: 0, behavior: 'instant' })"); await pg.wait_for_timeout(350)
         await f.locator('[data-go]').click(); await pg.wait_for_timeout(900)

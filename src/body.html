@@ -11,33 +11,48 @@
 <main id="top">
 <section class="hero">
   <div class="wrap hero-in">
-    <h1><span class="h1-pre">Složte si vlastní</span> <span class="h1-name"><span class="nowrap">AI Akcelerátor</span> na míru</span></h1>
-    <p class="lede">Náš nejprodávanější kurz. Každé firmě ho skládáme z jejích konkrétních úkolů.</p>
+    <h1>Složte si vlastní <span class="nowrap">AI Akcelerátor</span> na míru</h1>
+    <p class="lede">Vyberte úkoly, se kterými má AI pomáhat vašim lidem. Připravíme z nich návrh praktického kurzu pro vaši firmu, zdarma a nezávazně.</p>
     <div class="hero-cta">
-      <button class="btn btn-primary btn-lg" type="button" data-start>Začít skládat kurz</button>
+      <button class="btn btn-primary btn-lg" type="button" data-start>Složte si kurz na míru</button>
       <div class="perks">
         <p class="perk"><span class="coin" aria-hidden="true">Kč</span><span><b>Lze čerpat dotaci</b>Vzdělávání pro firmy</span></p>
         <p class="perk"><span class="coin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span><span><b>Konzultace zdarma</b></span></p>
       </div>
     </div>
-    <div class="trust">
-      <p>Firmy, které s námi spolupracují</p>
-      <ul class="logos" data-logos></ul>
-    </div>
   </div>
 </section>
 
-<div class="wrap">
-  <div class="filters" id="vyber">
-    <p class="filter-hint">Vyberte si obor a oddělení, přidejte, co se vám hodí, a výběr nám pošlete.</p>
-    <div class="filter-row"><span class="filter-l" id="fl-obor">Obor</span><div class="chips" id="f-obor" role="group" aria-labelledby="fl-obor"></div></div>
-    <div class="filter-row"><span class="filter-l" id="fl-odd">Oddělení</span><div class="chips" id="f-odd" role="group" aria-labelledby="fl-odd"></div></div>
-  </div>
-  <div class="res-head"><h2 id="res-title">Z čeho si můžete kurz složit</h2></div>
-  <div class="grid" id="grid"></div>
-  <div class="more" id="more" hidden><button class="btn btn-ghost" type="button" data-more></button></div>
-  <p class="foot">Odhady úspory času jsou orientační.</p>
+<div class="wrap trust">
+  <p>Firmy, které s námi spolupracují</p>
+  <ul class="logos" data-logos></ul>
 </div>
+
+<section class="app" id="vyber" aria-labelledby="res-title">
+  <div class="wrap">
+    <div class="res-head">
+      <h2 id="res-title">Z čeho si můžete kurz složit</h2>
+      <p class="filter-hint">Vyberte si obor a oddělení, přidejte, co se vám hodí, a výběr nám pošlete.</p>
+    </div>
+    <div class="app-grid">
+      <aside class="side" aria-label="Filtr možností">
+        <details class="fgroup" id="g-obor" open>
+          <summary><span class="fname">Obor</span><span class="fval" id="v-obor"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <div class="flist" id="f-obor" role="group" aria-label="Obor"></div>
+        </details>
+        <details class="fgroup" id="g-odd" open>
+          <summary><span class="fname">Oddělení</span><span class="fval" id="v-odd"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <div class="flist" id="f-odd" role="group" aria-label="Oddělení"></div>
+        </details>
+      </aside>
+      <div class="app-main">
+        <div class="grid" id="grid"></div>
+        <div class="more" id="more" hidden><button class="btn btn-ghost" type="button" data-more></button></div>
+        <p class="foot">Odhady úspory času jsou orientační.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section class="send" id="odeslat" aria-labelledby="send-title">
   <div class="wrap send-grid">
@@ -65,7 +80,7 @@
           <label class="check"><input type="checkbox" id="l-consent" aria-describedby="l-err"><span>Souhlasím s <a href="https://business.lifescale.cz/cz/pages/gdpr-business" target="_blank" rel="noopener">podmínkami zpracování osobních údajů</a></span></label>
           <p class="err" id="l-err" hidden></p>
           <button class="btn btn-primary btn-lg btn-block" type="submit" id="l-submit">Chci konzultaci a návrh kurzu zdarma</button>
-          <p class="soft center">Nezávazné. Ozve se vám konzultant.</p>
+          <p class="soft center">Nezávazné. Konzultant se vám ozve do 24 hodin.</p>
         </form>
       </div>
       <div class="done" id="lead-ok" hidden></div>

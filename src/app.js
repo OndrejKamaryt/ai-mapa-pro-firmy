@@ -17,7 +17,7 @@ const PARENTS = ['https://business.lifescale.cz'];
 if (EMBED) document.documentElement.classList.add('embed');
 
 const byId = id => UC.find(u => u.id === id);
-const hrs = u => nf(u[0], 1) + ' až ' + nf(u[1], 1) + ' h týdně';
+const hrs = u => nf(u[0], 1) + ' až ' + nf(u[1], 1) + ' h týdně na člověka';
 const moznost = n => n === 1 ? 'možnost' : (n >= 2 && n <= 4 ? 'možnosti' : 'možností');
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const ICON_OK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
@@ -33,7 +33,7 @@ const PRO_ODD = { obchod:'pro obchod', marketing:'pro marketing', hr:'pro HR a 
 const BARS = { s:1, m:2 };
 const bars = l => '<svg viewBox="0 0 18 16" aria-hidden="true">' + [[1, 10, 5], [7, 6, 9], [13, 2, 13]].map(([x, y, h], i) =>
   '<rect x="' + x + '" y="' + y + '" width="4" height="' + h + '" rx="1"' + (i < BARS[l] ? ' class="on"' : '') + '/>').join('') + '</svg>';
-const lvlTag = l => { const a = 'Obtížnost: ' + LEVEL[l].toLowerCase(); return '<span class="lvl" role="img" aria-label="' + a + '" title="' + a + '">' + bars(l) + '</span>'; };
+const lvlTag = l => { const a = 'Obtížnost: ' + LEVEL[l].toLowerCase(); return '<span class="lvl" role="img" aria-label="' + a + '" title="' + a + '">' + bars(l) + '<span class="lvl-t">' + LEVEL[l] + '</span></span>'; };
 
 /* posun stránky vždy přes window.scrollTo: scrollIntoView by ve vloženém iframe posouval i stránku webu */
 function scrollToEl(el){
@@ -48,6 +48,19 @@ const chip = (pole, k, l, on) => '<button class="chip" type="button" data-' + po
 function renderChips(){
   $('#f-obor').innerHTML = OBORY.map(([k, l]) => chip('obor', k, l, S.obor === k)).join('');
   $('#f-odd').innerHTML = ODDELENI.map(([k, l]) => chip('odd', k, l, S.odd === k)).join('');
+}
+/* filtr: na širší obrazovce je vlevo u karet a otevřený, na telefonu jsou to dvě rozbalovací menu */
+const WIDE = matchMedia('(min-width:901px)');
+function layoutFilters(){ $$('.fgroup').forEach(d => { d.open = WIDE.matches; }); }
+function syncFilters(){
+  $('#v-obor').textContent = S.obor ? OBOR_LABEL[S.obor] : 'Všechny';
+  $('#v-odd').textContent = S.odd ? ODD_LABEL[S.odd] : 'Všechna';
+}
+// na telefonu se menu po výběru zavře, aby byly hned vidět karty
+function filterPicked(btn){
+  syncFilters();
+  if (WIDE.matches) return;
+  const d = btn.closest('details'); d.open = false; $('summary', d).focus({ preventScroll:true });
 }
 // od nejsnazších, v rámci obtížnosti napřed možnosti přímo pro obor; bez oboru napřed ty obecné
 const rank = u => (u.l === 's' ? 0 : 2) + ((S.obor ? !u.i.length : u.i.length > 0) ? 1 : 0);
@@ -201,7 +214,7 @@ function renderDone(){
   const kam = esc(L.email) + (L.phone ? ' nebo ' + esc(L.phone) : '');
   const box = $('#lead-ok'); box.hidden = false;
   box.innerHTML = '<h2 class="done-t" id="done-t" tabindex="-1">' + ICON_OK + 'Děkujeme, výběr máme</h2>' +
-    '<p>' + (items.length ? 'Ozveme se vám s návrhem kurzu na ' + kam + '.' : 'Ozveme se vám na ' + kam + ' a kurz složíme spolu.') + '</p>' +
+    '<p>Do 24 hodin se vám ozve konzultant na ' + kam + (items.length ? ' a probere s vámi návrh kurzu.' : ' a kurz složíte spolu.') + '</p>' +
     (items.length ? '<ul class="pick-list sent">' + items.map(u => '<li><span>' + esc(u.t) + '</span></li>').join('') + '</ul>' : '') +
     '<p class="soft">Chcete to probrat hned? <a href="' + CALENDLY + '" target="_blank" rel="noopener">Rezervujte si konzultaci</a>.</p>' +
     (EMBED ? '' : '<p class="soft preview">Náhled pro tým: stránka není vložená na web LifeScale, kontakt se nikam neodeslal.</p>');
@@ -249,13 +262,13 @@ document.addEventListener('click', e => {
     S.obor = S.obor === ob.dataset.obor ? null : ob.dataset.obor;
     // čipy se jen přepnou, aby fokus zůstal na tom, na který se kliklo
     $$('#f-obor [data-obor]').forEach(c => c.setAttribute('aria-pressed', String(S.obor === c.dataset.obor)));
-    renderGrid(); renderPick(); syncLead(); return;
+    renderGrid(); renderPick(); syncLead(); filterPicked(ob); return;
   }
   const od = e.target.closest('[data-odd]');
   if (od){
     S.odd = S.odd === od.dataset.odd ? null : od.dataset.odd;
     $$('#f-odd [data-odd]').forEach(c => c.setAttribute('aria-pressed', String(S.odd === c.dataset.odd)));
-    renderGrid(); syncLead(); return;
+    renderGrid(); syncLead(); filterPicked(od); return;
   }
   if (e.target.closest('[data-more]')){
     S.all = true; renderGrid();
@@ -267,15 +280,10 @@ document.addEventListener('click', e => {
   const up = e.target.closest('[data-unpick]');
   if (up){ unpick(up.dataset.unpick); return; }
   if (e.target.closest('[data-go]')){ goForm(); return; }
-  if (e.target.closest('[data-start]')){ scrollToEl($('#vyber')); $('#f-obor .chip').focus({ preventScroll:true }); return; }
+  if (e.target.closest('[data-start]')){ scrollToEl($('#vyber')); $('#g-obor summary').focus({ preventScroll:true }); return; }
 });
 $('#lead').addEventListener('submit', submitLead);
 $$('[data-logos]').forEach(ul => { ul.innerHTML = LOGA.map(([n, id, h]) => '<li><img style="--h:' + h + 'px" src="https://cms.lifescale.cz/assets/' + id + '?width=360" alt="' + esc(n) + '"></li>').join(''); });
-renderChips();
-// na telefonu se řádek čipů posouvá do strany: šipka napoví, že je v něm víc, a na konci zmizí
-$$('.filter-row').forEach(r => {
-  const c = $('.chips', r), sync = () => r.classList.toggle('at-end', c.scrollLeft + c.clientWidth >= c.scrollWidth - 8);
-  c.addEventListener('scroll', sync, { passive:true }); window.addEventListener('resize', sync); sync();
-});
+renderChips(); syncFilters(); layoutFilters(); WIDE.addEventListener('change', layoutFilters);
 renderGrid(); renderBar(); renderPick(); syncLead(); syncBar();
 })();

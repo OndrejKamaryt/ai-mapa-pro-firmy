@@ -10,8 +10,8 @@ Lead magnet pro LifeScale Business, dřív „AI mapa pro firmy“. Cílí hlavn
 
 ## Jak to funguje
 
-1. Úvod s fotkou: „Složte si vlastní AI Akcelerátor na míru“, jedna věta o kurzu, tlačítko „Začít skládat kurz“, ikony „Lze čerpat dotaci Vzdělávání pro firmy“ a „Konzultace zdarma“ a pět log firem (pole `LOGA` v `src/data.js`).
-2. Pod úvodem je jedna věta, jak se stránkou pracovat, a dva řádky filtru: obory (výroba je první) a oddělení. Bez vybraného oboru a oddělení stránka ukáže šest snadných možností, každou z jiného oddělení (pole `START` v `src/app.js`), a tlačítko „Zobrazit všech 42 možností“. Po výběru oboru nebo oddělení ukáže všechny možnosti, které k němu patří, seřazené od nejsnazších. Oba filtry platí zároveň. Obtížnost ukazuje ikona se třemi sloupečky: snadné mají vyplněný jeden, střední dva.
+1. Úvod s fotkou: „Složte si vlastní AI Akcelerátor na míru“ v jedné velikosti, podnadpis s tím, co návštěvník dostane, tlačítko „Složte si kurz na míru“ a ikony „Lze čerpat dotaci Vzdělávání pro firmy“ a „Konzultace zdarma“. Pod úvodem je šedá řada pěti log firem (pole `LOGA` v `src/data.js`).
+2. Pracovní část začíná jednou větou, jak se stránkou pracovat. Vlevo je filtr s obory (výroba je první) a odděleními, který při posouvání zůstává vidět, vpravo karty. Na telefonu jsou to dvě rozbalovací menu nad kartami. Bez vybraného oboru a oddělení stránka ukáže šest snadných možností, každou z jiného oddělení (pole `START` v `src/app.js`), a tlačítko „Zobrazit všech 42 možností“. Po výběru oboru nebo oddělení ukáže všechny možnosti, které k němu patří, seřazené od nejsnazších. Oba filtry platí zároveň. Obtížnost ukazuje slovo a ikona se třemi sloupečky: snadné mají vyplněný jeden, střední dva.
 3. Každá karta říká, co možnost přinese a kolik času týdně ušetří, a má jediné tlačítko: „Přidat do výběru“, případně „Odebrat z výběru“. Detail s postupem a pokynem pro AI už stránka nemá.
 4. U spodního okraje je pořád vidět lišta s počtem vybraných možností a tlačítkem „Poslat výběr“, které vede k formuláři. Když je formulář na obrazovce nebo se do něj píše, lišta uhne.
 5. Závěr stránky je tmavá sekce „Pošlete nám výběr a připravíme vám návrh kurzu“: tři krátké body, co se návštěvník na konzultaci dozví, jedna reference a formulář s výběrem, ze kterého jde odebírat. Povinný je jen e-mail a souhlas se zpracováním údajů, jméno, telefon a firma jsou nepovinné. Odeslat jde i prázdný výběr, konzultant ho pak projde s návštěvníkem.
@@ -104,7 +104,7 @@ Test proklikne obory, oddělení, rozbalení všech možností, řazení podle o
 - Doplnit do scénáře v Make pole Zajem: přidat Parse JSON a do zprávy v #lifescale-leads vložit `shrnuti`, aby konzultant výběr viděl ve Slacku i v Pipedrivu. Když JSON nepůjde načíst, vložit text pole celý.
 - Přesunout stránku z osobního GitHubu na firemní hosting a změnit adresu v `cms/html-blok.html` i v `PARENTS` v `src/app.js`.
 - Doplnit stránce v CMS titulek a popis pro vyhledávače a do HTML bloku v CMS přenést nový titulek iframe z `cms/html-blok.html`.
-- Potvrdit tvrzení na stránce: „nejprodávanější kurz“, úsporu „v řádu dní měsíčně“ (věta z webu LifeScale) a „Nezávazné“.
+- Potvrdit tvrzení na stránce: „Nezávazné“ a „Konzultant se vám ozve do 24 hodin“, i o víkendech a svátcích.
 - Upřesnit dotaci: výzva uznává podporu účastníkovi, který absolvuje aspoň 50 hodin, a standardní AI Akcelerátor má 12 hodin. Stránka teď říká „Lze čerpat dotaci“ bez této podmínky, konzultant ji musí vysvětlit.
 - Rozhodnout, jestli loga zůstanou bez upřesnění: jsou z bloku „Firmy, které s námi spolupracují“ na webu, ne všechny musely absolvovat právě AI kurz. Reference Karla Kunzmanna je zkrácená citace z webu.
 - Nahradit písmo Figtree písmem Satoshi z webu.

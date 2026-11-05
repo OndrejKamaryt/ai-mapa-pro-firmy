@@ -54,12 +54,10 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .linkish{background:none; border:0; padding:6px 0; font:600 14px var(--font); color:var(--blue-ink); cursor:pointer; text-decoration:underline; text-underline-offset:3px}
 
 /* úvod: fotka z webu LifeScale s tmavým přechodem, jako hlavičky stránek webu */
-.hero{position:relative; overflow:hidden; color:#fff; padding:60px 0 92px; background:#0B3460 url("https://cms.lifescale.cz/assets/0bef6855-0b73-4e5a-b731-7e51b3e7ce15?width=1800&quality=72&format=webp") center/cover no-repeat}
+.hero{position:relative; overflow:hidden; color:#fff; padding:76px 0 72px; background:#0B3460 url("https://cms.lifescale.cz/assets/0bef6855-0b73-4e5a-b731-7e51b3e7ce15?width=1800&quality=72&format=webp") center/cover no-repeat}
 .hero::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(4,20,40,.78) 0%, rgba(4,20,40,.55) 48%, rgba(4,20,40,.12) 82%), linear-gradient(0deg, rgba(4,20,40,.62) 0%, rgba(4,20,40,0) 38%); pointer-events:none}
 .hero-in{position:relative; z-index:1}
-.hero h1{font-weight:800; letter-spacing:-.03em; color:#fff; max-width:980px}
-.h1-pre{display:block; font-size:clamp(24px,3vw,34px); line-height:1.15; font-weight:700; letter-spacing:-.02em; color:rgba(255,255,255,.94)}
-.h1-name{display:block; font-size:clamp(40px,6.4vw,76px); line-height:1.02; margin-top:6px}
+.hero h1{font-size:clamp(36px,5.2vw,68px); line-height:1.04; font-weight:800; letter-spacing:-.03em; color:#fff; max-width:15em}
 .nowrap{white-space:nowrap}
 .lede{font-size:clamp(17px,1.7vw,20px); line-height:1.5; color:rgba(255,255,255,.94); max-width:60ch; margin-top:18px}
 .hero-cta{display:flex; flex-wrap:wrap; align-items:center; gap:16px 30px; margin-top:26px}
@@ -68,52 +66,56 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .perk b{display:block; font-size:16px; color:#fff}
 .coin{width:42px; height:42px; flex:none; display:grid; place-items:center; border-radius:50%; background:#fff; color:var(--navy); font-size:15px; font-weight:800; letter-spacing:-.02em}
 .coin svg{width:22px; height:22px; fill:none; stroke:var(--navy); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
-.trust{margin-top:32px}
-.trust p{font-size:14px; font-weight:600; color:rgba(255,255,255,.85); margin-bottom:12px}
+.trust{padding-top:22px; padding-bottom:22px; display:flex; flex-wrap:wrap; align-items:center; gap:12px 36px}
+.trust p{margin:0; font-size:13px; font-weight:600; color:var(--muted)}
 .logos{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; align-items:center; gap:14px 34px}
-.logos img{display:block; width:auto; height:var(--h, 26px); filter:brightness(0) invert(1)}
+.logos img{display:block; width:auto; height:var(--h, 26px); filter:brightness(0) opacity(.42)}
 @media (max-width:720px){ .hero::after{background:rgba(4,20,40,.62)} }
 @media (max-width:560px){
-  .hero{padding:28px 0 60px}
+  .hero{padding:32px 0 36px}
   .lede{font-size:16px; margin-top:12px}
   .hero-cta{margin-top:18px}
   .hero-cta .btn{width:100%}
   .btn-lg{padding:14px 12px; font-size:16px}
   .perks{display:grid; gap:10px}
-  .trust{margin-top:22px}
-  .trust p{margin-bottom:10px}
+  .trust{padding-top:16px; padding-bottom:16px; gap:10px}
+  .trust p{width:100%}
   .logos{gap:12px 22px}
   .logos img{height:calc(var(--h, 26px) * .78)}
 }
 
-/* obory a oddělení */
-.filters{position:relative; z-index:2; background:#fff; border-radius:var(--r); box-shadow:var(--shadow); padding:16px 20px; margin-top:-34px; display:grid; grid-template-columns:minmax(0,1fr); gap:10px}
-.filter-hint{margin:0 0 2px; font-size:16px; font-weight:700; line-height:1.35}
-.filter-row{display:grid; grid-template-columns:68px minmax(0,1fr); gap:10px; align-items:start}
-.filter-l{font-size:13px; font-weight:700; line-height:40px; color:var(--muted)}
-.chips{display:flex; flex-wrap:wrap; gap:6px}
-.chip{min-height:40px; padding:8px 12px; border-radius:999px; border:1.5px solid var(--line); background:#fff; font:600 14px var(--font); color:var(--ink); cursor:pointer; white-space:nowrap; transition:border-color .15s, background .15s}
-.chip:hover{border-color:var(--blue)}
-.chip[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:#fff}
-@media (max-width:720px){
-  .filters{padding:12px 0 12px 12px; border-radius:var(--r-sm); gap:8px}
-  .filter-hint{padding-right:12px; font-size:15px}
-  .filter-row{display:block; position:relative}
-  .filter-l{display:block; line-height:1.4; margin-bottom:6px}
-  .filter-row::after{content:""; position:absolute; right:6px; bottom:6px; width:28px; height:28px; border-radius:50%; box-shadow:0 1px 5px rgba(32,16,11,.18); pointer-events:none; transition:opacity .15s;
-    background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233A4A55' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E") center/16px no-repeat}
-  .filter-row.at-end::after{opacity:0}
-  .chips{flex-wrap:nowrap; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none; padding-right:28px; -webkit-overflow-scrolling:touch;
-         -webkit-mask-image:linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image:linear-gradient(90deg, #000 calc(100% - 32px), transparent)}
-  .chips::-webkit-scrollbar{display:none}
-  .chip{scroll-snap-align:start}
+/* pracovní část: vlevo filtr, vpravo karty; na telefonu dvě rozbalovací menu nad kartami */
+.app{background:var(--blue-wash); border-top:1px solid var(--line); padding:40px 0 48px}
+.app-grid{display:grid; grid-template-columns:248px minmax(0,1fr); gap:24px; align-items:start}
+.side{position:sticky; top:80px; max-height:calc(100vh - var(--bar-h) - 96px); overflow-y:auto; background:#fff; border:1.5px solid var(--line); border-radius:var(--r); padding:8px}
+.embed .side{top:16px; max-height:calc(100vh - var(--bar-h) - 32px)}
+.fgroup + .fgroup{margin-top:6px; padding-top:6px; border-top:1px solid var(--line)}
+.fgroup summary{display:flex; align-items:center; gap:8px; min-height:40px; padding:6px 10px; border-radius:var(--r-sm); font-size:15px; font-weight:800; cursor:pointer; list-style:none}
+.fgroup summary::-webkit-details-marker{display:none}
+.fgroup summary:hover{background:var(--blue-wash)}
+.fname{margin-right:auto}
+.fval{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; font-weight:600; color:var(--blue-ink)}
+.fgroup[open] .fval{display:none}
+.fgroup summary svg{flex:none; width:16px; height:16px; fill:none; stroke:var(--muted); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; transition:transform .15s}
+.fgroup[open] summary svg{transform:rotate(180deg)}
+.flist{display:grid; gap:2px; padding:2px 0 4px}
+.chip{display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; min-height:34px; padding:5px 10px; border:0; border-radius:var(--r-sm); background:none; font:600 14px/1.25 var(--font); color:var(--ink); text-align:left; cursor:pointer}
+.chip:hover{background:var(--blue-wash)}
+.chip[aria-pressed="true"]{background:var(--ink); color:#fff}
+.chip[aria-pressed="true"]::after{content:"×"; font-size:18px; line-height:1}
+@media (max-width:900px){
+  .app{padding:28px 0 36px}
+  .app-grid{grid-template-columns:minmax(0,1fr); gap:14px}
+  .side, .embed .side{position:static; max-height:none; overflow:visible; padding:6px}
+  .fgroup summary{min-height:46px}
+  .chip{min-height:44px}
 }
 
 /* možnosti */
-.res-head{margin:30px 0 14px}
+.res-head{margin:0 0 20px}
+.filter-hint{margin:6px 0 0; font-size:17px; line-height:1.4; font-weight:500}
 .res-head h2{font-size:clamp(22px,2.6vw,30px); font-weight:800; letter-spacing:-.02em}
-.grid{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:16px}
-@media (max-width:1000px){ .grid{grid-template-columns:repeat(2, minmax(0,1fr))} }
+.grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px}
 @media (max-width:640px){ .grid{grid-template-columns:minmax(0,1fr); gap:12px} .res-head h2{font-size:21px} }
 .uc{display:flex; flex-direction:column; gap:10px; background:var(--card); border:1.5px solid var(--line); border-radius:var(--r); padding:20px; transition:box-shadow .2s}
 .uc:hover{box-shadow:var(--shadow); border-color:#D7E3EA}
@@ -131,6 +133,7 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 .meta span{display:inline-flex; align-items:center; gap:6px}
 .meta svg{width:16px; height:16px; stroke:var(--blue-ink); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
 .lvl{display:inline-flex; align-items:center}
+.lvl-t{font-size:13px; font-weight:600; color:var(--muted)}
 .meta .lvl svg, .lvl svg{width:18px; height:16px; flex:none; stroke:none; fill:none}
 .lvl rect{fill:#D3DDE4}
 .lvl rect.on{fill:var(--blue-ink)}
@@ -145,7 +148,7 @@ body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-in
 @media (max-width:640px){ .more .btn{width:100%} }
 
 /* závěr stránky: nabídka konzultace, reference a formulář */
-.send{margin-top:56px; padding:72px 0; background:var(--navy); color:#fff}
+.send{padding:72px 0; background:var(--navy); color:#fff}
 .send-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,540px); grid-template-rows:auto 1fr; gap:30px 64px; align-items:start}
 .send-intro{grid-column:1; grid-row:1}
 .send-box{grid-column:2; grid-row:1 / span 2; background:#fff; color:var(--ink); border-radius:20px; padding:32px; box-shadow:0 24px 60px rgba(2,14,30,.4)}
@@ -215,6 +218,9 @@ form.lead{display:grid; gap:12px}
 
 /* vložené na web LifeScale: hlavičku má stránka webu a pohled konzultanta se neukazuje */
 .embed .top, .embed .sales{display:none}
+/* posuvník má jen stránka webu, vnitřní by se s ním pletl */
+html.embed{scrollbar-width:none}
+html.embed::-webkit-scrollbar{display:none}
 
 /* pohled konzultanta */
 .sales{margin:30px 0; border:1.5px dashed #C9D4DB; border-radius:var(--r); padding:16px 18px; background:#FAFCFD}
