@@ -10,7 +10,7 @@ Lead magnet pro LifeScale Business, dřív „AI mapa pro firmy“. Cílí hlavn
 
 ## Jak to funguje
 
-1. Úvod s fotkou: „Složte si vlastní AI Akcelerátor na míru“ v jedné velikosti, podnadpis s tím, co návštěvník dostane, tlačítko „Složte si kurz na míru“ a ikony „Lze čerpat dotaci Vzdělávání pro firmy“ a „Konzultace zdarma“. Pod úvodem je šedá řada pěti log firem (pole `LOGA` v `src/data.js`).
+1. Úvod s fotkou: „Složte si AI kurz podle toho, co váš tým opravdu řeší“. Název AI Akcelerátor na stránce záměrně není, návštěvník by mu bez vysvětlení nerozuměl, zůstává jen ve shrnutí pro konzultanta. Dál podnadpis s tím, co návštěvník dostane, tlačítko „Složte si kurz na míru“ a ikony „Lze čerpat dotaci Vzdělávání pro firmy“ a „Konzultace zdarma“. Pod úvodem je šedá řada pěti log firem (pole `LOGA` v `src/data.js`).
 2. Pracovní část začíná jednou větou, jak se stránkou pracovat. Vlevo je filtr s obory (výroba je první) a odděleními, který při posouvání zůstává vidět, vpravo karty. Na telefonu jsou to dvě rozbalovací menu nad kartami. Bez vybraného oboru a oddělení stránka ukáže šest snadných možností, každou z jiného oddělení (pole `START` v `src/app.js`), a tlačítko „Zobrazit všech 42 možností“. Po výběru oboru nebo oddělení ukáže všechny možnosti, které k němu patří, seřazené od nejsnazších. Oba filtry platí zároveň. Obtížnost ukazuje slovo a ikona se třemi sloupečky: snadné mají vyplněný jeden, střední dva.
 3. Každá karta říká, co možnost přinese a kolik času týdně ušetří, a má jediné tlačítko: „Přidat do výběru“, případně „Odebrat z výběru“. Detail s postupem a pokynem pro AI už stránka nemá.
 4. U spodního okraje je pořád vidět lišta s počtem vybraných možností a tlačítkem „Poslat výběr“, které vede k formuláři. Když je formulář na obrazovce nebo se do něj píše, lišta uhne.
@@ -79,7 +79,7 @@ Možnosti jsou v `src/data.js` v poli `UC`. Každá má tato pole:
 | `i` | obory, pro které je možnost určená, prázdné pole znamená všechny obory |
 | `u` | úspora v hodinách týdně na člověka ve tvaru `[od, do]` |
 | `l` | obtížnost: `s` snadné, `m` střední |
-| `t`, `w` | název a co možnost přinese |
+| `t`, `w` | název a co se člověk naučí, popis začíná „Naučíte se“ |
 
 Pořadí oborů určuje pole `OBORY`, šest úvodních možností pole `START` v `src/app.js`. Po úpravě spusťte:
 

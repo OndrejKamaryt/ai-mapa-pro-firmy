@@ -57,7 +57,7 @@ async def main():
         async def pick(pole, skupina, k):
             await pg.click('#' + skupina + ' summary'); await pg.click('[data-' + pole + '="' + k + '"]'); await pg.wait_for_timeout(200)
         await pg.screenshot(path=f'{OUT}/m-start.png')
-        ok['nadpis s AI Akcelerátorem'] = 'AI Akcelerátor' in norm(await pg.inner_text('h1'))
+        ok['nadpis bez názvu AI Akcelerátor'] = norm(await pg.inner_text('h1')).startswith('Složte si AI kurz') and 'Akcelerátor' not in norm(await pg.inner_text('.hero'))
         hero = norm(await pg.inner_text('.hero'))
         ok['dotace a konzultace zdarma v úvodu'] = 'Lze čerpat dotaci' in hero and 'Konzultace zdarma' in hero
         ok['nadpis v jedné velikosti'] = await pg.locator('h1 span.h1-pre, h1 span.h1-name').count() == 0
@@ -86,6 +86,8 @@ async def main():
         ok['zrušení oddělení vrátí šestici'] = await pg.locator('.uc').count() == 6 and await pg.is_visible('#more')
         await pg.click('[data-more]'); await pg.wait_for_timeout(150)
         ok['všech 42 po kliknutí'] = await pg.locator('.uc').count() == 42 and await pg.is_hidden('#more')
+        popisy = await pg.eval_on_selector_all('.uc .w', 'els => els.map(e => e.textContent)')
+        ok['všech 42 popisů říká, co se naučíte'] = len(popisy) == 42 and all(norm(x).startswith('Naučíte se') for x in popisy)
         lv = await pg.eval_on_selector_all('.uc .lvl', 'els => els.map(e => e.getAttribute("aria-label"))')
         ok['seřazeno od nejsnazších'] = lv == sorted(lv, key=lambda a: 'střední' in a)
         await pick('obor', 'g-obor', 'vyroba')
