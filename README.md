@@ -40,11 +40,22 @@ Otevřete `index.html` v prohlížeči. Stránka nepotřebuje server ani instala
 
 ## Vložení na web LifeScale
 
-Na webu běží stránka z LifeScale CMS (Directus) s jedním HTML blokem z `cms/html-blok.html`. Blok zobrazí stránku z GitHub Pages přes celou obrazovku pod hlavičkou webu.
+Na webu běží stránka z LifeScale CMS (Directus) s jedním HTML blokem z `cms/html-blok.html`. Blok zobrazí stránku z GitHub Pages přes celou obrazovku. Posouvá se obsah iframu, ne stránka webu, a tak si blok se stránkou posílají zprávy, aby se hlavička a menu webu chovaly jako na ostatních stránkách.
 
 - Stránka pozná, že je vložená, a schová vlastní hlavičku a pohled konzultanta.
+- Hlavička webu odjíždí s obsahem stejně jako na běžných stránkách webu a vrátí se, až je obsah zase úplně nahoře. Stránka hlásí svůj posun zprávou `ls-ai-mapa-scroll` (pole `y` a `top`) a blok podle něj hlavičku posune. Hlavička přitom leží přes horní okraj iframu. Blok proto napřed pošle její výšku zprávou `ls-ai-mapa-host` a stránka si nahoře nechá stejně vysoké místo. Dokud ho v poli `top` nepotvrdí, zůstává hlavička pořád nahoře a iframe pod ní. Nová stránka tak funguje i se starším blokem a nový blok se starší stránkou.
+- Rozbalené menu webu se zavře, když myš přejede nad iframe, když se obsah posune nebo když návštěvník v iframu stiskne Esc. Stránka to hlásí zprávou `ls-ai-mapa-pointer` (při Esc s polem `key`) a blok pošle menu událost `pointerout`, na kterou menu slyší. Zavírá se pak stejně rychle jako jinde na webu.
+- Kolečko myši nebo tah prstem nad hlavičkou by posunuly stránku webu místo obsahu. Blok je proto předá stránce zprávou `ls-ai-mapa-wheel` a ta se posune o `dy`.
 - Po odeslání formuláře pošle kontakt a pole `zajem` stránce zprávou `postMessage` typu `ls-ai-mapa-lead`, a to jen na `https://business.lifescale.cz`. Stránka webu přijímá zprávy jen z `https://ondrejkamaryt.github.io`.
 - Stránka webu kontakt odešle na `/api/form-submit` stejně jako formuláře webu, se scénářem `general_inquiry` a poli Vaše jméno, E-mail, Telefon, Firma, Zajem a GDPR. Odtud jde do `form_submissions` a webhookem do Make, který lead ohlásí v kanálu #lifescale-leads. Výsledek vrátí zprávou `ls-ai-mapa-lead-ack` a podle ní stránka ukáže potvrzení, nebo chybu.
+
+Blok v CMS se nemění sám. Po každé úpravě `cms/html-blok.html` ho někdo musí do CMS přenést a `__PAGE_ID__` nahradit číslem stránky. Se starším blokem zůstává hlavička pořád nahoře.
+
+Co se od běžné stránky webu liší dál, protože se posouvá obsah iframu:
+
+- Hlavička se vrací až úplně nahoře. Stejně se dnes chovají ostatní stránky webu: hlavička je `sticky` uvnitř obalu s `overflow-x-hidden`, a tak s obsahem jen odjede. Až to správce webu opraví a hlavička se začne vracet při posunu nahoru, je potřeba stejné chování doplnit do bloku.
+- Klávesy pro posun (mezerník, PageDown, šipky) posouvají obsah až po kliknutí do něj. Hned po načtení posunou stránku webu k patičce.
+- Na telefonu se při čtení neschová adresní řádek prohlížeče. Schovává se jen při posunu celé stránky.
 
 ### Pole Zajem
 
@@ -100,13 +111,14 @@ pip install playwright
 PW_CHANNEL=chrome python3 tests/test_flow.py
 ```
 
-Test proklikne obory, oddělení, rozbalení všech možností, řazení podle obtížnosti, řazení a štítky podle oboru, přidání a odebrání na kartě i ve formuláři, lištu, kontrolu formuláře a odeslání. Ve vloženém režimu podstrčí potvrzení od webu LifeScale jednou chybné a jednou úspěšné. Snímky obrazovky uloží do `tests/out/`.
+Test proklikne obory, oddělení, rozbalení všech možností, řazení podle obtížnosti, řazení a štítky podle oboru, přidání a odebrání na kartě i ve formuláři, lištu, kontrolu formuláře a odeslání. Ve vloženém režimu podstrčí potvrzení od webu LifeScale jednou chybné a jednou úspěšné a zkouší i zprávy pro hlavičku a menu webu: hlášení posunu, místo na hlavičku, kolečko nad hlavičkou a Esc. Snímky obrazovky uloží do `tests/out/`.
 
 ## Před ostrým spuštěním
 
 - Doplnit do scénáře v Make pole Zajem: přidat Parse JSON a do zprávy v #lifescale-leads vložit `shrnuti`, aby konzultant výběr viděl ve Slacku i v Pipedrivu. Když JSON nepůjde načíst, vložit text pole celý.
 - Přesunout stránku z osobního GitHubu na firemní hosting a změnit adresu v `cms/html-blok.html` i v `PARENTS` v `src/app.js`.
-- Doplnit stránce v CMS titulek a popis pro vyhledávače a do HTML bloku v CMS přenést nový titulek iframe z `cms/html-blok.html`.
+- Přenést do CMS aktuální `cms/html-blok.html`. Blok v CMS je starší: hlavička s ním zůstává pořád nahoře, menu se po odjetí myši zavírá zhruba o třetinu vteřiny později než jinde a iframe má starý titulek.
+- Doplnit stránce v CMS titulek a popis pro vyhledávače.
 - Potvrdit tvrzení na stránce: „Nezávazné“ a „Konzultant se vám ozve do 24 hodin“, i o víkendech a svátcích.
 - Upřesnit dotaci: výzva uznává podporu účastníkovi, který absolvuje aspoň 50 hodin, a standardní AI Akcelerátor má 12 hodin. Stránka teď říká „Lze čerpat dotaci“ bez této podmínky, konzultant ji musí vysvětlit.
 - Rozhodnout, jestli loga zůstanou bez upřesnění: jsou z bloku „Firmy, které s námi spolupracují“ na webu, ne všechny musely absolvovat právě AI kurz. Reference Karla Kunzmanna je zkrácená citace z webu.

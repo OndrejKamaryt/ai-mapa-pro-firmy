@@ -5,6 +5,10 @@ section:has(.ls-ai-mapa){padding-left:0 !important; padding-right:0 !important}
 .container:has(.ls-ai-mapa), .prose:has(.ls-ai-mapa){max-width:none !important; overflow:visible !important}
 .ls-ai-mapa{height:calc(100vh - 56px); height:calc(100dvh - 56px); margin:0}
 .ls-ai-mapa iframe{display:block; width:100%; height:100%; border:0; margin:0}
+/* Jakmile stránka v iframu potvrdí, že si nahoře nechala místo, leží hlavička webu přes horní okraj iframu
+   a odjíždí s jeho obsahem jako na běžných stránkách webu. Posun hlásí stránka, viz skript. */
+.ls-ai-mapa.is-full{height:100vh; height:100dvh; margin-top:calc(-1 * var(--ls-top, 56px))}
+html:has(.ls-ai-mapa.is-full) body > div > header{transform:translateY(var(--ls-hdr, 0px)); transition:none; touch-action:pinch-zoom}
 </style>
 <div class="ls-ai-mapa not-prose"><iframe src="https://ondrejkamaryt.github.io/ai-mapa-pro-firmy/" title="Složte si AI kurz na míru" allow="clipboard-write"></iframe></div>
 <script>
@@ -46,18 +50,88 @@ section:has(.ls-ai-mapa){padding-left:0 !important; padding-right:0 !important}
       })
       .catch(function (err) { reply(false); console.error('[AI mapa] Odeslání kontaktu selhalo:', err); });
   });
-  // Menu webu nevidí myš nad iframem, a tak se samo nezavře. Stránka v iframu dá vědět (ls-ai-mapa-pointer)
-  // a menu zavřeme, jako by z něj myš odjela. Kdyby zůstalo otevřené, zkusíme ještě Esc.
-  var closing = 0;
-  window.addEventListener('message', function (e) {
-    if (e.origin !== ORIGIN || !e.data || e.data.type !== 'ls-ai-mapa-pointer' || closing) return;
-    var open = document.querySelectorAll('header [data-state="open"]');
-    if (!open.length) return;
-    open.forEach(function (el) { el.dispatchEvent(new PointerEvent('pointerleave', { pointerType: 'mouse', bubbles: false })); });
+
+  // Rozbalené menu webu. Když myš přejede z menu nad iframe, web se to nedozví a menu nechá otevřené. Stránka v iframu
+  // proto dá vědět (ls-ai-mapa-pointer) a menu dostane pointerout, na který slyší: zavře se stejně rychle, jako když
+  // z něj myš odjede jinam. Kdyby přesto zůstalo otevřené a myš se do hlavičky nevrátila, zavře ho Esc.
+  // Esc stisknutý v iframu přijde stejnou zprávou s polem key a zavře menu hned.
+  // Jde jen o rozbalovací menu v navigaci (nav). Menu přes celou obrazovku na telefonu se zavírá samo a nesmí se ho to týkat.
+  var MENU = 'header nav [data-state="open"]', closing = 0, back = false;
+  var esc = function () { document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true })); };
+  function leaveMenu() {
+    var open = document.querySelectorAll(MENU);
+    if (!open.length || closing) return;
+    back = false;
+    open.forEach(function (el) { el.dispatchEvent(new PointerEvent('pointerout', { pointerType: 'mouse', bubbles: true })); });
     closing = setTimeout(function () {
       closing = 0;
-      if (document.querySelector('header [data-state="open"]')) document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true }));
+      if (!back && document.querySelector(MENU)) esc();
     }, 500);
+  }
+  document.addEventListener('pointerover', function (e) { if (e.target instanceof Element && e.target.closest('header')) back = true; }, true);
+  window.addEventListener('message', function (e) {
+    if (e.origin !== ORIGIN || !e.data || e.data.type !== 'ls-ai-mapa-pointer') return;
+    if (e.data.key !== 'Escape') leaveMenu();
+    else if (document.querySelector(MENU)) esc();
   });
+
+  // Hlavička webu na běžných stránkách odjíždí s obsahem a vrátí se až úplně nahoře. Tady se posouvá obsah iframu,
+  // a tak stránka hlásí svůj posun (ls-ai-mapa-scroll) a hlavičku posouváme stejně. Stránka si napřed musí nahoře
+  // nechat místo na hlavičku (ls-ai-mapa-host). Dokud ho nepotvrdí v poli top, zůstává hlavička pořád nahoře jako dřív.
+  // Prvky hledáme až při události: skript běží jen jednou, kdežto blok se při přechodu mezi stránkami webu vymění.
+  var HDR = 'body > div > header', innerY = 0, kbd = false;
+  var HAS = !!(window.CSS && CSS.supports && CSS.supports('selector(html:has(body))'));   // posun hlavičky stojí na :has() ve stylech výše
+  function parts() {
+    var box = document.querySelector('.ls-ai-mapa'), hdr = document.querySelector(HDR), fr = box && box.querySelector('iframe');
+    return hdr && fr && fr.contentWindow ? { box: box, hdr: hdr, win: fr.contentWindow, h: hdr.offsetHeight, full: box.classList.contains('is-full') } : null;
+  }
+  function place(p) {
+    var root = document.documentElement.style, v = (kbd ? 0 : -Math.min(innerY, p.h)) + 'px';
+    if (root.getPropertyValue('--ls-hdr') !== v) root.setProperty('--ls-hdr', v);
+  }
+  window.addEventListener('message', function (e) {
+    var d = e.data, p, y;
+    if (e.origin !== ORIGIN || !d || d.type !== 'ls-ai-mapa-scroll' || !HAS || !(p = parts()) || e.source !== p.win) return;
+    if (d.top !== p.h) {
+      p.box.classList.remove('is-full');
+      p.win.postMessage({ type: 'ls-ai-mapa-host', top: p.h }, ORIGIN);
+      return;
+    }
+    if (!p.full) {
+      p.box.style.setProperty('--ls-top', p.h + 'px');
+      p.box.classList.add('is-full');
+    }
+    y = Math.max(0, +d.y || 0);
+    if (y !== innerY) { kbd = false; leaveMenu(); }   // obsah se posunul: menu se zavře, jako když na běžné stránce odjede s hlavičkou
+    innerY = y;
+    place(p);
+  });
+  window.addEventListener('resize', function () { var p = parts(); if (p && p.full) p.win.postMessage({ type: 'ls-ai-mapa-host', top: p.h }, ORIGIN); });
+  // Fokus z klávesnice v odjeté hlavičce by nebyl vidět. Hlavička se proto ukáže a schová se zase s dalším posunem obsahu.
+  function focusMoved() { var p = parts(); if (!p || !p.full) return; kbd = !!p.hdr.querySelector(':focus-visible'); place(p); }
+  document.addEventListener('focusin', focusMoved);
+  document.addEventListener('focusout', function () { setTimeout(focusMoved, 0); });
+  // Kolečko nebo tah prstem nad hlavičkou by posunuly stránku webu místo obsahu, a tak je předáme stránce v iframu.
+  function overHeader(e) { var p = e.target instanceof Element && e.target.closest(HDR) && parts(); return p && p.full ? p : null; }
+  document.addEventListener('wheel', function (e) {
+    var p;
+    if (e.ctrlKey || !e.deltaY || !(p = overHeader(e))) return;
+    e.preventDefault();
+    p.win.postMessage({ type: 'ls-ai-mapa-wheel', dy: e.deltaY * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? window.innerHeight : 1) }, ORIGIN);
+  }, { passive: false });
+  var touchY = null, drag = false;
+  document.addEventListener('touchstart', function (e) {
+    touchY = e.touches.length === 1 && overHeader(e) ? e.touches[0].clientY : null;
+    drag = false;
+  }, { passive: true });
+  document.addEventListener('touchmove', function (e) {
+    var p = touchY !== null && parts(), y;
+    if (!p) return;
+    y = e.touches[0].clientY;
+    if (!drag && Math.abs(y - touchY) < 10) return;
+    drag = true;
+    p.win.postMessage({ type: 'ls-ai-mapa-wheel', dy: touchY - y }, ORIGIN);
+    touchY = y;
+  }, { passive: true });
 })();
 </script>

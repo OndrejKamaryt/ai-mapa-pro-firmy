@@ -221,6 +221,8 @@ form.lead{display:grid; gap:12px}
 /* posuvník má jen stránka webu, vnitřní by se s ním pletl */
 html.embed{scrollbar-width:none}
 html.embed::-webkit-scrollbar{display:none}
+/* hlavička webu leží přes horní okraj iframu a odjíždí s obsahem: stránka si pod ní nechá místo, výšku jí pošle web (ls-ai-mapa-host) */
+html.embed body{padding-top:var(--host-top, 0px)}
 
 /* pohled konzultanta */
 .sales{margin:30px 0; border:1.5px dashed #C9D4DB; border-radius:var(--r); padding:16px 18px; background:#FAFCFD}

@@ -226,6 +226,8 @@ form.lead{display:grid; gap:12px}
 /* posuvník má jen stránka webu, vnitřní by se s ním pletl */
 html.embed{scrollbar-width:none}
 html.embed::-webkit-scrollbar{display:none}
+/* hlavička webu leží přes horní okraj iframu a odjíždí s obsahem: stránka si pod ní nechá místo, výšku jí pošle web (ls-ai-mapa-host) */
+html.embed body{padding-top:var(--host-top, 0px)}
 
 /* pohled konzultanta */
 .sales{margin:30px 0; border:1.5px dashed #C9D4DB; border-radius:var(--r); padding:16px 18px; background:#FAFCFD}
@@ -876,14 +878,42 @@ document.addEventListener('click', e => {
 });
 $('#lead').addEventListener('submit', submitLead);
 $$('[data-logos]').forEach(ul => { ul.innerHTML = LOGA.map(([n, id, h]) => '<li><img style="--h:' + h + 'px" src="https://cms.lifescale.cz/assets/' + id + '?width=360" alt="' + esc(n) + '"></li>').join(''); });
-/* menu webu nevidí myš nad iframem, a tak se samo nezavře: při vstupu myši, kliknutí nebo posunu dáme webu vědět */
+/* menu webu nevidí myš nad iframem, a tak se samo nezavře: při pohybu myši, kliknutí nebo posunu dáme webu vědět.
+   Hlásí se i pouhý pohyb: vstup myši (pointerover) prohlížeč neohlásí, když myš přiletí zpátky nad stejný prvek. */
 if (EMBED){
+  const post = msg => PARENTS.forEach(o => { try { window.parent.postMessage(msg, o); } catch (e) {} });
   let pinged = 0;
   const ping = () => {
-    const t = Date.now(); if (t - pinged < 300) return; pinged = t;
-    PARENTS.forEach(o => { try { window.parent.postMessage({ type:'ls-ai-mapa-pointer' }, o); } catch (e) {} });
+    const t = Date.now(); if (t - pinged < 100) return; pinged = t;
+    post({ type:'ls-ai-mapa-pointer' });
   };
-  ['pointerover', 'pointerdown', 'wheel', 'touchstart'].forEach(n => document.addEventListener(n, ping, { passive:true }));
+  ['pointerover', 'pointermove', 'pointerdown', 'wheel', 'touchstart'].forEach(n => document.addEventListener(n, ping, { passive:true }));
+  // Esc má zavřít rozbalené menu webu, i když je fokus tady v iframu
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') post({ type:'ls-ai-mapa-pointer', key:'Escape' }); });
+
+  /* hlavička webu má odjíždět s obsahem jako na ostatních stránkách webu, jenže tady se posouvá obsah iframu:
+     stránka hlásí webu svůj posun (ls-ai-mapa-scroll) a web podle něj hlavičku posune. Web napřed pošle výšku hlavičky
+     (ls-ai-mapa-host), stránka si pod ní nechá místo a potvrdí ho v poli top. Starší blok v CMS zprávy nezná a nic se nemění. */
+  let hostTop = 0, sentY = -1, sentTop = -1;
+  const report = () => {
+    const y = Math.max(0, Math.round(window.scrollY));
+    if (y === sentY && hostTop === sentTop) return;
+    sentY = y; sentTop = hostTop;
+    post({ type:'ls-ai-mapa-scroll', y, top: hostTop });
+  };
+  window.addEventListener('scroll', report, { passive:true });
+  window.addEventListener('message', e => {
+    const d = e.data;
+    if (!PARENTS.includes(e.origin) || !d) return;
+    if (d.type === 'ls-ai-mapa-host'){
+      hostTop = Math.min(200, Math.max(0, Math.round(+d.top || 0)));
+      document.documentElement.style.setProperty('--host-top', hostTop + 'px');
+      report();
+    }
+    // kolečko nebo tah prstem nad hlavičkou webu: web je předá sem, jinak by se místo obsahu posunula celá stránka webu
+    else if (d.type === 'ls-ai-mapa-wheel') window.scrollTo({ top: window.scrollY + (+d.dy || 0), behavior:'instant' });
+  });
+  report();
 }
 renderChips(); syncFilters(); layoutFilters(); WIDE.addEventListener('change', layoutFilters);
 renderGrid(); renderBar(); renderPick(); syncLead(); syncBar();

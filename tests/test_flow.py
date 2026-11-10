@@ -5,7 +5,8 @@ Spuštění z kořene repozitáře:
 
 Skript proklikne filtr oborů a oddělení, šest úvodních možností a rozbalení všech, přidání a odebrání z výběru, lištu,
 formulář a odeslání. Odeslání zkouší i ve vloženém režimu: stránku otevře v iframe a potvrzení od webu
-LifeScale podstrčí sám, jednou úspěšné a jednou chybné. Fotku a písma z internetu zablokuje, takže běží
+LifeScale podstrčí sám, jednou úspěšné a jednou chybné. Tamtéž zkouší zprávy pro hlavičku a menu webu
+(hlášení posunu, místo na hlavičku, kolečko nad hlavičkou, Esc). Fotku a písma z internetu zablokuje, takže běží
 i bez sítě. Snímky obrazovky uloží do tests/out/.
 Bez stažených prohlížečů Playwrightu jde použít nainstalovaný Chrome: PW_CHANNEL=chrome python3 tests/test_flow.py
 """
@@ -18,18 +19,19 @@ OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, 'out')
 os.makedirs(OUT, exist_ok=True)
 norm = lambda s: re.sub(r'[  ]', ' ', s or '')
 
-# rodičovská stránka jako na webu LifeScale: přijme kontakt a odpoví potvrzením, ok podle window.ACK_OK
+# rodičovská stránka jako na webu LifeScale: přijme kontakt a odpoví potvrzením, ok podle window.ACK_OK.
+# Zprávy pro hlavičku webu (posun, Esc) jen sbírá, zprávy od webu posílá toFrame(data, odkud).
 PARENT = '''<!doctype html><meta charset="utf-8"><style>body{margin:0}iframe{display:block;width:100vw;height:100vh;border:0}</style>
 <iframe id="f" src="%s"></iframe>
 <script>
-window.ACK_OK = true; window.LEADS = []; window.PINGS = 0;
+window.ACK_OK = true; window.LEADS = []; window.PINGS = 0; window.ESC = 0; window.SCROLLS = [];
+window.toFrame = (data, origin) => document.getElementById('f').contentWindow.dispatchEvent(new MessageEvent('message', { origin: origin || 'https://business.lifescale.cz', data }));
 window.postMessage = function (msg) {
-  if (msg && msg.type === 'ls-ai-mapa-pointer') { window.PINGS++; return; }
+  if (msg && msg.type === 'ls-ai-mapa-pointer') { window.PINGS++; if (msg.key === 'Escape') window.ESC++; return; }
+  if (msg && msg.type === 'ls-ai-mapa-scroll') { window.SCROLLS.push(msg); return; }
   if (!msg || msg.type !== 'ls-ai-mapa-lead') return;
   window.LEADS.push(msg);
-  const w = document.getElementById('f').contentWindow;
-  setTimeout(() => w.dispatchEvent(new MessageEvent('message', { origin: 'https://business.lifescale.cz',
-    data: { type: 'ls-ai-mapa-lead-ack', id: msg.id, ok: window.ACK_OK } })), 50);
+  setTimeout(() => window.toFrame({ type: 'ls-ai-mapa-lead-ack', id: msg.id, ok: window.ACK_OK }), 50);
 };
 </script>'''
 
@@ -89,7 +91,7 @@ async def main():
         ok['zrušení oddělení vrátí šestici'] = await pg.locator('.uc').count() == 6 and await pg.is_visible('#more')
         await pg.click('[data-more]'); await pg.wait_for_timeout(150)
         ok['všechny karty po kliknutí'] = await pg.locator('.uc').count() == await pg.evaluate('UC.length') and await pg.is_hidden('#more')
-        ok['jednorázová úspora jen u karet s polem j'] = await pg.evaluate("UC.some(u => u.j) && UC.every(u => { const m = document.querySelector('.uc[data-id=\"' + u.id + '\"] .meta span').textContent.replace(/\s+/g, ' '); const t = (u.j || '').replace(/\s+/g, ' '); return u.j ? m.includes('Ušetří ' + t) && !m.includes('týdně') : m.includes('h týdně na člověka'); })")
+        ok['jednorázová úspora jen u karet s polem j'] = await pg.evaluate("UC.some(u => u.j) && UC.every(u => { const m = document.querySelector('.uc[data-id=\"' + u.id + '\"] .meta span').textContent.replace(/\\s+/g, ' '); const t = (u.j || '').replace(/\\s+/g, ' '); return u.j ? m.includes('Ušetří ' + t) && !m.includes('týdně') : m.includes('h týdně na člověka'); })")
         popisy = await pg.eval_on_selector_all('.uc .w', 'els => els.map(e => e.textContent)')
         ok['všechny popisy říkají, co se naučíte'] = len(popisy) == await pg.evaluate('UC.length') and all(norm(x).startswith('Naučíte se') for x in popisy)
         lv = await pg.eval_on_selector_all('.uc .lvl', 'els => els.map(e => e.getAttribute("aria-label"))')
@@ -153,14 +155,30 @@ async def main():
         ctx, pg, f, errs = await setup(b, 1366, 768, embed=True)
         await pg.screenshot(path=f'{OUT}/d-start.png')
         ok['ve vloženém režimu bez hlavičky'] = not await f.locator('.top').is_visible() and not await f.locator('.sales').is_visible()
+        # hlavička webu: se starším blokem v CMS (žádná zpráva od webu) si stránka místo nenechává, s novým ano
+        pad = lambda: f.locator('body').evaluate('e => getComputedStyle(e).paddingTop')
+        inner_y = lambda: f.locator('body').evaluate('() => Math.round(scrollY)')
+        hlaseni = lambda: pg.evaluate('window.SCROLLS')
+        ok['bez zprávy od webu zůstává stránka bez místa na hlavičku'] = await pad() == '0px' and (await hlaseni())[-1] == {'type': 'ls-ai-mapa-scroll', 'y': 0, 'top': 0}
+        await pg.evaluate("window.toFrame({ type: 'ls-ai-mapa-host', top: 99 }, 'https://example.com')"); await pg.wait_for_timeout(100)
+        ok['cizí web stránce místo na hlavičku nenastaví'] = await pad() == '0px'
+        await pg.evaluate("window.toFrame({ type: 'ls-ai-mapa-host', top: 56 })"); await pg.wait_for_timeout(100)
+        ok['stránka si nechá místo na hlavičku webu a potvrdí ho'] = await pad() == '56px' and (await hlaseni())[-1] == {'type': 'ls-ai-mapa-scroll', 'y': 0, 'top': 56}
         await f.locator('[data-pick="o1"]').click(); await f.locator('[data-pick="v1"]').click()
         ok['na notebooku jsou filtry otevřené'] = await f.locator('#g-obor').evaluate('e => e.open') and await f.locator('#g-odd').evaluate('e => e.open')
         top = await f.locator('.side').evaluate("e => { window.scrollTo({ top: document.getElementById('grid').getBoundingClientRect().bottom + scrollY - innerHeight + 100, behavior: 'instant' }); return e.getBoundingClientRect().top; }")
         ok['filtr zůstává vidět při posouvání'] = abs(top - 16) < 2
+        await pg.wait_for_timeout(150)
+        ok['stránka hlásí webu svůj posun'] = await inner_y() > 500 and (await hlaseni())[-1]['y'] == await inner_y()
         # po přidání je formulář už vidět a lišta schovaná, proto napřed zpátky nahoru
+        await f.locator('#vyber').evaluate("() => window.scrollTo({ top: 0, behavior: 'instant' })"); await pg.wait_for_timeout(350)
+        await pg.evaluate("window.toFrame({ type: 'ls-ai-mapa-wheel', dy: 120 })"); await pg.wait_for_timeout(150)
+        ok['kolečko nad hlavičkou webu posune obsah stránky'] = await inner_y() == 120 and (await hlaseni())[-1]['y'] == 120
         await f.locator('#vyber').evaluate("() => window.scrollTo({ top: 0, behavior: 'instant' })"); await pg.wait_for_timeout(350)
         await f.locator('[data-go]').click(); await pg.wait_for_timeout(1600)
         await f.locator('#l-email').fill('petr@firma.cz'); await f.locator('#l-consent').check()
+        await f.locator('#l-email').press('Escape'); await pg.wait_for_timeout(100)
+        ok['Esc ve stránce dá webu vědět, ať zavře menu'] = await pg.evaluate('window.ESC') == 1
         await pg.evaluate('window.ACK_OK = false')
         await f.locator('#l-submit').click(); await pg.wait_for_timeout(400)
         ok['stránka dá webu vědět o myši kvůli menu'] = await pg.evaluate('window.PINGS') > 0
