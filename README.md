@@ -49,7 +49,7 @@ Na webu běží stránka z LifeScale CMS (Directus) s jedním HTML blokem z `cms
 - Po odeslání formuláře pošle kontakt a pole `zajem` stránce zprávou `postMessage` typu `ls-ai-mapa-lead`, a to jen na `https://business.lifescale.cz`. Stránka webu přijímá zprávy jen z `https://ondrejkamaryt.github.io`.
 - Stránka webu kontakt odešle na `/api/form-submit` stejně jako formuláře webu, se scénářem `general_inquiry` a poli Vaše jméno, E-mail, Telefon, Firma, Zajem a GDPR. Odtud jde do `form_submissions` a webhookem do Make, který lead ohlásí v kanálu #lifescale-leads. Výsledek vrátí zprávou `ls-ai-mapa-lead-ack` a podle ní stránka ukáže potvrzení, nebo chybu.
 
-Blok v CMS se nemění sám. Po každé úpravě `cms/html-blok.html` ho někdo musí do CMS přenést a `__PAGE_ID__` nahradit číslem stránky. Se starším blokem zůstává hlavička pořád nahoře.
+Blok v CMS se nemění sám. Po každé úpravě `cms/html-blok.html` ho někdo musí do CMS přenést a `__PAGE_ID__` nahradit číslem stránky. Naposledy se přenášel 10. 11. 2026 a odpovídá tomuto souboru.
 
 Co se od běžné stránky webu liší dál, protože se posouvá obsah iframu:
 
@@ -117,7 +117,6 @@ Test proklikne obory, oddělení, rozbalení všech možností, řazení podle o
 
 - Doplnit do scénáře v Make pole Zajem: přidat Parse JSON a do zprávy v #lifescale-leads vložit `shrnuti`, aby konzultant výběr viděl ve Slacku i v Pipedrivu. Když JSON nepůjde načíst, vložit text pole celý.
 - Přesunout stránku z osobního GitHubu na firemní hosting a změnit adresu v `cms/html-blok.html` i v `PARENTS` v `src/app.js`.
-- Přenést do CMS aktuální `cms/html-blok.html`. Blok v CMS je starší: hlavička s ním zůstává pořád nahoře, menu se po odjetí myši zavírá zhruba o třetinu vteřiny později než jinde a iframe má starý titulek.
 - Doplnit stránce v CMS titulek a popis pro vyhledávače.
 - Potvrdit tvrzení na stránce: „Nezávazné“ a „Konzultant se vám ozve do 24 hodin“, i o víkendech a svátcích.
 - Upřesnit dotaci: výzva uznává podporu účastníkovi, který absolvuje aspoň 50 hodin, a standardní AI Akcelerátor má 12 hodin. Stránka teď říká „Lze čerpat dotaci“ bez této podmínky, konzultant ji musí vysvětlit.
