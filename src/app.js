@@ -49,6 +49,11 @@ function renderChips(){
   $('#f-obor').innerHTML = OBORY.map(([k, l]) => chip('obor', k, l, S.obor === k)).join('');
   $('#f-odd').innerHTML = ODDELENI.map(([k, l]) => chip('odd', k, l, S.odd === k)).join('');
 }
+// vybrat jde jen jedno: obor, nebo oddělení
+function syncChips(){
+  $$('#f-obor [data-obor]').forEach(c => c.setAttribute('aria-pressed', String(S.obor === c.dataset.obor)));
+  $$('#f-odd [data-odd]').forEach(c => c.setAttribute('aria-pressed', String(S.odd === c.dataset.odd)));
+}
 /* filtr: na širší obrazovce je vlevo u karet a otevřený, na telefonu jsou to dvě rozbalovací menu */
 const WIDE = matchMedia('(min-width:901px)');
 function layoutFilters(){ $$('.fgroup').forEach(d => { d.open = WIDE.matches; }); }
@@ -62,8 +67,8 @@ function filterPicked(btn){
   if (WIDE.matches) return;
   const d = btn.closest('details'); d.open = false; $('summary', d).focus({ preventScroll:true });
 }
-// od nejsnazších, v rámci obtížnosti napřed možnosti přímo pro obor; bez oboru napřed ty obecné
-const rank = u => (u.l === 's' ? 0 : 2) + ((S.obor ? !u.i.length : u.i.length > 0) ? 1 : 0);
+// s vybraným oborem jdou napřed všechny možnosti přímo pro něj, jinak od nejsnazších a napřed ty obecné
+const rank = u => S.obor ? (u.i.length ? 0 : 2) + (u.l === 's' ? 0 : 1) : (u.l === 's' ? 0 : 2) + (u.i.length > 0 ? 1 : 0);
 function visible(){
   const list = UC.filter(u => (!S.odd || u.d === S.odd) && (!S.obor || (S.obor === 'jine' ? !u.i.length : (!u.i.length || u.i.includes(S.obor)))))
     .sort((a, b) => rank(a) - rank(b));
@@ -260,14 +265,16 @@ document.addEventListener('click', e => {
   const ob = e.target.closest('[data-obor]');
   if (ob){
     S.obor = S.obor === ob.dataset.obor ? null : ob.dataset.obor;
+    if (S.obor) S.odd = null;
     // čipy se jen přepnou, aby fokus zůstal na tom, na který se kliklo
-    $$('#f-obor [data-obor]').forEach(c => c.setAttribute('aria-pressed', String(S.obor === c.dataset.obor)));
+    syncChips();
     renderGrid(); renderPick(); syncLead(); filterPicked(ob); return;
   }
   const od = e.target.closest('[data-odd]');
   if (od){
     S.odd = S.odd === od.dataset.odd ? null : od.dataset.odd;
-    $$('#f-odd [data-odd]').forEach(c => c.setAttribute('aria-pressed', String(S.odd === c.dataset.odd)));
+    if (S.odd) S.obor = null;
+    syncChips();
     renderGrid(); syncLead(); filterPicked(od); return;
   }
   if (e.target.closest('[data-more]')){

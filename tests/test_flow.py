@@ -75,20 +75,20 @@ async def main():
         ok['bez sekce kurzu a PDF'] = await pg.locator('#kurz, #mods, .subsidy, .virt').count() == 0
         ok['výroba je první obor'] = await pg.get_attribute('#f-obor .chip >> nth=0', 'data-obor') == 'vyroba'
         ok['lišta je vidět hned'] = await pg.is_visible('#bar') and norm(await pg.inner_text('#bar-n')) == 'Zatím nic nevybráno'
-        ok['krátký návod nad filtrem'] = norm(await pg.inner_text('.filter-hint')).startswith('Vyberte si obor a oddělení')
+        ok['krátký návod nad filtrem'] = norm(await pg.inner_text('.filter-hint')).startswith('Vyberte si obor nebo oddělení')
         ok['řada oddělení'] = await pg.locator('#f-odd .chip').count() == 7 and await pg.get_attribute('#f-odd .chip >> nth=0', 'data-odd') == 'obchod'
         await pick('odd', 'g-odd', 'provoz')
         d = await pg.eval_on_selector_all('.uc .dept', 'els => els.map(e => e.textContent)')
-        ok['filtr oddělení ukáže všechny jeho možnosti'] = len(d) == 10 and {norm(x) for x in d} == {'Provoz a odborná práce'} and await pg.is_hidden('#more')
+        ok['filtr oddělení ukáže všechny jeho možnosti'] = len(d) == await pg.evaluate("UC.filter(u => u.d === 'provoz').length") and {norm(x) for x in d} == {'Provoz a odborná práce'} and await pg.is_hidden('#more')
         ok['po výběru se menu zavře a fokus je na něm'] = await pg.evaluate("document.activeElement.closest('details') && document.activeElement.closest('details').id") == 'g-odd' and not await pg.evaluate("document.getElementById('g-odd').open")
         ok['menu ukazuje vybrané oddělení'] = norm(await pg.inner_text('#v-odd')) == 'Provoz a odborná práce'
         ok['nadpis podle oddělení'] = norm(await pg.inner_text('#res-title')).endswith('pro provoz a odbornou práci')
         await pick('odd', 'g-odd', 'provoz')
         ok['zrušení oddělení vrátí šestici'] = await pg.locator('.uc').count() == 6 and await pg.is_visible('#more')
         await pg.click('[data-more]'); await pg.wait_for_timeout(150)
-        ok['všech 42 po kliknutí'] = await pg.locator('.uc').count() == 42 and await pg.is_hidden('#more')
+        ok['všechny karty po kliknutí'] = await pg.locator('.uc').count() == await pg.evaluate('UC.length') and await pg.is_hidden('#more')
         popisy = await pg.eval_on_selector_all('.uc .w', 'els => els.map(e => e.textContent)')
-        ok['všech 42 popisů říká, co se naučíte'] = len(popisy) == 42 and all(norm(x).startswith('Naučíte se') for x in popisy)
+        ok['všechny popisy říkají, co se naučíte'] = len(popisy) == await pg.evaluate('UC.length') and all(norm(x).startswith('Naučíte se') for x in popisy)
         lv = await pg.eval_on_selector_all('.uc .lvl', 'els => els.map(e => e.getAttribute("aria-label"))')
         ok['seřazeno od nejsnazších'] = lv == sorted(lv, key=lambda a: 'střední' in a)
         await pick('obor', 'g-obor', 'vyroba')
@@ -97,10 +97,13 @@ async def main():
         ok['fokus na menu oboru'] = await pg.evaluate("document.activeElement.closest('details') && document.activeElement.closest('details').id") == 'g-obor'
         await pick('odd', 'g-odd', 'obchod')
         d = await pg.eval_on_selector_all('.uc .dept', 'els => els.map(e => e.textContent)')
-        ok['obor a oddělení platí zároveň'] = len(d) == 4 and {norm(x) for x in d} == {'Obchod'} and norm(await pg.inner_text('#res-title')).endswith('pro obchod ve výrobě a průmyslu')
+        ok['oddělení zruší obor'] = {norm(x) for x in d} == {'Obchod'} and norm(await pg.inner_text('#res-title')).endswith('pro obchod') and await pg.locator('#f-obor [aria-pressed="true"]').count() == 0
         z = json.loads(await pg.input_value('#l-zajem'))
-        ok['oddělení v poli Zajem'] = z['oddeleni'] == 'Obchod' and z['oddeleni_id'] == 'obchod' and 'Oddělení: Obchod' in norm(z['shrnuti'])
-        await pick('odd', 'g-odd', 'obchod')
+        ok['oddělení v poli Zajem'] = z['obor'] is None and z['oddeleni'] == 'Obchod' and z['oddeleni_id'] == 'obchod' and 'Oddělení: Obchod' in norm(z['shrnuti'])
+        await pick('obor', 'g-obor', 'vyroba')
+        ok['obor zruší oddělení'] = await pg.locator('#f-odd [aria-pressed="true"]').count() == 0 and norm(await pg.inner_text('#v-odd')) == 'Všechna'
+        d = await pg.eval_on_selector_all('.uc', 'els => els.slice(0, 6).map(e => e.dataset.id)')
+        ok['s oborem jdou napřed karty pro obor'] = all(byl in ('vy1', 'vy2', 'vy3', 'vy4', 'vy5', 'vy6') for byl in d)
         await pg.click('[data-pick="vy1"]'); await pg.click('[data-pick="p3"]'); await pg.click('[data-pick="h2"]')
         await pg.wait_for_timeout(250)
         ok['přidání do výběru'] = norm(await pg.inner_text('#bar-n')) == 'Váš výběr: 3 možnosti' and await pg.locator('.uc.in').count() == 3
