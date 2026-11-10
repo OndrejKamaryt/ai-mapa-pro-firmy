@@ -24,6 +24,7 @@ const LOGA = [
 
 /* možnosti: d = oddělení, i = obory (prázdné = všechny), u = úspora v hodinách týdně [od, do], l = obtížnost, t = název, w = co to přinese.
    r = obory, kterým se obecná možnost hodí nejvíc (nepovinné, jen u obecných): po výběru takového oboru jde hned za jeho vlastní možnosti a dostane jeho štítek.
+   j = nepovinná jednorázová úspora jako text (třeba '4 až 8 h po každé akci') u nárazových úkolů, kde týdenní průměr nesedí: karta ji ukáže místo údaje z u. Pole u zůstává povinné.
    Postupy, pokyny pro AI a upozornění ke každé možnosti jsou v podklady/postupy.json, stránka je nezobrazuje. */
 const UC = [
   /* OBCHOD */
@@ -54,7 +55,7 @@ const UC = [
     w:'Naučíte se s AI psát z technických parametrů jednotné popisy na web: titulek, perex, přínosy pro zákazníka a parametry.' },
   { id:'m5', d:'marketing', i:[], u:[0.5,1], l:'s', t:'Případová studie z hotové zakázky',
     w:'Naučíte se s AI připravit z rozhovoru s kolegou, který zakázku vedl, případovou studii pro web i nabídky: situace, řešení, výsledek a návrh citace.' },
-  { id:'m6', d:'marketing', i:[], u:[0.5,1], l:'m', t:'Kontakty z veletrhu obeslané do týdne',
+  { id:'m6', d:'marketing', i:[], u:[0.5,1], j:'4 až 8 h po každé akci', l:'m', t:'Kontakty z veletrhu obeslané do týdne',
     w:'Naučíte se s AI roztřídit kontakty z veletrhu nebo jiné akce podle poznámek a ke každé skupině připravit navazující e-mail na míru.' },
   { id:'m7', d:'marketing', i:[], u:[1,2], l:'s', t:'Produktové texty i v němčině a angličtině',
     w:'Naučíte se s AI přeložit produktové listy a texty na web do cizího jazyka a podle vašeho slovníčku udržet správné odborné výrazy.' },
@@ -67,9 +68,9 @@ const UC = [
     w:'Naučíte se s AI připravit otázky k pohovoru podle hledaných dovedností a jednoduchou kartu pro férové porovnání uchazečů.' },
   { id:'h4', d:'hr', i:[], u:[1,3], l:'m', t:'Odpovědi na časté dotazy ze směrnic',
     w:'Naučíte se s AI připravit z firemních směrnic srozumitelné odpovědi na časté dotazy zaměstnanců, třeba k dovolené, home office nebo benefitům.' },
-  { id:'h5', d:'hr', i:[], u:[0.5,1], l:'s', t:'Podklady k hodnoticímu rozhovoru',
+  { id:'h5', d:'hr', i:[], u:[0.5,1], j:'2 až 3 h na vedoucího v období hodnocení', l:'s', t:'Podklady k hodnoticímu rozhovoru',
     w:'Naučíte se s AI připravit z poznámek vedoucího osnovu hodnoticího rozhovoru, otázky a konkrétní zpětnou vazbu bez obecných frází.' },
-  { id:'h6', d:'hr', i:[], u:[0.5,1], l:'m', t:'Roční plán vzdělávání',
+  { id:'h6', d:'hr', i:[], u:[0.5,1], j:'den práce při ročním plánu', l:'m', t:'Roční plán vzdělávání',
     w:'Naučíte se s AI sestavit z požadavků vedoucích, hodnocení a lhůt povinných školení roční plán s prioritami, termíny a odhadem nákladů.' },
   { id:'h7', d:'hr', i:[], r:['vyroba','logistika','zdravotnictvi'], u:[0.5,1], l:'s', t:'Oznámení, které si lidé přečtou',
     w:'Naučíte se s AI napsat srozumitelné oznámení o změně směn, mezd nebo benefitů a přeložit ho do jazyka zahraničních kolegů.' },
@@ -127,7 +128,7 @@ const UC = [
     w:'Naučíte se s AI navrhnout interní pravidla: jaké nástroje používat, co do nich nevkládat, kdy výstup kontroluje člověk a koho se ptát.' },
   { id:'v5', d:'vedeni', i:[], r:['fin'], u:[1,3], l:'m', t:'Z dlouhého podkladu jedna strana k rozhodnutí',
     w:'Naučíte se s AI shrnout dlouhou nabídku, smlouvu nebo investiční záměr na jednu stranu: co se navrhuje, kolik to stojí, rizika a otázky.' },
-  { id:'v6', d:'vedeni', i:[], u:[0.5,1], l:'m', t:'Dotační výzva: co žádá a jestli se vás týká',
+  { id:'v6', d:'vedeni', i:[], u:[0.5,1], j:'pár hodin na jednu výzvu', l:'m', t:'Dotační výzva: co žádá a jestli se vás týká',
     w:'Naučíte se s AI projít text dotační výzvy a vypsat, kdo může žádat, na co, do kdy, co doložit a které podmínky vaše firma nesplňuje.' },
   /* STAVEBNICTVÍ */
   { id:'s1', d:'obchod', i:['stavebnictvi'], u:[2,4], l:'m', t:'Kontrola výkazu výměr proti nabídce',

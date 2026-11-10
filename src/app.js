@@ -90,7 +90,7 @@ function card(u){
     '<div class="uc-top"><span class="dept">' + esc(ODD_LABEL[u.d]) + '</span>' + (tag ? '<span class="ind">' + esc(OBOR_PRO[tag]) + '</span>' : '') +
     '<span class="picked" aria-hidden="true">' + ICON_OK + 'Ve výběru</span></div>' +
     '<h3>' + esc(u.t) + '</h3><p class="w">' + esc(u.w) + '</p>' +
-    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span>' + lvlTag(u.l) + '</div>' +
+    '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + (u.j ? esc(u.j) : hrs(u.u)) + '</span>' + lvlTag(u.l) + '</div>' +
     '<div class="uc-actions"><button class="pick-btn' + (on ? ' on' : '') + '" type="button" data-pick="' + u.id + '">' + pickBtn(u) + '</button></div></article>';
 }
 function renderGrid(){

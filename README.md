@@ -80,6 +80,7 @@ Možnosti jsou v `src/data.js` v poli `UC`. Každá má tato pole:
 | `i` | obory, pro které je možnost určená, prázdné pole znamená všechny obory |
 | `r` | nepovinné, jen u obecných možností: obory, kterým se možnost hodí nejvíc. Po výběru takového oboru jde hned za jeho vlastní možnosti a dostane jeho štítek. Dávejte ho jen tam, kde text možnosti pro obor sedí doslova |
 | `u` | úspora v hodinách týdně na člověka ve tvaru `[od, do]` |
+| `j` | nepovinné, jednorázová úspora jako text, třeba `4 až 8 h po každé akci`. Dávejte ho u nárazových úkolů, kde týdenní průměr nesedí. Karta pak místo údaje z `u` ukáže „Ušetří“ a tento text, `u` ale zůstává povinné |
 | `l` | obtížnost: `s` snadné, `m` střední |
 | `t`, `w` | název a co se člověk naučí, popis začíná „Naučíte se“ |
 

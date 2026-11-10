@@ -89,6 +89,7 @@ async def main():
         ok['zrušení oddělení vrátí šestici'] = await pg.locator('.uc').count() == 6 and await pg.is_visible('#more')
         await pg.click('[data-more]'); await pg.wait_for_timeout(150)
         ok['všechny karty po kliknutí'] = await pg.locator('.uc').count() == await pg.evaluate('UC.length') and await pg.is_hidden('#more')
+        ok['jednorázová úspora jen u karet s polem j'] = await pg.evaluate("UC.some(u => u.j) && UC.every(u => { const m = document.querySelector('.uc[data-id=\"' + u.id + '\"] .meta span').textContent.replace(/\s+/g, ' '); const t = (u.j || '').replace(/\s+/g, ' '); return u.j ? m.includes('Ušetří ' + t) && !m.includes('týdně') : m.includes('h týdně na člověka'); })")
         popisy = await pg.eval_on_selector_all('.uc .w', 'els => els.map(e => e.textContent)')
         ok['všechny popisy říkají, co se naučíte'] = len(popisy) == await pg.evaluate('UC.length') and all(norm(x).startswith('Naučíte se') for x in popisy)
         lv = await pg.eval_on_selector_all('.uc .lvl', 'els => els.map(e => e.getAttribute("aria-label"))')
