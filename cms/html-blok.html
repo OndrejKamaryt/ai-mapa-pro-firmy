@@ -101,6 +101,7 @@ html:has(.ls-ai-mapa.is-full) body > div > header{transform:translateY(var(--ls-
       p.box.style.setProperty('--ls-top', p.h + 'px');
       p.box.classList.add('is-full');
     }
+    if (!wheelOn) { document.addEventListener('wheel', onWheel, { passive: false }); wheelOn = true; }
     y = Math.max(0, +d.y || 0);
     if (y !== innerY) { kbd = false; leaveMenu(); }   // obsah se posunul: menu se zavře, jako když na běžné stránce odjede s hlavičkou
     innerY = y;
@@ -113,12 +114,15 @@ html:has(.ls-ai-mapa.is-full) body > div > header{transform:translateY(var(--ls-
   document.addEventListener('focusout', function () { setTimeout(focusMoved, 0); });
   // Kolečko nebo tah prstem nad hlavičkou by posunuly stránku webu místo obsahu, a tak je předáme stránce v iframu.
   function overHeader(e) { var p = e.target instanceof Element && e.target.closest(HDR) && parts(); return p && p.full ? p : null; }
-  document.addEventListener('wheel', function (e) {
+  // Na kolečko se poslouchá, jen dokud je blok na stránce: jinde na webu by takový posluchač zbytečně brzdil posouvání.
+  var wheelOn = false;
+  function onWheel(e) {
     var p;
+    if (!document.querySelector('.ls-ai-mapa')) { document.removeEventListener('wheel', onWheel); wheelOn = false; return; }
     if (e.ctrlKey || !e.deltaY || !(p = overHeader(e))) return;
     e.preventDefault();
     p.win.postMessage({ type: 'ls-ai-mapa-wheel', dy: e.deltaY * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? window.innerHeight : 1) }, ORIGIN);
-  }, { passive: false });
+  }
   var touchY = null, drag = false;
   document.addEventListener('touchstart', function (e) {
     touchY = e.touches.length === 1 && overHeader(e) ? e.touches[0].clientY : null;
