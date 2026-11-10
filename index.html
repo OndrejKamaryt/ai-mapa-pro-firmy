@@ -766,6 +766,15 @@ document.addEventListener('click', e => {
 });
 $('#lead').addEventListener('submit', submitLead);
 $$('[data-logos]').forEach(ul => { ul.innerHTML = LOGA.map(([n, id, h]) => '<li><img style="--h:' + h + 'px" src="https://cms.lifescale.cz/assets/' + id + '?width=360" alt="' + esc(n) + '"></li>').join(''); });
+/* menu webu nevidí myš nad iframem, a tak se samo nezavře: při vstupu myši, kliknutí nebo posunu dáme webu vědět */
+if (EMBED){
+  let pinged = 0;
+  const ping = () => {
+    const t = Date.now(); if (t - pinged < 300) return; pinged = t;
+    PARENTS.forEach(o => { try { window.parent.postMessage({ type:'ls-ai-mapa-pointer' }, o); } catch (e) {} });
+  };
+  ['pointerover', 'pointerdown', 'wheel', 'touchstart'].forEach(n => document.addEventListener(n, ping, { passive:true }));
+}
 renderChips(); syncFilters(); layoutFilters(); WIDE.addEventListener('change', layoutFilters);
 renderGrid(); renderBar(); renderPick(); syncLead(); syncBar();
 })();

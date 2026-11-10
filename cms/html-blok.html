@@ -46,5 +46,18 @@ section:has(.ls-ai-mapa){padding-left:0 !important; padding-right:0 !important}
       })
       .catch(function (err) { reply(false); console.error('[AI mapa] Odeslání kontaktu selhalo:', err); });
   });
+  // Menu webu nevidí myš nad iframem, a tak se samo nezavře. Stránka v iframu dá vědět (ls-ai-mapa-pointer)
+  // a menu zavřeme, jako by z něj myš odjela. Kdyby zůstalo otevřené, zkusíme ještě Esc.
+  var closing = 0;
+  window.addEventListener('message', function (e) {
+    if (e.origin !== ORIGIN || !e.data || e.data.type !== 'ls-ai-mapa-pointer' || closing) return;
+    var open = document.querySelectorAll('header [data-state="open"]');
+    if (!open.length) return;
+    open.forEach(function (el) { el.dispatchEvent(new PointerEvent('pointerleave', { pointerType: 'mouse', bubbles: false })); });
+    closing = setTimeout(function () {
+      closing = 0;
+      if (document.querySelector('header [data-state="open"]')) document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true }));
+    }, 500);
+  });
 })();
 </script>

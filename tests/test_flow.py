@@ -22,8 +22,9 @@ norm = lambda s: re.sub(r'[  ]', ' ', s or '')
 PARENT = '''<!doctype html><meta charset="utf-8"><style>body{margin:0}iframe{display:block;width:100vw;height:100vh;border:0}</style>
 <iframe id="f" src="%s"></iframe>
 <script>
-window.ACK_OK = true; window.LEADS = [];
+window.ACK_OK = true; window.LEADS = []; window.PINGS = 0;
 window.postMessage = function (msg) {
+  if (msg && msg.type === 'ls-ai-mapa-pointer') { window.PINGS++; return; }
   if (!msg || msg.type !== 'ls-ai-mapa-lead') return;
   window.LEADS.push(msg);
   const w = document.getElementById('f').contentWindow;
@@ -149,6 +150,7 @@ async def main():
         await f.locator('#l-email').fill('petr@firma.cz'); await f.locator('#l-consent').check()
         await pg.evaluate('window.ACK_OK = false')
         await f.locator('#l-submit').click(); await pg.wait_for_timeout(400)
+        ok['stránka dá webu vědět o myši kvůli menu'] = await pg.evaluate('window.PINGS') > 0
         ok['chyba při nepředání'] = 'nepodařilo odeslat' in norm(await f.locator('#l-err').inner_text()) and await f.locator('#lead').is_visible()
         await pg.evaluate('window.ACK_OK = true')
         await f.locator('#l-submit').click(); await pg.wait_for_timeout(500)
