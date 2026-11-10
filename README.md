@@ -11,7 +11,7 @@ Lead magnet pro LifeScale Business, dřív „AI mapa pro firmy“. Cílí hlavn
 ## Jak to funguje
 
 1. Úvod s fotkou: „Složte si AI kurz podle toho, co váš tým opravdu řeší“. Název AI Akcelerátor na stránce záměrně není, návštěvník by mu bez vysvětlení nerozuměl, zůstává jen ve shrnutí pro konzultanta. Dál podnadpis s tím, co návštěvník dostane, tlačítko „Složte si kurz na míru“ a ikony „Lze čerpat dotaci Vzdělávání pro firmy“ a „Konzultace zdarma“. Pod úvodem je šedá řada pěti log firem (pole `LOGA` v `src/data.js`).
-2. Pracovní část začíná jednou větou, jak se stránkou pracovat. Vlevo je filtr s obory (výroba je první) a odděleními, který při posouvání zůstává vidět, vpravo karty. Na telefonu jsou to dvě rozbalovací menu nad kartami. Bez vybraného oboru a oddělení stránka ukáže šest snadných možností, každou z jiného oddělení (pole `START` v `src/app.js`), a tlačítko „Zobrazit všech 70 možností“. Po výběru oboru nebo oddělení ukáže všechny možnosti, které k němu patří, seřazené od nejsnazších. Vybrat jde jen jedno, obor, nebo oddělení. S vybraným oborem jdou napřed možnosti přímo pro něj (ke každému oboru jich je šest), pak obecné. Obtížnost ukazuje slovo a ikona se třemi sloupečky: snadné mají vyplněný jeden, střední dva.
+2. Pracovní část začíná jednou větou, jak se stránkou pracovat. Vlevo je filtr s obory (výroba je první) a odděleními, který při posouvání zůstává vidět, vpravo karty. Na telefonu jsou to dvě rozbalovací menu nad kartami. Bez vybraného oboru a oddělení stránka ukáže šest snadných možností, každou z jiného oddělení (pole `START` v `src/app.js`), a tlačítko „Zobrazit všech 74 možností“. Po výběru oboru nebo oddělení ukáže všechny možnosti, které k němu patří, seřazené od nejsnazších. Vybrat jde jen jedno, obor, nebo oddělení. S vybraným oborem jdou napřed možnosti přímo pro něj (ke každému oboru jich je šest), pak obecné. Obtížnost ukazuje slovo a ikona se třemi sloupečky: snadné mají vyplněný jeden, střední dva.
 3. Každá karta říká, co možnost přinese a kolik času týdně ušetří, a má jediné tlačítko: „Přidat do výběru“, případně „Odebrat z výběru“. Detail s postupem a pokynem pro AI už stránka nemá.
 4. U spodního okraje je pořád vidět lišta s počtem vybraných možností a tlačítkem „Poslat výběr“, které vede k formuláři. Když je formulář na obrazovce nebo se do něj píše, lišta uhne.
 5. Závěr stránky je tmavá sekce „Pošlete nám výběr a připravíme vám návrh kurzu“: tři krátké body, co se návštěvník na konzultaci dozví, jedna reference a formulář s výběrem, ze kterého jde odebírat. Povinný je jen e-mail a souhlas se zpracováním údajů, jméno, telefon a firma jsou nepovinné. Odeslat jde i prázdný výběr, konzultant ho pak projde s návštěvníkem.
@@ -29,7 +29,7 @@ Otevřete `index.html` v prohlížeči. Stránka nepotřebuje server ani instala
 | `index.html` | sestavená stránka, tu otevírejte a nasazujte |
 | `src/head.html` | titulek, popis, odkazy na písma a všechny styly |
 | `src/body.html` | obsah stránky |
-| `src/data.js` | obory, oddělení, loga a všech 70 možností |
+| `src/data.js` | obory, oddělení, loga a všech 74 možností |
 | `src/app.js` | filtry a řazení, výběr, lišta, formulář a předání kontaktu webu |
 | `build.sh` | složí `src/` do `index.html` a do `dist/artifact.html` pro Claude |
 | `cms/html-blok.html` | HTML blok pro stránku v LifeScale CMS, viz níže |
