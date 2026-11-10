@@ -83,6 +83,8 @@ async def main():
         ok['po výběru se menu zavře a fokus je na něm'] = await pg.evaluate("document.activeElement.closest('details') && document.activeElement.closest('details').id") == 'g-odd' and not await pg.evaluate("document.getElementById('g-odd').open")
         ok['menu ukazuje vybrané oddělení'] = norm(await pg.inner_text('#v-odd')) == 'Provoz a odborná práce'
         ok['nadpis podle oddělení'] = norm(await pg.inner_text('#res-title')).endswith('pro provoz a odbornou práci')
+        ok['bez oboru mají štítek jen oborové karty'] = await pg.evaluate("Array.from(document.querySelectorAll('.uc')).every(e => !!e.querySelector('.ind') === (UC.find(x => x.id === e.dataset.id).i.length > 0))")
+        ok['značky oborů jen u obecných karet a jen platné'] = await pg.evaluate("UC.every(u => !u.r || (!u.i.length && u.r.length > 0 && u.r.every(k => k !== 'jine' && OBORY.some(o => o[0] === k))))")
         await pick('odd', 'g-odd', 'provoz')
         ok['zrušení oddělení vrátí šestici'] = await pg.locator('.uc').count() == 6 and await pg.is_visible('#more')
         await pg.click('[data-more]'); await pg.wait_for_timeout(150)
@@ -95,6 +97,8 @@ async def main():
         t = norm(await pg.inner_text('#res-title')); out.append('m obor: ' + t)
         ok['filtr výroba'] = t.endswith('ve výrobě a průmyslu') and await pg.get_attribute('.uc >> nth=0', 'data-id') == 'vy1'
         ok['fokus na menu oboru'] = await pg.evaluate("document.activeElement.closest('details') && document.activeElement.closest('details').id") == 'g-obor'
+        await pick('obor', 'g-obor', 'jine')
+        ok['jiný obor ukáže jen obecné karty bez štítku'] = await pg.locator('.uc').count() == await pg.evaluate("UC.filter(u => !u.i.length).length") and await pg.evaluate("Array.from(document.querySelectorAll('.uc')).every(e => !UC.find(x => x.id === e.dataset.id).i.length && !e.querySelector('.ind'))")
         await pick('odd', 'g-odd', 'obchod')
         d = await pg.eval_on_selector_all('.uc .dept', 'els => els.map(e => e.textContent)')
         ok['oddělení zruší obor'] = {norm(x) for x in d} == {'Obchod'} and norm(await pg.inner_text('#res-title')).endswith('pro obchod') and await pg.locator('#f-obor [aria-pressed="true"]').count() == 0
@@ -104,6 +108,10 @@ async def main():
         ok['obor zruší oddělení'] = await pg.locator('#f-odd [aria-pressed="true"]').count() == 0 and norm(await pg.inner_text('#v-odd')) == 'Všechna'
         d = await pg.eval_on_selector_all('.uc', 'els => els.slice(0, 6).map(e => e.dataset.id)')
         ok['s oborem jdou napřed karty pro obor'] = all(byl in ('vy1', 'vy2', 'vy3', 'vy4', 'vy5', 'vy6') for byl in d)
+        # skupina 0 = karty přímo pro obor, 1 = obecné, které se oboru hodí nejvíc (pole r), 2 = ostatní obecné
+        sk = await pg.evaluate("Array.from(document.querySelectorAll('.uc')).map(e => { const u = UC.find(x => x.id === e.dataset.id), ind = e.querySelector('.ind'); return [u.i.includes('vyroba') ? 0 : ((u.r || []).includes('vyroba') ? 1 : 2), ind ? ind.textContent : '']; })")
+        ok['za kartami oboru jdou obecné, které se mu hodí'] = [x[0] for x in sk] == sorted(x[0] for x in sk) and {x[0] for x in sk} == {0, 1, 2}
+        ok['štítek oboru mají jen karty, které se mu hodí'] = all((norm(x[1]) == 'Pro výrobu') == (x[0] < 2) for x in sk)
         await pg.click('[data-pick="vy1"]'); await pg.click('[data-pick="p3"]'); await pg.click('[data-pick="h2"]')
         await pg.wait_for_timeout(250)
         ok['přidání do výběru'] = norm(await pg.inner_text('#bar-n')) == 'Váš výběr: 3 možnosti' and await pg.locator('.uc.in').count() == 3
@@ -113,7 +121,8 @@ async def main():
         ok['odebrání na kartě'] = norm(await pg.inner_text('#bar-n')) == 'Váš výběr: 2 možnosti'
         ok['na telefonu nescrolluje do strany'] = await pg.evaluate('document.documentElement.scrollWidth') == 390
         await pg.screenshot(path=f'{OUT}/m-vyber.png')
-        await pg.click('[data-go]'); await pg.wait_for_timeout(900)
+        # plynulý posun k formuláři trvá u dlouhého seznamu skoro vteřinu, proto delší čekání
+        await pg.click('[data-go]'); await pg.wait_for_timeout(1600)
         ok['lišta vede k formuláři'] = await pg.evaluate("document.activeElement.id") == 'send-title'
         ok['nad formulářem lišta uhne'] = await pg.evaluate("document.getElementById('bar').classList.contains('is-hidden')")
         ok['výběr ve formuláři'] = await pg.locator('#pick li').count() == 2
@@ -149,7 +158,7 @@ async def main():
         ok['filtr zůstává vidět při posouvání'] = abs(top - 16) < 2
         # po přidání je formulář už vidět a lišta schovaná, proto napřed zpátky nahoru
         await f.locator('#vyber').evaluate("() => window.scrollTo({ top: 0, behavior: 'instant' })"); await pg.wait_for_timeout(350)
-        await f.locator('[data-go]').click(); await pg.wait_for_timeout(900)
+        await f.locator('[data-go]').click(); await pg.wait_for_timeout(1600)
         await f.locator('#l-email').fill('petr@firma.cz'); await f.locator('#l-consent').check()
         await pg.evaluate('window.ACK_OK = false')
         await f.locator('#l-submit').click(); await pg.wait_for_timeout(400)

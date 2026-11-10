@@ -68,7 +68,10 @@ function filterPicked(btn){
   const d = btn.closest('details'); d.open = false; $('summary', d).focus({ preventScroll:true });
 }
 // s vybraným oborem jdou napřed všechny možnosti přímo pro něj, jinak od nejsnazších a napřed ty obecné
-const rank = u => S.obor ? (u.i.length ? 0 : 2) + (u.l === 's' ? 0 : 1) : (u.l === 's' ? 0 : 2) + (u.i.length > 0 ? 1 : 0);
+// obecná možnost může mít v poli r obory, kterým se hodí nejvíc: s takovým oborem jde hned za jeho vlastní možnosti a dostane jeho štítek
+const fits = u => !!S.obor && !u.i.length && (u.r || []).includes(S.obor);
+const tagOf = u => u.i.length ? u.i[0] : (fits(u) ? S.obor : null);
+const rank = u => S.obor ? (u.i.length ? 0 : (fits(u) ? 2 : 4)) + (u.l === 's' ? 0 : 1) : (u.l === 's' ? 0 : 2) + (u.i.length > 0 ? 1 : 0);
 function visible(){
   const list = UC.filter(u => (!S.odd || u.d === S.odd) && (!S.obor || (S.obor === 'jine' ? !u.i.length : (!u.i.length || u.i.includes(S.obor)))))
     .sort((a, b) => rank(a) - rank(b));
@@ -82,9 +85,9 @@ function pickBtn(u){
   return (on ? ICON_MINUS : ICON_PLUS) + '<span>' + (on ? 'Odebrat z výběru' : 'Přidat do výběru') + '</span><span class="sr-only">: ' + esc(u.t) + '</span>';
 }
 function card(u){
-  const on = inCart(u.id);
+  const on = inCart(u.id), tag = tagOf(u);
   return '<article class="uc' + (on ? ' in' : '') + '" data-id="' + u.id + '">' +
-    '<div class="uc-top"><span class="dept">' + esc(ODD_LABEL[u.d]) + '</span>' + (u.i.length ? '<span class="ind">' + esc(OBOR_PRO[u.i[0]]) + '</span>' : '') +
+    '<div class="uc-top"><span class="dept">' + esc(ODD_LABEL[u.d]) + '</span>' + (tag ? '<span class="ind">' + esc(OBOR_PRO[tag]) + '</span>' : '') +
     '<span class="picked" aria-hidden="true">' + ICON_OK + 'Ve výběru</span></div>' +
     '<h3>' + esc(u.t) + '</h3><p class="w">' + esc(u.w) + '</p>' +
     '<div class="meta"><span>' + ICON_CLOCK + 'Ušetří ' + hrs(u.u) + '</span>' + lvlTag(u.l) + '</div>' +
@@ -241,7 +244,8 @@ function goForm(){
   $('#send-title').focus({ preventScroll:true });
 }
 if ('IntersectionObserver' in window){
-  new IntersectionObserver(en => { formInView = en[0].isIntersecting; syncBar(); }, { rootMargin:'0px 0px -96px 0px' }).observe($('#odeslat'));
+  // platí poslední záznam: když se změny sejdou v jedné dávce (formulář se ukáže a hned zmizí), první by nechal lištu schovanou
+  new IntersectionObserver(en => { formInView = en[en.length - 1].isIntersecting; syncBar(); }, { rootMargin:'0px 0px -96px 0px' }).observe($('#odeslat'));
 }
 $('#lead').addEventListener('focusin', () => { formFocus = true; syncBar(); });
 $('#lead').addEventListener('focusout', () => { setTimeout(() => { formFocus = $('#lead').contains(document.activeElement); syncBar(); }, 0); });
