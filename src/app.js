@@ -329,7 +329,27 @@ if (EMBED){
     }
     // kolečko nebo tah prstem nad hlavičkou webu: web je předá sem, jinak by se místo obsahu posunula celá stránka webu
     else if (d.type === 'ls-ai-mapa-wheel') window.scrollTo({ top: window.scrollY + (+d.dy || 0), behavior:'instant' });
+    // posun celé stránky webu: web hlásí, o kolik je odrolovaná (patička je vidět)
+    else if (d.type === 'ls-ai-mapa-page') setPage(+d.y || 0);
   });
+  /* patička webu: na běžné stránce odjede hned, jak se posunete nahoru. Tady by se při posunu nahoru nejdřív vracel obsah
+     iframu a patička by zůstala vidět. Dokud je stránka webu odrolovaná (pageY), posun nahoru proto předáme webu.
+     Na dotyku prohlížeč začne posouvat obsah dřív, než ho stihneme zastavit. Proto se při odrolované stránce vypne
+     jeho posouvání prstem (touch-action) a celý tah řídíme sami: nejdřív stránka webu, pak obsah. */
+  let pageY = 0, touchY = null, touchOwn = false;
+  const setPage = y => { pageY = Math.max(0, y); document.documentElement.style.touchAction = pageY > 0 ? 'none' : ''; };
+  const upToPage = dy => { setPage(pageY + dy); post({ type:'ls-ai-mapa-page-scroll', dy }); };
+  document.addEventListener('wheel', e => {
+    if (e.ctrlKey || e.deltaY >= 0 || pageY <= 0) return;
+    e.preventDefault();
+    upToPage(e.deltaY * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? window.innerHeight : 1));
+  }, { passive:false });
+  document.addEventListener('touchstart', e => { touchY = e.touches.length === 1 ? e.touches[0].clientY : null; touchOwn = touchY !== null && pageY > 0; }, { passive:true });
+  document.addEventListener('touchmove', e => {
+    if (!touchOwn) return;
+    const y = e.touches[0].clientY, dy = touchY - y; touchY = y;
+    if (dy < 0 && pageY > 0) upToPage(dy); else window.scrollBy({ top:dy, behavior:'instant' });
+  }, { passive:true });
   report();
 }
 renderChips(); syncFilters(); layoutFilters(); WIDE.addEventListener('change', layoutFilters);

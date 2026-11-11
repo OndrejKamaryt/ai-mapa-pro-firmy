@@ -123,6 +123,22 @@ html:has(.ls-ai-mapa.is-full) body > div > header{transform:translateY(var(--ls-
     e.preventDefault();
     p.win.postMessage({ type: 'ls-ai-mapa-wheel', dy: e.deltaY * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? window.innerHeight : 1) }, ORIGIN);
   }
+  // Patička webu na běžné stránce odjede hned, jak se posunete nahoru. Tady kolečko nebo tah nad iframem posouvá jeho obsah,
+  // a tak mu hlásíme, o kolik je stránka webu odrolovaná (ls-ai-mapa-page). Dokud je odrolovaná, předá nám posun nahoru zpátky
+  // (ls-ai-mapa-page-scroll) a posuneme celou stránku. Teprve potom se vrací obsah iframu.
+  var pageRaf = 0, pageOn = false;
+  function sendPage() {
+    var p = parts(); pageRaf = 0;
+    if (!p) { window.removeEventListener('scroll', onPageScroll); pageOn = false; return; }
+    p.win.postMessage({ type: 'ls-ai-mapa-page', y: Math.max(0, Math.round(window.scrollY)) }, ORIGIN);
+  }
+  function onPageScroll() { if (!pageRaf) pageRaf = requestAnimationFrame(sendPage); }
+  window.addEventListener('message', function (e) {
+    var d = e.data, p;
+    if (e.origin !== ORIGIN || !d || !(p = parts()) || e.source !== p.win) return;
+    if (d.type === 'ls-ai-mapa-scroll' && !pageOn) { window.addEventListener('scroll', onPageScroll, { passive: true }); pageOn = true; sendPage(); }
+    else if (d.type === 'ls-ai-mapa-page-scroll' && d.dy < 0) window.scrollBy({ top: +d.dy, behavior: 'instant' });
+  });
   var touchY = null, drag = false;
   document.addEventListener('touchstart', function (e) {
     touchY = e.touches.length === 1 && overHeader(e) ? e.touches[0].clientY : null;

@@ -24,11 +24,12 @@ norm = lambda s: re.sub(r'[  ]', ' ', s or '')
 PARENT = '''<!doctype html><meta charset="utf-8"><style>body{margin:0}iframe{display:block;width:100vw;height:100vh;border:0}</style>
 <iframe id="f" src="%s"></iframe>
 <script>
-window.ACK_OK = true; window.LEADS = []; window.PINGS = 0; window.ESC = 0; window.SCROLLS = [];
+window.ACK_OK = true; window.LEADS = []; window.PINGS = 0; window.ESC = 0; window.SCROLLS = []; window.PAGEUP = [];
 window.toFrame = (data, origin) => document.getElementById('f').contentWindow.dispatchEvent(new MessageEvent('message', { origin: origin || 'https://business.lifescale.cz', data }));
 window.postMessage = function (msg) {
   if (msg && msg.type === 'ls-ai-mapa-pointer') { window.PINGS++; if (msg.key === 'Escape') window.ESC++; return; }
   if (msg && msg.type === 'ls-ai-mapa-scroll') { window.SCROLLS.push(msg); return; }
+  if (msg && msg.type === 'ls-ai-mapa-page-scroll') { window.PAGEUP.push(msg.dy); return; }
   if (!msg || msg.type !== 'ls-ai-mapa-lead') return;
   window.LEADS.push(msg);
   setTimeout(() => window.toFrame({ type: 'ls-ai-mapa-lead-ack', id: msg.id, ok: window.ACK_OK }), 50);
@@ -174,6 +175,12 @@ async def main():
         await f.locator('#vyber').evaluate("() => window.scrollTo({ top: 0, behavior: 'instant' })"); await pg.wait_for_timeout(350)
         await pg.evaluate("window.toFrame({ type: 'ls-ai-mapa-wheel', dy: 120 })"); await pg.wait_for_timeout(150)
         ok['kolečko nad hlavičkou webu posune obsah stránky'] = await inner_y() == 120 and (await hlaseni())[-1]['y'] == 120
+        # patička webu: dokud je stránka webu odrolovaná, posun nahoru se předá webu a obsah se nehne; jinak se nic nemění
+        wh = "() => { const ev = new WheelEvent('wheel', { deltaY: -150, bubbles: true, cancelable: true }); document.dispatchEvent(ev); return ev.defaultPrevented; }"
+        ok['bez odrolované stránky webu se kolečko nahoru nepředává'] = not await f.locator('#vyber').evaluate(wh) and await pg.evaluate('window.PAGEUP.length') == 0
+        await pg.evaluate("window.toFrame({ type: 'ls-ai-mapa-page', y: 100 })")
+        ok['při odrolované stránce webu se posun nahoru předá webu'] = await f.locator('#vyber').evaluate(wh) and await pg.evaluate('window.PAGEUP') == [-150]
+        ok['předaný posun odrolování zmenší a zbytek ho už nepředá'] = not await f.locator('#vyber').evaluate(wh) and await pg.evaluate('window.PAGEUP.length') == 1
         await f.locator('#vyber').evaluate("() => window.scrollTo({ top: 0, behavior: 'instant' })"); await pg.wait_for_timeout(350)
         await f.locator('[data-go]').click(); await pg.wait_for_timeout(1600)
         await f.locator('#l-email').fill('petr@firma.cz'); await f.locator('#l-consent').check()
