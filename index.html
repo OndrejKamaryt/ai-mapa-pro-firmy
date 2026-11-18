@@ -264,7 +264,7 @@ html.embed body{padding-top:var(--host-top, 0px)}
     <div class="hero-cta">
       <button class="btn btn-primary btn-lg" type="button" data-start>Složte si kurz na míru</button>
       <div class="perks">
-        <p class="perk"><span class="coin" aria-hidden="true">Kč</span><span><b>Lze čerpat dotaci</b>Vzdělávání pro firmy</span></p>
+        <p class="perk"><span class="coin" aria-hidden="true">Kč</span><span><b>Poradíme, jak čerpat dotaci</b>Vzdělávání pro firmy</span></p>
         <p class="perk"><span class="coin" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4A2.5 2.5 0 0 1 4 13.5z"/></svg></span><span><b>Konzultace zdarma</b></span></p>
       </div>
     </div>
@@ -310,7 +310,7 @@ html.embed body{padding-top:var(--host-top, 0px)}
       <ul class="gains">
         <li>kde vám AI ušetří nejvíc času</li>
         <li>jak by vypadal kurz pro vaši firmu</li>
-        <li>jak na něj získat dotaci</li>
+        <li>jestli a jak na něj čerpat dotaci</li>
       </ul>
     </div>
 
@@ -328,7 +328,7 @@ html.embed body{padding-top:var(--host-top, 0px)}
           <label class="check"><input type="checkbox" id="l-consent" aria-describedby="l-err"><span>Souhlasím s <a href="https://business.lifescale.cz/cz/pages/gdpr-business" target="_blank" rel="noopener">podmínkami zpracování osobních údajů</a></span></label>
           <p class="err" id="l-err" hidden></p>
           <button class="btn btn-primary btn-lg btn-block" type="submit" id="l-submit">Chci konzultaci a návrh kurzu zdarma</button>
-          <p class="soft center">Nezávazné. Konzultant se vám ozve do 24 hodin.</p>
+          <p class="soft center">Nezávazné. Konzultant se vám ozve do jednoho pracovního dne.</p>
         </form>
       </div>
       <div class="done" id="lead-ok" hidden></div>
@@ -805,7 +805,7 @@ function renderDone(){
   const kam = esc(L.email) + (L.phone ? ' nebo ' + esc(L.phone) : '');
   const box = $('#lead-ok'); box.hidden = false;
   box.innerHTML = '<h2 class="done-t" id="done-t" tabindex="-1">' + ICON_OK + 'Děkujeme, výběr máme</h2>' +
-    '<p>Do 24 hodin se vám ozve konzultant na ' + kam + (items.length ? ' a probere s vámi návrh kurzu.' : ' a kurz složíte spolu.') + '</p>' +
+    '<p>Do jednoho pracovního dne se vám ozve konzultant na ' + kam + (items.length ? ' a probere s vámi návrh kurzu.' : ' a kurz složíte spolu.') + '</p>' +
     (items.length ? '<ul class="pick-list sent">' + items.map(u => '<li><span>' + esc(u.t) + '</span></li>').join('') + '</ul>' : '') +
     '<p class="soft">Chcete to probrat hned? <a href="' + CALENDLY + '" target="_blank" rel="noopener">Rezervujte si konzultaci</a>.</p>' +
     (EMBED ? '' : '<p class="soft preview">Náhled pro tým: stránka není vložená na web LifeScale, kontakt se nikam neodeslal.</p>');

@@ -63,7 +63,7 @@ async def main():
         await pg.screenshot(path=f'{OUT}/m-start.png')
         ok['nadpis bez názvu AI Akcelerátor'] = norm(await pg.inner_text('h1')).startswith('Složte si AI kurz') and 'Akcelerátor' not in norm(await pg.inner_text('.hero'))
         hero = norm(await pg.inner_text('.hero'))
-        ok['dotace a konzultace zdarma v úvodu'] = 'Lze čerpat dotaci' in hero and 'Konzultace zdarma' in hero
+        ok['dotace a konzultace zdarma v úvodu'] = 'Poradíme, jak čerpat dotaci' in hero and 'Konzultace zdarma' in hero
         ok['nadpis v jedné velikosti'] = await pg.locator('h1 span.h1-pre, h1 span.h1-name').count() == 0
         ok['text tlačítka v úvodu'] = norm(await pg.inner_text('[data-start]')) == 'Složte si kurz na míru'
         ok['loga jen pod úvodem'] = await pg.locator('.trust .logos img').count() == 5 and await pg.locator('.hero .logos img, .send .logos img').count() == 0
@@ -130,7 +130,7 @@ async def main():
         ok['lišta vede k formuláři'] = await pg.evaluate("document.activeElement.id") == 'send-title'
         ok['nad formulářem lišta uhne'] = await pg.evaluate("document.getElementById('bar').classList.contains('is-hidden')")
         ok['výběr ve formuláři'] = await pg.locator('#pick li').count() == 2
-        ok['do 24 hodin u formuláře'] = 'do 24 hodin' in norm(await pg.inner_text('#lead .soft.center'))
+        ok['do jednoho pracovního dne u formuláře'] = 'do jednoho pracovního dne' in norm(await pg.inner_text('#lead .soft.center'))
         ok['bez zaškrtávátka kurz na míru'] = await pg.locator('#l-custom').count() == 0
         await pg.click('[data-unpick="vy1"]'); await pg.wait_for_timeout(100)
         ok['odebrání ve formuláři'] = await pg.locator('#pick li').count() == 1 and await pg.locator('.uc.in').count() == 1
@@ -144,7 +144,7 @@ async def main():
         ok['souhlas je povinný'] = norm(await pg.inner_text('#l-err')).startswith('Bez souhlasu')
         await pg.check('#l-consent'); await pg.click('#l-submit'); await pg.wait_for_timeout(500)
         ok['potvrzení se shrnutím'] = await pg.is_visible('#lead-ok') and 'Předávka směny' in norm(await pg.inner_text('#lead-ok'))
-        ok['potvrzení s 24 hodinami'] = 'Do 24 hodin se vám ozve konzultant' in norm(await pg.inner_text('#lead-ok'))
+        ok['potvrzení s jedním pracovním dnem'] = 'Do jednoho pracovního dne se vám ozve konzultant' in norm(await pg.inner_text('#lead-ok'))
         ok['konzultant, ne obchodník'] = 'obchodník' not in norm(await pg.inner_text('body')).lower()
         ok['po odeslání bez tlačítek na kartách'] = not await pg.is_visible('[data-pick]')
         await pg.screenshot(path=f'{OUT}/m-done.png')
